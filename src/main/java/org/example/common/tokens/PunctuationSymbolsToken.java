@@ -1,5 +1,5 @@
 package org.example.common.tokens;
 
-public class PunctuationSymbolsToken implements Tokens{
+public class PunctuationSymbolsToken implements Token {
     String type;
 }
