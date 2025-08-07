@@ -1,5 +1,5 @@
 package org.example.common.tokens;
 
-public class OperatorToken implements Tokens{
-    String type;
+public class OperatorToken implements Token {
+    Operator type;
 }
