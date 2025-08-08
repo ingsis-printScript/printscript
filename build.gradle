@@ -33,3 +33,18 @@ kotlin {
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

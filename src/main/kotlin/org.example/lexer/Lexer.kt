@@ -9,7 +9,8 @@ class Lexer(
 
     fun lex(input: String): List<Token> {
         // función split -> genera inputs
-        // función detect el tipo -> tokenDetector (devuelve el tokenizer a usar)
+        // función detect del TokenDetector -> tokenDetector (devuelve el tokenizer a usar)
+        // funcion tokenizer del TokenDetector
         // función tokenizer -> tokenizer (algo como una factory) -> devuelve el token acorde al input
         // poner el token en la lista
         return emptyList()
@@ -17,8 +18,9 @@ class Lexer(
 
     // nivel de dificultad = BAJO
     fun split(input: String): List<String> {
-        return listOf(input)
+        return input.split(" ").filter { it.isNotBlank() }
     }
+    //let a: string="hello" string hello
 
     // EN split:
     // ¿incluir separación de comas?
@@ -34,3 +36,9 @@ class Lexer(
         TODO("Implementar lógica de creación del token")
     }
 }
+
+
+// let
+//que es let?
+//llamo a detector para saber que es let?
+//se fija dentro de sus detectors cual es, resultado es un Keyword
