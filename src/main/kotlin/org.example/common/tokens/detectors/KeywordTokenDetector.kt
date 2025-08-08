@@ -1,6 +1,8 @@
 package org.example.common.tokens.detectors
 
+import org.example.common.Range
 import org.example.common.tokens.Keywords
+import org.example.common.tokens.tokenizer.KeywordTokenizer
 import org.example.common.tokens.tokenizer.Tokenizer
 import java.util.*
 
@@ -24,6 +26,6 @@ class KeywordTokenDetector : TokenDetector {
     }
 
     override fun getTokenizer(string: String): Tokenizer {
-        return KeywordTokenizer(string)
+        return KeywordTokenizer()
     }
 }
