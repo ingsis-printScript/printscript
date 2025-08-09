@@ -1,7 +1,9 @@
 package org.example.common.tokens.detectors
 
 import org.example.common.Range
+import org.example.common.tokens.KeywordToken
 import org.example.common.tokens.Keywords
+import org.example.common.tokens.Token
 import org.example.common.tokens.tokenizer.KeywordTokenizer
 import org.example.common.tokens.tokenizer.Tokenizer
 import java.util.*
@@ -10,7 +12,7 @@ class KeywordTokenDetector : TokenDetector {
 
     //objetivo es identificar a partir del formato del string q se le pasa que Token es.
     //como: se tiene fijar a partir del enum de keywords si coincide con el string que recibio
-    override fun detect(string: String): Optional<String> {
+    override fun detect(string: String): Optional<Token> {
 
         val upperString = string.uppercase()
 
@@ -18,14 +20,10 @@ class KeywordTokenDetector : TokenDetector {
         for (keyword in Keywords.values()) {
             // Si encontramos una coincidencia, retornamos el nombre del keyword
             if (keyword.name == upperString) {
-                return Optional.of(keyword.name)
+                return Optional.of(KeywordToken(keyword, "", Range(0,0) ))
             }
         }
-        return Optional.empty<String>()
-        //return new KeywordToken(Keywords.Token, "", new Range(0, 0))
-    }
+        return Optional.empty<Token>()
 
-    override fun getTokenizer(string: String): Tokenizer {
-        return KeywordTokenizer()
     }
 }
