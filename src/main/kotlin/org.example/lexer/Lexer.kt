@@ -33,14 +33,14 @@ class Lexer(
     // EN split:
     // ¿incluir separación de comas?
     // ¿incluir separación de posibles iguales sin espacios...?
-    fun split(input: String): List<String> {
+    private fun split(input: String): List<String> {
         return input.split(" ").filter { it.isNotBlank() }
     }
 
 
      //FASE 1: DETECCIÓN
      //Identifica qué tipo de token es y devuelve el token vacío + el índice del detector que funcionó
-    fun detectToken(input: String): Pair<Token, Int> {
+     private fun detectToken(input: String): Pair<Token, Int> {
         for ((index, detector) in detectors.withIndex()) {
             val optionalToken = detector.detect(input)
             if (optionalToken.isPresent) {
@@ -53,7 +53,7 @@ class Lexer(
     //FASE 2: TOKENIZACIÓN
      //Usa el token vacío de la detección y lo completa con toda la información necesaria
      //El tokenizer RECIBE la información del detector para completar el token
-    fun tokenize(emptyToken: Token, detectorIndex: Int, input: String, range: Range): Token {
+    private fun tokenize(emptyToken: Token, detectorIndex: Int, input: String, range: Range): Token {
         return tokenizers[detectorIndex].tokenize(emptyToken, input, range)
     }
 
