@@ -1,4 +1,4 @@
-package org.example.common.lexer
+package org.example.lexer
 
 import org.example.common.Range
 import org.example.common.tokens.Token
