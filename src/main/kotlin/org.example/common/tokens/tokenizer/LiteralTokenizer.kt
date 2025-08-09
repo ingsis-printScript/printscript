@@ -6,13 +6,26 @@ import org.example.common.tokens.LiteralType
 import org.example.common.tokens.Token
 
 class LiteralTokenizer: Tokenizer {
-    override fun tokenize(string: String, range: Range): Token {
-        //no puedo crear el raw con los /n porque el ejemplo de la pagina funciona como quiere
-        val raw: String = string
-        return if (string.toIntOrNull() != null) {
-            LiteralToken(LiteralType.NUMBER, raw, string.toInt(), range)
-        } else {
-            LiteralToken(LiteralType.STRING, raw, string, range)
+    override fun tokenize(emptyToken: Token, string: String, range: Range): Token {
+        val emptyLiteralToken = emptyToken as LiteralToken<*>
+        val raw = string
+
+        return when (emptyLiteralToken.type) {
+            LiteralType.NUMBER -> {
+                val value = string.toDouble()
+                LiteralToken(LiteralType.NUMBER, raw, value, range)
+            }
+
+            LiteralType.STRING -> {
+                // Sacar comillas - ya sabemos que es string válido
+                val value = if ((string.startsWith("\"") && string.endsWith("\"")) ||
+                    (string.startsWith("'") && string.endsWith("'"))) {
+                    string.substring(1, string.length - 1)
+                } else {
+                    string
+                }
+                LiteralToken(LiteralType.STRING, raw, value, range)
+            }
         }
     }
 }

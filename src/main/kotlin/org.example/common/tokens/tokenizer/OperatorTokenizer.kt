@@ -6,8 +6,8 @@ import org.example.common.tokens.OperatorToken
 import org.example.common.tokens.Token
 
 class OperatorTokenizer: Tokenizer {
-    override fun tokenize(string: String, range: Range): Token {
-        val type: Operator = Operator.fromString(string)
-        return OperatorToken(type)
+    override fun tokenize(emptyToken: Token, string: String, range: Range): Token {
+        val emptyOperatorToken = emptyToken as OperatorToken
+        return OperatorToken(emptyOperatorToken.type, range)
     }
 }

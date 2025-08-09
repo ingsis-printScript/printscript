@@ -6,11 +6,8 @@ import org.example.common.tokens.Keywords
 import org.example.common.tokens.Token
 
 class KeywordTokenizer: Tokenizer {
-    override fun tokenize(string: String, range: Range): Token {
-        //buscar la keyword y meterla en variable keyword si se quiere hacer "expansible"
-        val keyword: Keywords = Keywords.fromString(string)
-        val token: KeywordToken = KeywordToken(keyword, string, range)
-        return token
+    override fun tokenize(emptyToken: Token, string: String, range: Range): Token {
+        val emptyKeywordToken = emptyToken as KeywordToken
+        return KeywordToken(emptyKeywordToken.kind, string, range)
     }
-
 }

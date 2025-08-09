@@ -4,5 +4,5 @@ import org.example.common.Range
 import org.example.common.tokens.Token
 
 interface Tokenizer {
-    fun tokenize(string: String, range: Range): Token
+    fun tokenize(emptyToken: Token, string: String, range: Range): Token
 }

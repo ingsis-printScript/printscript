@@ -6,8 +6,8 @@ import org.example.common.tokens.Punctuation
 import org.example.common.tokens.Token
 
 class PunctuationTokenizer: Tokenizer {
-    override fun tokenize(string: String, range: Range): Token {
-        val type: Punctuation = Punctuation.fromString(string)
-        return PunctuationSymbolsToken(type)
+    override fun tokenize(emptyToken: Token, string: String, range: Range): Token {
+        val emptyPunctuationToken = emptyToken as PunctuationSymbolsToken
+        return PunctuationSymbolsToken(emptyPunctuationToken.type, range)
     }
 }
