@@ -1,9 +1,9 @@
-package org.example.lexer
+package org.example.common.lexer
 
 import org.example.common.Range
 import org.example.common.tokens.Token
 import org.example.common.tokens.detectors.TokenDetector
-import org.example.common.tokens.tokenizer.Tokenizer
+import org.example.common.tokens.tokenizers.Tokenizer
 
 class Lexer(
     private val detectors: List<TokenDetector>,

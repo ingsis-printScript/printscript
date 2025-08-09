@@ -1,8 +1,8 @@
-package org.example.common.tokens.tokenizer
+package org.example.common.tokens.tokenizers
 
 import org.example.common.Range
 import org.example.common.tokens.LiteralToken
-import org.example.common.tokens.LiteralType
+import org.example.common.tokens.enums.LiteralType
 import org.example.common.tokens.Token
 
 class LiteralTokenizer: Tokenizer {

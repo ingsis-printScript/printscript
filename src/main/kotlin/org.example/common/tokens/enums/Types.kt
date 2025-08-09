@@ -1,4 +1,4 @@
-package org.example.common.tokens
+package org.example.common.tokens.enums
 
 enum class Types {
     STRING, NUMBER;

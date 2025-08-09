@@ -1,4 +1,4 @@
-package org.example.common.tokens.tokenizer
+package org.example.common.tokens.tokenizers
 
 import org.example.common.Range
 import org.example.common.tokens.IdentifierToken

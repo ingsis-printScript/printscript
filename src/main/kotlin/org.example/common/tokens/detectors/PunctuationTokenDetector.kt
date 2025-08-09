@@ -1,7 +1,7 @@
 package org.example.common.tokens.detectors
 
 import org.example.common.Range
-import org.example.common.tokens.Punctuation
+import org.example.common.tokens.enums.Punctuation
 import org.example.common.tokens.PunctuationSymbolsToken
 import org.example.common.tokens.Token
 import java.util.*

@@ -1,8 +1,7 @@
-package org.example.common.tokens.tokenizer
+package org.example.common.tokens.tokenizers
 
 import org.example.common.Range
 import org.example.common.tokens.KeywordToken
-import org.example.common.tokens.Keywords
 import org.example.common.tokens.Token
 
 class KeywordTokenizer: Tokenizer {
