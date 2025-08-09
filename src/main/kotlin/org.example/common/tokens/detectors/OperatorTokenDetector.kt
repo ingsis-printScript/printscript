@@ -10,7 +10,7 @@ class OperatorTokenDetector: TokenDetector {
     override fun detect(string: String): Optional<Token> {
         return try {
             val operator = Operator.fromString(string)
-            Optional.of(OperatorToken(operator))
+            Optional.of(OperatorToken(operator, Range(0,0)))
         } catch (e: NoSuchElementException) {
             Optional.empty()
         }
