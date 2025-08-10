@@ -1,6 +1,6 @@
 package org.example.common.ast.statements
 
-import org.example.common.ast.ASTnode
+import org.example.common.ast.ASTNode
 
-interface Statement: ASTnode {
+interface Statement: ASTNode {
 }

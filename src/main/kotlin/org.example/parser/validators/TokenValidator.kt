@@ -1,4 +1,4 @@
-package org.example.parser
+package org.example.parser.validators
 
 import org.example.common.tokens.Token
 
