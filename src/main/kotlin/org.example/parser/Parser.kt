@@ -1,6 +1,7 @@
 package org.example.parser
 
 import org.example.common.ast.ASTnode
+import org.example.common.ast.Program
 import org.example.common.tokens.PunctuationToken
 import org.example.common.tokens.Token
 import org.example.common.tokens.enums.Punctuation
@@ -16,7 +17,7 @@ class Parser {
         val segments: List<List<Token>> = separate(tokenList)
 
         for (statement in segments) {parseStatement(statement) }
-        return ASTnode()
+        return Program()
     }
 
 
@@ -45,16 +46,16 @@ class Parser {
 
 
 
-val astNodes = statements.map { statement ->
-    parseStatement(statement) // ← Acá usa los StatementParsers
-}
-
-private fun parseStatement(statement: List<Token>): ASTNode {
-    if (parser.canParse(statement) && parser.analyzeStatement(statement)) { // separar(?
-        return parser.parse(statement) // ← Usa el StatementParser específico
+    val astNodes = org.example.common.ast.statements.map { statement ->
+        parseStatement(statement) // ← Acá usa los StatementParsers
     }
-    throw SyntaxError("No parser found for statement: ${statement}")
-}
+
+    private fun parseStatement(statement: List<Token>): ASTNode {
+        if (parser.canParse(statement) && parser.analyzeStatement(statement)) { // separar(?
+            return parser.parse(statement) // ← Usa el StatementParser específico
+        }
+        throw SyntaxError("No parser found for statement: ${statement}")
+    }
 
 }
 
