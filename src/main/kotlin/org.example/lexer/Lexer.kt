@@ -30,11 +30,69 @@ class Lexer(
         return tokens
     }
 
-    // EN split:
-    // ¿incluir separación de comas?
-    // ¿incluir separación de posibles iguales sin espacios...?
     private fun split(input: String): List<String> {
-        return input.split(" ").filter { it.isNotBlank() }
+        val currentTerm = StringBuilder()
+
+        val splitInput = processInput(input, currentTerm)
+
+        finishCurrentTerm(currentTerm, splitInput)
+
+        return splitInput.filter { it.isNotBlank() }
+    }
+
+    private fun processInput(
+        input: String,
+        currentTerm: StringBuilder
+    ): MutableList<String> {
+        val splitInput = mutableListOf<String>()
+        var stringDelimiter: Char? = null
+        var inString = false
+
+        var i = 0
+        while (i < input.length) {
+            val char = input[i]
+
+            when {
+                startingString(char, inString) -> {
+                    finishCurrentTerm(currentTerm, splitInput)
+                    inString = true
+                    stringDelimiter = char
+                    currentTerm.append(char)
+                }
+
+                endingString(char, stringDelimiter, inString) -> {
+                    currentTerm.append(char)
+                    finishCurrentTerm(currentTerm, splitInput)
+                    inString = false
+                    stringDelimiter = null
+                }
+
+                inString -> { currentTerm.append(char) }
+
+                char.isWhitespace() -> { finishCurrentTerm(currentTerm, splitInput) }
+
+                char in "=:;" -> {
+                    finishCurrentTerm(currentTerm, splitInput)
+                    splitInput.add(char.toString())
+                }
+
+                else -> { currentTerm.append(char) }
+            }
+            i++
+        }
+        return splitInput
+    }
+
+    private fun endingString(char: Char, stringDelimiter: Char?, inString: Boolean) =
+        char == stringDelimiter && inString
+
+    private fun startingString(char: Char, inString: Boolean) = (char == '"' || char == '\'') && !inString
+
+    private fun finishCurrentTerm(currentTerm: StringBuilder, result: MutableList<String>) {
+        if (currentTerm.isNotEmpty()) {
+            result.add(currentTerm.toString())
+            currentTerm.clear()
+        }
     }
 
 
