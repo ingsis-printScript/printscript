@@ -11,11 +11,11 @@ class TypeValidator() : TokenValidator {
     //private val validTypesMessage: String = validTypes.joinToString(", ", prefix = "(", postfix = ")")
 
 
-    override fun validate(token: Token, position: Int): ValidationResult {
-        return when (token) {
+    override fun validate(statement: List<Token>, position: Int): ValidationResult {
+        return when (val token: Token = statement[position]) {
             is TypeToken -> {
                 if (token.kind.name in validTypes) {
-                    ValidationResult.Success
+                    ValidationResult.Success(1)
                 } else {
                     ValidationResult.Error("Expected type $validTypes, found '${token.kind.name}'", position)
                 }

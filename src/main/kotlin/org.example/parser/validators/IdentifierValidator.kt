@@ -7,11 +7,11 @@ class IdentifierValidator() : TokenValidator {
     // por ahora lo dejo medio hardcodeado, pero dsp se podría pasar como parámetro
     private val identifierPattern = Regex("^[a-zA-Z_][a-zA-Z0-9_]*$")
 
-    override fun validate(token: Token, position: Int): ValidationResult {
-        return when (token) {
+    override fun validate(statement: List<Token>, position: Int): ValidationResult {
+        return when (val token: Token = statement[position]) {
             is IdentifierToken -> {
                 if (isValidIdentifierFormat(token.name)) {
-                    ValidationResult.Success
+                    ValidationResult.Success(1)
                 } else {
                     ValidationResult.Error("Invalid identifier format: '${token.name}'", position)
                 }

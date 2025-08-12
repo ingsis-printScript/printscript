@@ -6,11 +6,11 @@ import org.example.common.tokens.Token
 // TODO(odio sumar una dep. pero ig que esta ok? o sea, es el validator de ESE token)
 class KeywordValidator(private val expectedKeyword: String) : TokenValidator {
 
-    override fun validate(token: Token, position: Int): ValidationResult {
-        return when (token) {
+    override fun validate(statement: List<Token>, position: Int): ValidationResult {
+        return when (val token: Token = statement[position]) {
             is KeywordToken -> {
                 if (token.kind.name.equals(expectedKeyword, ignoreCase = true)) {
-                    ValidationResult.Success
+                    ValidationResult.Success(1)
                 } else {
                     ValidationResult.Error("Expected '$expectedKeyword', found '${token.kind}'", position)
                 }
