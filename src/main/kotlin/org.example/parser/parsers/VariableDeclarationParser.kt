@@ -11,7 +11,7 @@ import org.example.common.tokens.enums.Keywords
 import org.example.common.tokens.enums.Punctuation
 import org.example.parser.validators.*
 
-class VariableDeclarationOnlyParser : StatementParser {
+class VariableDeclarationParser : StatementParser {
 
     private val pattern = StatementPattern(listOf(
         KeywordValidator("let"),
@@ -24,7 +24,7 @@ class VariableDeclarationOnlyParser : StatementParser {
     override fun canParse(statement: List<Token>): Boolean {
         return statement.isNotEmpty() &&
                 statement[0] is KeywordToken &&
-                (statement[0] as KeywordToken).kind == Keywords.LET
+                (statement[0] as KeywordToken).kind == Keywords.LET //al final que tenga punto y coma? / que alguno incluya un type?
     }
 
     override fun analyzeStatement(statement: List<Token>): ValidationResult {
@@ -49,10 +49,10 @@ class VariableDeclarationOnlyParser : StatementParser {
     override fun buildAST(statement: List<Token>): ASTNode {
         val identifier = (statement[1] as IdentifierToken).name
         val type = (statement[3] as TypeToken).kind.name
-        val range = Range(/* calcular desde tokens */)
+        val range = Range(/* calcular desde tokens */) //cada token tiene su range
 
         return VariableDeclarator(type, range, identifier)
-    }
+    } //Hacer hijos?
 
     override fun getPattern(): StatementPattern = pattern
 }

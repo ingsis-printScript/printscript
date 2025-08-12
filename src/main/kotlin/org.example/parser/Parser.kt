@@ -2,6 +2,7 @@ package org.example.parser
 
 import org.example.common.ast.ASTNode
 import org.example.common.ast.Program
+import org.example.common.ast.statements.Statement
 import org.example.common.tokens.PunctuationToken
 import org.example.common.tokens.Token
 import org.example.common.tokens.enums.Punctuation
@@ -15,11 +16,15 @@ class Parser {
     //la dividimos en segmentos si termina en punto y coma
     //cada segmento es procesado -> AST
 
-    fun parse(tokenList: List<Token>): ASTNode {
+    fun parse(tokenList: List<Token>): Program {
         val segments: List<List<Token>> = separate(tokenList)
+        val programList = mutableListOf<Statement>()
 
-        for (statement in segments) {parseStatement(statement) }
-        return Program()
+        for (statement in segments) {
+            val node: ASTNode = parseStatement(statement)
+            programList.add(node as Statement)
+        }
+        return Program(programList)
     }
 
 
@@ -55,7 +60,7 @@ class Parser {
     private fun parseStatement(statement: List<Token>, parser: StatementParser): ASTNode {
         val canParse: Boolean = parser.canParse(statement)
         if (canParse) {
-            val analysisResult:ValidationResult = parser.analyzeStatement(statement)
+            val analysisResult: ValidationResult = parser.analyzeStatement(statement)
             if (analysisResult is ValidationResult.Error) {
                 // TODO(Check el tema de position... y el tipo de error que devuelvo)
                 throw SyntaxError("Error in statement: ${analysisResult.message} at index ${analysisResult.position}")
@@ -64,7 +69,6 @@ class Parser {
         }
         throw SyntaxError("No parser found for statement: $statement")
     }
-
 }
 
 
