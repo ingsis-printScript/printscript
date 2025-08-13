@@ -7,3 +7,5 @@ data class TypeToken (
     var kind: Types,
     val range: Range
 ): Token
+
+let a: Intr
