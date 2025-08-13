@@ -5,11 +5,11 @@ import org.example.common.tokens.enums.Punctuation
 
 class PunctuationValidator(private val expected: Punctuation) : TokenValidator {
     private val expectedSymbol = expected.symbol
-    override fun validate(token: Token, position: Int): ValidationResult {
-        return when (token) {
+    override fun validate(statement: List<Token>, position: Int): ValidationResult {
+        return when (val token: Token = statement[position]) {
             is PunctuationToken -> {
                 if (token.kind.symbol == expectedSymbol) {
-                    ValidationResult.Success
+                    ValidationResult.Success(1)
                 } else {
                     ValidationResult.Error("Expected '${expectedSymbol}', found '${token.kind.symbol}'", position)
                 }

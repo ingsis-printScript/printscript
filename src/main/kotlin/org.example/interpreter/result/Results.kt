@@ -1,4 +1,4 @@
 package org.example.interpreter.result
 
-sealed interface Result {
+sealed interface Results  {
 }

@@ -1,3 +1,3 @@
 package org.example.interpreter.result
 
-class NoResult(): Result
+class  NoResult(): Results

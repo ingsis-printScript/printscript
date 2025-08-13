@@ -33,14 +33,21 @@ class VariableDeclarationParser : StatementParser {
         // TODO(Fix para expressions... no sé cómo hacer porque validate recibe UN TOKEN.)
         // necesito un tipo composite...of sorts. VER
 
-        pattern.validators.forEachIndexed { index, validator ->
-            val result = validator.validate(statement[index], index)
-            if (result is ValidationResult.Error) {
-                return result
+        var position = 0
+        pattern.validators.forEachIndexed { _, validator ->
+            if (statement.size <= position) {
+                return ValidationResult.Error(
+                    "Expected more tokens, found ${statement.size} at position $position",
+                    position
+                )
+            }
+            when (val result = validator.validate(statement, position)) {
+                is ValidationResult.Error -> return result
+                is ValidationResult.Success -> position += result.consumed
             }
         }
 
-        return ValidationResult.Success
+        return ValidationResult.Success(position)
     }
 
     override fun buildAST(statement: List<Token>): ASTNode {
