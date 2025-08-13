@@ -2,7 +2,6 @@ package org.example.common.tokens.detectors
 
 import org.example.common.Range
 import org.example.common.tokens.enums.Types
-import org.example.common.tokens.TypeToken
 import org.example.common.tokens.Token
 import java.util.*
 

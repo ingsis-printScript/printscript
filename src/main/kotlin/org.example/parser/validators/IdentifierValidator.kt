@@ -1,6 +1,5 @@
 package org.example.parser.validators
 
-import org.example.common.tokens.IdentifierToken
 import org.example.common.tokens.Token
 
 class IdentifierValidator() : TokenValidator {

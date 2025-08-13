@@ -1,6 +1,5 @@
 package org.example.parser.validators
 
-import org.example.common.tokens.PunctuationToken
 import org.example.common.tokens.Token
 import org.example.common.tokens.enums.Punctuation
 

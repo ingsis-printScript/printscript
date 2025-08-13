@@ -30,7 +30,7 @@ class Lexer(
         return tokens
     }
 
-    private fun split(input: String): List<String> {
+    private fun split(input: String): List<String> { //en vez de todo junto, recibir hasta que .... (procesar por sentencia)
         val currentTerm = StringBuilder()
 
         val splitInput = processInput(input, currentTerm)

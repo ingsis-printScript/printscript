@@ -12,3 +12,8 @@ enum class Keywords() {
 // Por el momento solo hay LET.
 // ¿Aislar LET a "DeclaratorToken"? Problema con límite de extensibilidad?
 // Si es así, ¿qué pasa con Keywords...?
+
+
+let a = intr
+
+

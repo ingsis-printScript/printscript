@@ -1,6 +1,5 @@
 package org.example.parser.validators
 
-import org.example.common.tokens.KeywordToken
 import org.example.common.tokens.Token
 
 // TODO(odio sumar una dep. pero ig que esta ok? o sea, es el validator de ESE token)

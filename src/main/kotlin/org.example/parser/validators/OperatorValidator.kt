@@ -1,6 +1,5 @@
 package org.example.parser.validators
 
-import org.example.common.tokens.OperatorToken
 import org.example.common.tokens.Token
 import org.example.common.tokens.enums.Operator
 

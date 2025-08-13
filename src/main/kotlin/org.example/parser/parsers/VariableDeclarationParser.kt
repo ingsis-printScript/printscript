@@ -3,10 +3,7 @@ package org.example.parser.parsers
 import org.example.common.Range
 import org.example.common.ast.ASTNode
 import org.example.common.ast.statements.VariableDeclarator
-import org.example.common.tokens.IdentifierToken
-import org.example.common.tokens.KeywordToken
 import org.example.common.tokens.Token
-import org.example.common.tokens.TypeToken
 import org.example.common.tokens.enums.Keywords
 import org.example.common.tokens.enums.Punctuation
 import org.example.parser.validators.*
@@ -24,7 +21,7 @@ class VariableDeclarationParser : StatementParser {
     override fun canParse(statement: List<Token>): Boolean {
         return statement.isNotEmpty() &&
                 statement[0] is KeywordToken &&
-                (statement[0] as KeywordToken).kind == Keywords.LET //al final que tenga punto y coma? / que alguno incluya un type?
+                (statement[0] as KeywordToken).kind == Keywords.LET
     }
 
     override fun analyzeStatement(statement: List<Token>): ValidationResult {

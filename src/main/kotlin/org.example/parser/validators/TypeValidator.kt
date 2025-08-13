@@ -1,7 +1,6 @@
 package org.example.parser.validators
 
 import org.example.common.tokens.Token
-import org.example.common.tokens.TypeToken
 import org.example.common.tokens.enums.Types
 
 class TypeValidator() : TokenValidator {
