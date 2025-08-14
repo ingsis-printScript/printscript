@@ -1,7 +1,7 @@
 package org.example.common.tokens.enums
 
 enum class TokenType {
-    KEYWORD, IDENTIFIER, LITERAL, OPERATOR, PUNCTUATION, TYPE
+     OPERATOR, PUNCTUATION, NUMBER, STRING, SYMBOL, KEYWORD
 }
 
 

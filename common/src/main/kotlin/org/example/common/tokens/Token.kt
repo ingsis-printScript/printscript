@@ -7,7 +7,6 @@ data class Token(
     val name: String,
     val range: Range,
 )
-LET
 
 //(punctuation)
 // TODO(inconsistencia entre uso de KIND y TYPE en los tokens)
