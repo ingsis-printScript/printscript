@@ -62,7 +62,7 @@ class VariableDeclarationAssignationParser: StatementParser {
     override fun buildAST(statement: List<Token>): ASTNode {
         val identifier = IdentifierExpression(statement[1].name, statement[3].name,
             Range(statement[1].range.start, statement[1].range.end))
-        val range = Range(statement[0].range.start, statement[4].range.end)
+        val range = Range(statement[0].range.start, statement[6].range.end)
 
         return VariableDeclarator(identifier, range)
     }

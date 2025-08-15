@@ -56,10 +56,9 @@ class VariableAssignationParser: StatementParser {
     override fun buildAST(statement: List<Token>): ASTNode {
         val identifier = IdentifierExpression(statement[0].name, statement[0].name,
             Range(statement[0].range.start, statement[0].range.end))
-        val type = (statement[3] as TypeToken).kind.name
-        val range = Range(/* calcular desde tokens */) //cada token tiene su range
+        val range = Range(statement[0].range.start, statement[3].range.end)
 
-        return VariableDeclarator(type, range, identifier)
+        return VariableDeclarator(identifier, range, identifier)
     } //Hacer hijos?
 
     override fun getPattern(): StatementPattern = pattern
