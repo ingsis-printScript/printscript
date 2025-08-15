@@ -12,11 +12,11 @@ class IdentifierValidator() : TokenValidator {
 
     override fun validate(statement: List<Token>, position: Int): ValidationResult {
         val token: Token = statement[position]
-        return if (token.kind == TokenType.SYMBOL) {
-            if (isValidIdentifierFormat(token.name)) {
+        return if (token.type == TokenType.SYMBOL) {
+            if (isValidIdentifierFormat(token.value)) {
                 ValidationResult.Success(1)
             } else {
-                ValidationResult.Error("Invalid identifier format: '${token.name}'", position)
+                ValidationResult.Error("Invalid identifier format: '${token.value}'", position)
             }
         }
         else ValidationResult.Error("Expected identifier, found ${token::class.simpleName}", position)

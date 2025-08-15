@@ -9,13 +9,13 @@ class KeywordValidator(private val expectedKeyword: String) : TokenValidator {
 
     override fun validate(statement: List<Token>, position: Int): ValidationResult {
         val token: Token = statement[position]
-        return if (token.kind == TokenType.KEYWORD) {
-            if (token.kind.name.equals(expectedKeyword, ignoreCase = true)) {
+        return if (token.type == TokenType.KEYWORD) {
+            if (token.type.name.equals(expectedKeyword, ignoreCase = true)) {
                 ValidationResult.Success(1)
             } else {
-                ValidationResult.Error("Expected '$expectedKeyword', found '${token.kind}'", position)
+                ValidationResult.Error("Expected '$expectedKeyword', found '${token.type}'", position)
             }
-        } else ValidationResult.Error("Expected keyword, found ${token.kind}", position)
+        } else ValidationResult.Error("Expected keyword, found ${token.type}", position)
     }
 
     override fun getExpectedDescription(): String {

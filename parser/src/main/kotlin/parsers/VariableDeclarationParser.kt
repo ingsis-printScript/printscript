@@ -6,7 +6,6 @@ import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.statements.VariableDeclarator
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
-import org.example.parser.ValidationResult
 import org.example.parser.validators.*
 
 class VariableDeclarationParser : StatementParser {
@@ -21,9 +20,9 @@ class VariableDeclarationParser : StatementParser {
 
     override fun canParse(statement: List<Token>): Boolean {
         return statement.isNotEmpty() &&
-                statement[0].kind == TokenType.KEYWORD &&
-                statement[0].name.equals("let", ignoreCase = true) &&
-                statement[4].name != "="
+                statement[0].type == TokenType.KEYWORD &&
+                statement[0].value.equals("let", ignoreCase = true) &&
+                statement[4].value != "="
     }
 
     /*override fun analyzeStatement(statement: List<Token>): ValidationResult {
@@ -31,7 +30,7 @@ class VariableDeclarationParser : StatementParser {
     }*/
 
     override fun buildAST(statement: List<Token>): ASTNode {
-        val identifier = IdentifierExpression(statement[1].name, statement[3].name,
+        val identifier = IdentifierExpression(statement[1].value, statement[3].value,
             Range(statement[1].range.start, statement[1].range.end))
         val range = Range(statement[0].range.start, statement[4].range.end)
 

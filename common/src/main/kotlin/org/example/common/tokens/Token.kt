@@ -3,8 +3,8 @@ package org.example.common.tokens
 import org.example.common.Range
 
 data class Token(
-    val kind: TokenType,
-    val name: String,
+    val type: TokenType,
+    val value: String,
     val range: Range,
 )
 

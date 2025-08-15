@@ -37,7 +37,7 @@ class Parser {
             currentStatement.add(token)
 
             //TODO("hacer rules.rule? -> o sea, inyectar END condition")
-            if (token is PunctuationToken && token.kind == Punctuation.SEMICOLON) {
+            if (token is PunctuationToken && token.type == Punctuation.SEMICOLON) {
                 statements.add(currentStatement.toList())
                 currentStatement.clear()
             }

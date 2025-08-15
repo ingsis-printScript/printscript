@@ -11,7 +11,6 @@ import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.KeywordValidator
 import org.example.parser.validators.PunctuationValidator
 import org.example.parser.validators.TypeValidator
-import org.example.parser.ValidationResult
 
 class VariableDeclarationAssignationParser: StatementParser {
 
@@ -27,13 +26,13 @@ class VariableDeclarationAssignationParser: StatementParser {
 
     override fun canParse(statement: List<Token>): Boolean {
         return statement.isNotEmpty() &&
-                statement[0].kind == TokenType.KEYWORD &&
-                statement[0].name.equals("let", ignoreCase = true) &&
-                statement[1].kind == TokenType.SYMBOL &&
-                statement[2].kind == TokenType.PUNCTUATION &&
-                statement[2].name == ":" &&
-                statement[4].kind == TokenType.PUNCTUATION &&
-                statement[4].name == "="
+                statement[0].type == TokenType.KEYWORD &&
+                statement[0].value.equals("let", ignoreCase = true) &&
+                statement[1].type == TokenType.SYMBOL &&
+                statement[2].type == TokenType.PUNCTUATION &&
+                statement[2].value == ":" &&
+                statement[4].type == TokenType.PUNCTUATION &&
+                statement[4].value == "="
     }
 
     /*override fun analyzeStatement(statement: List<Token>): ValidationResult {
@@ -41,7 +40,7 @@ class VariableDeclarationAssignationParser: StatementParser {
     }*/
 
     override fun buildAST(statement: List<Token>): ASTNode {
-        val identifier = IdentifierExpression(statement[1].name, statement[3].name,
+        val identifier = IdentifierExpression(statement[1].value, statement[3].value,
             Range(statement[1].range.start, statement[1].range.end))
         val range = Range(statement[0].range.start, statement[6].range.end)
 

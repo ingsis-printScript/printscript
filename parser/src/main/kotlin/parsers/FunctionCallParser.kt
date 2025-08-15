@@ -3,7 +3,6 @@ package org.example.parser.parsers
 import org.example.common.ast.ASTNode
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
-import org.example.parser.ValidationResult
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.PunctuationValidator
@@ -21,9 +20,9 @@ class FunctionCallParser : StatementParser {
 
     override fun canParse(statement: List<Token>): Boolean {
         return statement.isNotEmpty() &&
-                statement[0].kind == TokenType.SYMBOL && // TODO(CHECK SYMBOL)
-                statement[1].kind == TokenType.PUNCTUATION &&
-                statement[1].name == "("
+                statement[0].type == TokenType.SYMBOL && // TODO(CHECK SYMBOL)
+                statement[1].type == TokenType.PUNCTUATION &&
+                statement[1].value == "("
     }
 
     //override fun analyzeStatement(statement: List<Token>): ValidationResult {}
