@@ -6,6 +6,7 @@ import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.statements.VariableDeclarator
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
+import org.example.parser.ValidationResult
 import org.example.parser.validators.*
 
 class VariableDeclarationParser : StatementParser {

@@ -9,7 +9,7 @@ import org.example.common.tokens.TokenType
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.PunctuationValidator
-import org.example.parser.validators.ValidationResult
+import org.example.parser.ValidationResult
 
 class VariableAssignationParser: StatementParser {
 

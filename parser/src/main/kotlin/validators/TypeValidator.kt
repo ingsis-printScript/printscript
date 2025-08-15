@@ -3,6 +3,7 @@ package org.example.parser.validators
 import org.example.common.enums.Operator
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
+import org.example.parser.ValidationResult
 import org.example.parser.enums.Type
 
 class TypeValidator() : TokenValidator {
