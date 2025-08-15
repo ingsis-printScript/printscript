@@ -31,21 +31,7 @@ class VariableDeclarationParser : StatementParser {
                 "Expected ${pattern.validators.size} tokens, found ${statement.size}", 0)
         }
 
-        var position = 0
-        pattern.validators.forEachIndexed { _, validator ->
-            if (statement.size <= position) {
-                return ValidationResult.Error(
-                    "Expected more tokens, found ${statement.size} at position $position",
-                    position
-                )
-            }
-            when (val result = validator.validate(statement, position)) {
-                is ValidationResult.Error -> return result
-                is ValidationResult.Success -> position += result.consumed
-            }
-        }
-
-        return ValidationResult.Success(position)
+        return AnalyzeStatementService.analyzeStatement(statement, pattern)
     }
 
     override fun buildAST(statement: List<Token>): ASTNode {
