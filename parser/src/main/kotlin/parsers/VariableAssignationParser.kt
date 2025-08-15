@@ -3,12 +3,13 @@ package org.example.parser.parsers
 import org.example.common.Range
 import org.example.common.ast.ASTNode
 import org.example.common.ast.expressions.IdentifierExpression
-import org.example.common.ast.statements.VariableDeclarator
+import org.example.common.ast.statements.VariableAssigner
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.PunctuationValidator
+import parsers.ExpressionBuilder
 
 class VariableAssignationParser: StatementParser {
 
@@ -34,13 +35,14 @@ class VariableAssignationParser: StatementParser {
     }*/
 
     override fun buildAST(statement: List<Token>): ASTNode {
-        val identifier = IdentifierExpression(statement[0].value, statement[0].value,
+        val identifier = IdentifierExpression(statement[0].value,
             Range(statement[0].range.start, statement[0].range.end))
         val range = Range(statement[0].range.start, statement[3].range.end)
 
-        val expression
+        val expressionBuilder = ExpressionBuilder() //es re feo que me tengo que crear un expression builder
+        val expression = expressionBuilder.buildExpression(statement, 2, statement.size - 1)
 
-        return VariableDeclarator(identifier, range, identifier)
+        return VariableAssigner(identifier, expression, range)
     } //Hacer hijos?
 
     override fun getPattern(): StatementPattern = pattern
