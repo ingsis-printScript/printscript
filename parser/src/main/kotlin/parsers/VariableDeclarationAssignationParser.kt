@@ -5,15 +5,22 @@ import org.example.common.ast.ASTNode
 import org.example.common.ast.statements.VariableDeclarator
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
-import org.example.parser.validators.*
+import org.example.parser.validators.ExpressionValidator
+import org.example.parser.validators.IdentifierValidator
+import org.example.parser.validators.KeywordValidator
+import org.example.parser.validators.PunctuationValidator
+import org.example.parser.validators.TypeValidator
+import org.example.parser.validators.ValidationResult
 
-class VariableDeclarationParser : StatementParser {
+class VariableDeclarationAssignationParser: StatementParser {
 
     private val pattern = StatementPattern(listOf(
-        KeywordValidator("let"), //mmmm hardcodeado
+        KeywordValidator("let"),
         IdentifierValidator(),
         PunctuationValidator(":"),
         TypeValidator(),
+        PunctuationValidator("="),
+        ExpressionValidator(),
         PunctuationValidator(";")
     ))
 
@@ -21,12 +28,15 @@ class VariableDeclarationParser : StatementParser {
         return statement.isNotEmpty() &&
                 statement[0].kind == TokenType.KEYWORD &&
                 statement[0].name.equals("let", ignoreCase = true) &&
+                statement[1].kind == TokenType.SYMBOL &&
                 statement[2].kind == TokenType.PUNCTUATION &&
-                statement[2].name == ":"
+                statement[2].name == ":" &&
+                statement[4].kind == TokenType.PUNCTUATION &&
+                statement[4].name == "="
     }
 
     override fun analyzeStatement(statement: List<Token>): ValidationResult {
-        if (statement.size != pattern.validators.size) {
+        if (statement.size < pattern.validators.size) {
             return ValidationResult.Error(
                 "Expected ${pattern.validators.size} tokens, found ${statement.size}", 0)
         }
