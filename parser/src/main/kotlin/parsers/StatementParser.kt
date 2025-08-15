@@ -6,7 +6,7 @@ import org.example.parser.ValidationResult
 
 interface StatementParser {
     fun canParse(statement: List<Token>): Boolean
-    fun analyzeStatement(statement: List<Token>): ValidationResult
+    //fun analyzeStatement(statement: List<Token>): ValidationResult
     fun buildAST(statement: List<Token>): ASTNode
     fun getPattern(): StatementPattern
 }

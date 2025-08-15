@@ -2,6 +2,7 @@ package org.example.common.tokens
 
 enum class TokenType {
     OPERATOR, PUNCTUATION, NUMBER, STRING, SYMBOL, KEYWORD;
+    //TODO("LITERAL? -> necesito distinguir entre IDENTIFIER y LITERAL")
 
 
     companion object {

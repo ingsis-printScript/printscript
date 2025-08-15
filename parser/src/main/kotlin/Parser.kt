@@ -5,6 +5,7 @@ import org.example.common.ast.Program
 import org.example.common.ast.statements.Statement
 import org.example.common.tokens.Token
 import org.example.common.tokens.enums.Punctuation
+import org.example.parser.parsers.AnalyzeStatementService
 import org.example.parser.parsers.StatementParser
 
 class Parser {
@@ -59,7 +60,7 @@ class Parser {
     private fun parseStatement(statement: List<Token>, parser: List<StatementParser>): ASTNode {
         val canParse: Boolean = parser.canParse(statement)
         if (canParse) {
-            val analysisResult: ValidationResult = parser.analyzeStatement(statement)
+            val analysisResult: ValidationResult = AnalyzeStatementService.analyzeStatement(statement, parser.getPattern)
             if (analysisResult is ValidationResult.Error) {
                 // TODO(Check el tema de position... y el tipo de error que devuelvo)
                 throw SyntaxError("Error in statement: ${analysisResult.message} at index ${analysisResult.position}")

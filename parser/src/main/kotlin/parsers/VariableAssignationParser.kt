@@ -30,14 +30,9 @@ class VariableAssignationParser: StatementParser {
     }
 
 
-    override fun analyzeStatement(statement: List<Token>): ValidationResult {
-        if (statement.size < pattern.validators.size) {
-            return ValidationResult.Error(
-                "Expected at least ${pattern.validators.size} tokens, found ${statement.size}", 0)
-        }
-
+    /*override fun analyzeStatement(statement: List<Token>): ValidationResult {
         return AnalyzeStatementService.analyzeStatement(statement, pattern)
-    }
+    }*/
 
     override fun buildAST(statement: List<Token>): ASTNode {
         val identifier = IdentifierExpression(statement[0].name, statement[0].name,
