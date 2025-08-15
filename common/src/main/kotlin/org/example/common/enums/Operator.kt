@@ -1,4 +1,4 @@
-package enums
+package org.example.common.enums
 
 enum class Operator(val symbol: String) {
     ADD("+"),
