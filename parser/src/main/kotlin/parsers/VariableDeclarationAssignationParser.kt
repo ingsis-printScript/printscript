@@ -2,6 +2,7 @@ package org.example.parser.parsers
 
 import org.example.common.Range
 import org.example.common.ast.ASTNode
+import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.statements.VariableDeclarator
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
@@ -59,12 +60,12 @@ class VariableDeclarationAssignationParser: StatementParser {
     }
 
     override fun buildAST(statement: List<Token>): ASTNode {
-        val identifier = (statement[1] as IdentifierToken).name
-        val type = (statement[3] as TypeToken).kind.name
-        val range = Range(/* calcular desde tokens */) //cada token tiene su range
+        val identifier = IdentifierExpression(statement[1].name, statement[3].name,
+            Range(statement[1].range.start, statement[1].range.end))
+        val range = Range(statement[0].range.start, statement[4].range.end)
 
-        return VariableDeclarator(type, range, identifier)
-    } //Hacer hijos?
+        return VariableDeclarator(identifier, range)
+    }
 
     override fun getPattern(): StatementPattern = pattern
 }

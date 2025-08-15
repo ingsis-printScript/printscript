@@ -1,9 +1,11 @@
 package org.example.common.ast.statements
 
 import org.example.common.Range
+import org.example.common.ast.expressions.Expression
+import org.example.common.ast.expressions.IdentifierExpression
 
 class VariableDeclarator(
-    val type: String,
+    val identifier: IdentifierExpression,
     override val range: Range,
-    val identifier: String,
+    val expression: Expression? = null,
     ): Statement

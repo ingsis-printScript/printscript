@@ -2,9 +2,10 @@ package org.example.common.ast.statements
 
 import org.example.common.Range
 import org.example.common.ast.expressions.Expression
+import org.example.common.ast.expressions.IdentifierExpression
 
 class VariableAssigner(
-    val identifier: String,
+    val name: IdentifierExpression,
     val value: Expression,
     override val range: Range
     ): Statement {
