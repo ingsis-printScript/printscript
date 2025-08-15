@@ -1,4 +1,4 @@
-package org.example.parser.validators
+package org.example.parser
 
 sealed class ValidationResult{
     data class Success(

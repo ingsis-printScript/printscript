@@ -2,6 +2,7 @@ package org.example.parser.validators
 
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
+import org.example.parser.ValidationResult
 
 // TODO(odio sumar una dep. pero ig que esta ok? o sea, es el validator de ESE token)
 class KeywordValidator(private val expectedKeyword: String) : TokenValidator {
