@@ -1,4 +1,5 @@
 package org.example.common
 
-data class Range(val start: Int, val end: Int) {
-}
+import org.example.common.tokens.Token
+
+data class Range(val row: Int, val column: Int)
