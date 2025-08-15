@@ -14,9 +14,7 @@ class ExpressionValidator : TokenValidator {
         while (pos < statement.size) {
             val token = statement[pos]
 
-            if (token.kind == TokenType.PUNCTUATION && token.name == ";") {
-                break
-            }
+            if (isSemicolon(token)) break
 
             if (expectingElement) {
                 when {
@@ -24,44 +22,52 @@ class ExpressionValidator : TokenValidator {
                         expectingElement = false
                         pos++
                     }
-                    token.kind == TokenType.PUNCTUATION && token.name == "(" -> {
+                    isStartingParen(token) -> {
                         parenStack.addLast(token)
                         pos++
                     }
-                    else -> return ValidationResult.Error(
-                        "Expected element or '(', found '${token.name}'", pos
-                    )
+                    else -> return error(pos, "Expected element or '(', found '${token.name}'")
                 }
             } else {
                 when {
-                    token.kind == TokenType.OPERATOR -> {
+                    isOperator(token) -> {
                         expectingElement = true
                         pos++
                     }
-                    token.kind == TokenType.PUNCTUATION && token.name == ")" -> {
-                        if (parenStack.isEmpty()) {
-                            return ValidationResult.Error("Unmatched closing parenthesis ')'", pos)
-                        }
+                    isClosingParen(token) -> {
+                        if (parenStack.isEmpty()) return error(pos, "Unmatched closing parenthesis ')'")
                         parenStack.removeLast()
                         pos++
                     }
-                    else -> return ValidationResult.Error(
-                        "Expected operator or ')', found '${token.name}'", pos
-                    )
+                    else -> return error(pos, "Expected operator or ')', found '${token.name}'")
                 }
             }
         }
 
         if (parenStack.isNotEmpty()) {
-            return ValidationResult.Error("Unmatched opening parenthesis '('", pos)
+            return error(pos, "Unmatched opening parenthesis '('")
         }
 
         if (expectingElement && pos > position) {
-            return ValidationResult.Error("Expression cannot end with an operator", pos)
+            return error(pos, "Expression cannot end with an operator")
         }
 
         return ValidationResult.Success(pos - position)
     }
+
+    private fun isSemicolon(token: Token) = isPunctuation(token) && token.name == ";"
+
+    private fun error(pos: Int, message: String): ValidationResult.Error {
+        return ValidationResult.Error(message, pos)
+    }
+
+    private fun isOperator(token: Token) = token.kind == TokenType.OPERATOR
+
+    private fun isClosingParen(token: Token) = isPunctuation(token) && token.name == ")"
+
+    private fun isPunctuation(token: Token) = token.kind == TokenType.PUNCTUATION
+
+    private fun isStartingParen(token: Token) = isPunctuation(token) && token.name == "("
 
     override fun getExpectedDescription(): String {
         return "An expression with elements, operators, parentheses ending with ';'"
