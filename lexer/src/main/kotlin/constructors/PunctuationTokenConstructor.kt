@@ -8,7 +8,7 @@ import java.util.*
 class PunctuationTokenConstructor: TokenConstructor {
 
     private val punctuations = setOf(
-        "=", ";", ",", "(", ")", "{", "}", "[", "]"
+        "=", ";", ":", ",", "(", ")", "{", "}", "[", "]"
     )
 
     override fun constructToken(input: String, offset: Int, range: Range): Optional<Token> {

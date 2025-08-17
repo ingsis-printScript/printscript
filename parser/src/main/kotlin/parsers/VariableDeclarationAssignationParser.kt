@@ -28,13 +28,11 @@ class VariableDeclarationAssignationParser: StatementParser {
 
     override fun canParse(statement: List<Token>): Boolean {
         return statement.isNotEmpty() &&
-                statement[0].type == TokenType.KEYWORD &&
-                statement[0].value.equals("let", ignoreCase = true) &&
-                statement[1].type == TokenType.SYMBOL &&
-                statement[2].type == TokenType.PUNCTUATION &&
-                statement[2].value == ":" &&
-                statement[4].type == TokenType.PUNCTUATION &&
-                statement[4].value == "="
+                statement[0].kind == TokenType.KEYWORD &&
+                statement[0].name.equals("let", ignoreCase = true) &&
+                statement[1].kind == TokenType.SYMBOL &&
+                statement[4].kind == TokenType.PUNCTUATION &&
+                statement[4].name == "="
     }
 
     /*override fun analyzeStatement(statement: List<Token>): ValidationResult {

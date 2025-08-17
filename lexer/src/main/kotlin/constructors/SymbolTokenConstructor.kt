@@ -13,6 +13,9 @@ class SymbolTokenConstructor : TokenConstructor {
 
         val firstChar = input[0]
         if (!firstChar.isLetter() && firstChar != '_') return Optional.empty()
+        // No me encanta interferir con análisis sintáctico en el Lexer
+        // O sea, siento que el análisis (sintáctico y semántico)
+        // quedo desperdigado entre L y P y además se duplica
 
         val identifier = input.takeWhile { it.isLetterOrDigit() || it == '_' }
         val tokenRange = Range(offset, offset + identifier.length)

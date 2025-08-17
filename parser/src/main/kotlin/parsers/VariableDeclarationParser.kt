@@ -40,7 +40,7 @@ class VariableDeclarationParser : StatementParser {
 
     override fun getPattern(): StatementPattern = pattern
 
-    fun detectType(token: Token): Type {
+    private fun detectType(token: Token): Type {
         return when (token.type) {
             TokenType.NUMBER -> Type.NUMBER
             TokenType.STRING -> Type.STRING
