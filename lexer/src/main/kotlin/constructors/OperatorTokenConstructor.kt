@@ -8,7 +8,7 @@ import java.util.*
 class OperatorTokenConstructor: TokenConstructor {
 
     private val operators = setOf(
-        "+", "-", "*", "/", "%", "==", "!=", "<", "<=", ">", ">=", "&&", "||", "!"
+        "+", "-", "*", "/", "%", "!=", "<", "<=", ">", ">=", "&&", "||", "!"
     )
 
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
