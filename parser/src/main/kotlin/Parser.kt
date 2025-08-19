@@ -56,6 +56,11 @@ class Parser {
         parseStatement(statement) // ← Acá usa los StatementParsers
     }
 
+    //List<StatementParser>
+    //canParse
+    //analyzeStatement
+    //buildAST
+
     //TODO("Hacer que reciba lista de parsers... ")
     private fun parseStatement(statement: List<Token>, parser: List<StatementParser>): ASTNode {
         val canParse: Boolean = parser.canParse(statement)
