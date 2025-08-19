@@ -1,6 +1,5 @@
 package org.example.lexer
 
-import org.example.common.Range
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.common.tokens.constructors.NumberTokenConstructor
@@ -48,8 +47,8 @@ class LexerTest {
     }
 
     private fun assertTokenAtPosition(expectedLine: Int, expectedColumn: Int, actualToken: Token) {
-        assertEquals(expectedLine, actualToken.range.line, "Token line position mismatch")
-        assertEquals(expectedColumn, actualToken.range.column, "Token column position mismatch")
+        assertEquals(expectedLine, actualToken.position.line, "Token line position mismatch")
+        assertEquals(expectedColumn, actualToken.position.column, "Token column position mismatch")
     }
 
     // Test data builders para casos comunes

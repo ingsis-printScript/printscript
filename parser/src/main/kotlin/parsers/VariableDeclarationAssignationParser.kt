@@ -1,6 +1,6 @@
 package org.example.parser.parsers
 
-import org.example.common.Range
+import org.example.common.Position
 import org.example.common.ast.ASTNode
 import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.statements.VariableDeclarator
@@ -41,13 +41,13 @@ class VariableDeclarationAssignationParser: StatementParser {
 
     override fun buildAST(statement: List<Token>): ASTNode {
         val identifier = IdentifierExpression(statement[1].value,
-            Range(statement[1].range.start, statement[1].range.end))
-        val range = Range(statement[0].range.start, statement[6].range.end)
+            Position(statement[1].position.start, statement[1].position.end))
+        val position = Position(statement[0].position.start, statement[6].position.end)
 
         val expressionBuilder = ExpressionBuilder() //es re feo que me tengo que crear un expression builder
         val expression = expressionBuilder.buildExpression(statement, 5, statement.size - 1)
 
-        return VariableDeclarator(identifier, detectType(statement[3]), range, expression)
+        return VariableDeclarator(identifier, detectType(statement[3]), position, expression)
     }
 
     fun detectType(token: Token): Type {

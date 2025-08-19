@@ -1,6 +1,6 @@
 package org.example.lexer
 
-import org.example.common.Range
+import org.example.common.Position
 import org.example.common.tokens.Token
 import org.example.common.tokens.detectors.KeywordTokenConstructor
 import org.example.common.tokens.detectors.TokenConstructor
@@ -65,13 +65,13 @@ class Lexer(
 
     private fun getOptionalToken(): Optional<Token> {
         val s = currentLine.substring(tokenOffset)
-        val startRange = Range(line, tokenOffset)
+        val startPosition = Position(line, tokenOffset)
 
-        return keywords.constructToken(s, tokenOffset, startRange)
+        return keywords.constructToken(s, tokenOffset, startPosition)
             .or {
                 Optional.ofNullable(
                     constructors.asSequence()
-                        .map { it.constructToken(s, tokenOffset, startRange) }
+                        .map { it.constructToken(s, tokenOffset, startPosition) }
                         .filter { it.isPresent }
                         .map { it.get() }
                         .maxByOrNull { it.value.length }

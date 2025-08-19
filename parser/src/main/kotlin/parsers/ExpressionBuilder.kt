@@ -1,6 +1,6 @@
 package parsers
 
-import org.example.common.Range
+import org.example.common.Position
 import org.example.common.ast.expressions.BinaryExpression
 import org.example.common.ast.expressions.Expression
 import org.example.common.ast.expressions.IdentifierExpression
@@ -16,10 +16,10 @@ class ExpressionBuilder {
             val token = tokens[start]
             return when {
                 token.type == TokenType.NUMBER || token.type == TokenType.STRING ->
-                    LiteralExpression(token.type, token.value, token.range)
+                    LiteralExpression(token.type, token.value, token.position)
 
                 token.type == TokenType.SYMBOL ->
-                    IdentifierExpression(token.value, token.range)
+                    IdentifierExpression(token.value, token.position)
 
                 else ->
                     throw IllegalArgumentException("Unexpected token: ${token.value}")
@@ -39,12 +39,12 @@ class ExpressionBuilder {
                 val leftExpr = buildExpression(tokens, start, i)
                 val rightExpr = buildExpression(tokens, i + 1, end)
 
-                val range = Range(
-                    tokens[start].range.start,
-                    tokens[end - 1].range.end
+                val position = Position(
+                    tokens[start].position.start,
+                    tokens[end - 1].position.end
                 )
 
-                return BinaryExpression(leftExpr, operator, rightExpr, range)
+                return BinaryExpression(leftExpr, operator, rightExpr, position)
             }
         }
 
