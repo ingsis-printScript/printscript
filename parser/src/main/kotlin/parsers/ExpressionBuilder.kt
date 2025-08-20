@@ -11,7 +11,7 @@ import org.example.common.tokens.TokenType
 
 class ExpressionBuilder {
 
-    fun buildExpression(tokens: List<Token>, start: Int, end: Int): Expression { //tengo que pasarle 0, tokens.size
+    fun buildExpression(tokens: List<Token>, start: Int, end: Int): Expression {
         if (end - start == 1) {
             val token = tokens[start]
             return when {
