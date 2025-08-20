@@ -4,30 +4,32 @@ import org.example.common.ast.ASTNode
 import org.example.common.ast.Program
 import org.example.common.ast.statements.Statement
 import org.example.common.tokens.Token
-import org.example.common.tokens.enums.Punctuation
+import org.example.common.tokens.TokenType
 import org.example.parser.parsers.AnalyzeStatementService
 import org.example.parser.parsers.StatementParser
 
-class Parser {
+class Parser(val parsers: List<StatementParser>) {
 
+    // recibimos una lista de tokens
+    // la dividimos en segmentos si termina en punto y coma
+    //      (así acepta varios statements, aunque solo le mandemos 1)
+    // cada segmento es procesado -> AST -> Program
 
-    //recibimos una lista de tokens
-    //la dividimos en segmentos si termina en punto y coma
-    //cada segmento es procesado -> AST
+    // isEndToken podría ajustarse con args -> recibir expected (TokenType y symbol)
 
     fun parse(tokenList: List<Token>): Program {
         val segments: List<List<Token>> = separate(tokenList)
         val programList = mutableListOf<Statement>()
 
         for (statement in segments) {
-            val node: ASTNode = parseStatement(statement)
+            val node: ASTNode = parseStatement(statement, parsers)
             programList.add(node as Statement)
         }
         return Program(programList)
     }
 
 
-    fun separate(tokens: List<Token>): List<List<Token>> {
+    private fun separate(tokens: List<Token>): List<List<Token>> {
         if (tokens.isEmpty()) return emptyList()
 
         val statements = mutableListOf<List<Token>>()
@@ -37,7 +39,7 @@ class Parser {
             currentStatement.add(token)
 
             //TODO("hacer rules.rule? -> o sea, inyectar END condition")
-            if (token is PunctuationToken && token.type == Punctuation.SEMICOLON) {
+            if (isEndToken(token)) {
                 statements.add(currentStatement.toList())
                 currentStatement.clear()
             }
@@ -50,29 +52,27 @@ class Parser {
         return statements
     }
 
+    private fun isEndToken(token: Token) = token.type == TokenType.PUNCTUATION && token.value == ";"
 
-// TODO("Finish..., para parseStatement manejar errores del analyze")
-    val astNodes = org.example.common.ast.statements.map { statement ->
-        parseStatement(statement) // ← Acá usa los StatementParsers
-    }
 
     //List<StatementParser>
     //canParse
     //analyzeStatement
     //buildAST
 
-    //TODO("Hacer que reciba lista de parsers... ")
-    private fun parseStatement(statement: List<Token>, parser: List<StatementParser>): ASTNode {
-        val canParse: Boolean = parser.canParse(statement)
-        if (canParse) {
-            val analysisResult: ValidationResult = AnalyzeStatementService.analyzeStatement(statement, parser.getPattern)
-            if (analysisResult is ValidationResult.Error) {
-                // TODO(Check el tema de position... y el tipo de error que devuelvo)
-                throw SyntaxError("Error in statement: ${analysisResult.message} at index ${analysisResult.position}")
+    // dejé canParse porque así los errores propios de un tipo de statement se pueden comunicar
+    private fun parseStatement(statement: List<Token>, parsers: List<StatementParser>): ASTNode {
+        for (parser in parsers){
+            if (parser.canParse(statement)) {
+                val analysisResult: ValidationResult = AnalyzeStatementService.analyzeStatement(statement, parser.getPattern())
+                if (analysisResult is ValidationResult.Error) {
+                    // TODO(Check el tema de position... y el tipo de error que devuelvo)
+                    throw SyntaxError("Error in statement: ${analysisResult.message} at index ${analysisResult.position}")
+                }
+                return parser.buildAST(statement)
             }
-            return parser.buildAST(statement)
         }
-        throw SyntaxError("No parser found for statement: $statement")
+        throw SyntaxError("Invalid structure for statement: $statement")
     }
 }
 

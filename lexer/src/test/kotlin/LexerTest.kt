@@ -9,7 +9,7 @@ import org.example.lexer.exceptions.UnsupportedCharacterException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 
-
+// TODO(test for errors and edge cases)
 class LexerTest {
 
     // Config
