@@ -1,6 +1,7 @@
 package org.example.parser.parsers
 
 import org.example.common.Position
+import org.example.common.Range
 import org.example.common.ast.ASTNode
 import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.statements.VariableAssigner
@@ -36,14 +37,15 @@ class VariableAssignationParser: StatementParser {
 
     override fun buildAST(statement: List<Token>): ASTNode {
         val identifier = IdentifierExpression(statement[0].value,
-            Position(statement[0].position.start, statement[0].position.end))
-        val position = Position(statement[0].position.start, statement[3].position.end)
+            Position(statement[0].position.line, statement[0].position.column))
+        val range = Range(
+            Position(statement[0].position.line, statement[0].position.column), Position(statement[statement.size - 1].position.line, statement[statement.size - 1].position.column))
 
         val expressionBuilder = ExpressionBuilder() //es re feo que me tengo que crear un expression builder
         val expression = expressionBuilder.buildExpression(statement, 2, statement.size - 1)
 
-        return VariableAssigner(identifier, expression, position)
-    } //Hacer hijos?
+        return VariableAssigner(identifier, expression, range)
+    }
 
     override fun getPattern(): StatementPattern = pattern
 }

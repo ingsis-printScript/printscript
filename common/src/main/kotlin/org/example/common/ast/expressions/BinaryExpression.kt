@@ -7,6 +7,6 @@ class BinaryExpression(
     val left: Expression,
     val operator: Operator,
     val right: Expression,
-    val position: Position
+    override val position: Position
 ): Expression {
 }
