@@ -9,7 +9,6 @@ import org.example.common.ast.statements.VariableDeclarator
 import org.example.common.ast.statements.VariableAssigner
 import org.example.common.ast.statements.FunctionCall
 import org.example.common.enums.Operator
-import org.example.common.tokens.TokenType
 import org.example.interpreter.result.NoResult
 import org.example.interpreter.result.Results
 import org.example.interpreter.result.Success
@@ -33,16 +32,16 @@ class Interpreter : ASTVisitor<Results>{
 
     override fun visitVariableDeclarator(node: VariableDeclarator): Results {
         return try {
-            val value = node.expression?.let {
+            val value = node.value?.let {
                 val result = visitExpression(it)
                 if (result is Error) return result
                 (result as? Success<*>)?.value
             }
 
-            symbolTable[node.name.name] = value
+            symbolTable[node.identifier.name] = value
             Success(value)
         } catch (e: Exception) {
-            Error("Error declaring variable '${node.name.name}': ${e.message}")
+            Error("Error declaring variable '${node.identifier.name}': ${e.message}")
         }
     }
 
@@ -66,13 +65,13 @@ class Interpreter : ASTVisitor<Results>{
 
     override fun visitFunctionCall(node: FunctionCall): Results {
         return try {
-            val evaluatedArgs = node.arguments.map {
+            val evaluatedArgs = node.value.let {
                 val result = visitExpression(it)
                 if (result is Error) return result
                 (result as? Success<*>)?.value
             }
 
-            val result = when (node.identifier) {
+            val result = when (node.identifier.name) {
                 "print", "println" -> {
                     val output = evaluatedArgs.joinToString(" ") { it?.toString() ?: "null" }
                     println(output)
