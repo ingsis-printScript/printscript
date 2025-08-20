@@ -1,0 +1,61 @@
+print "Inicio del programa"
+
+let x = 10
+let y = 20
+let z = x + y
+
+if x < y {
+    print "x es menor que y"
+    x = x + 1
+} else {
+    print "x no es menor que y"
+}
+
+for i = 0; i < 10; i = i + 1 {
+    print i
+}
+
+func suma(a, b) {
+    return a + b
+}
+
+func factorial(n) {
+    if n <= 1 {
+        return 1
+    } else {
+        return n * factorial(n - 1)
+    }
+}
+
+let resultadoSuma = suma(x, y)
+let resultadoFactorial = factorial(5)
+
+while resultadoSuma < 100 {
+    resultadoSuma = resultadoSuma * 2
+}
+
+let arr = [1, 2, 3, 4, 5]
+for element in arr {
+    print element
+}
+
+let matrix = [[1,2,3],[4,5,6],[7,8,9]]
+for row in matrix {
+    for col in row {
+        print col
+    }
+}
+
+print "Resultado final de suma: " + resultadoSuma
+print "Resultado final factorial: " + resultadoFactorial
+
+// Comentarios para que el lexer los ignore
+// Otro comentario
+let str = "Texto con caracteres especiales !@#\$%^&*()"
+print str
+
+if resultadoFactorial > 100 {
+    print "Gran factorial"
+} else {
+    print "Pequeño factorial"
+}
