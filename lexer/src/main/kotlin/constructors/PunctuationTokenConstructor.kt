@@ -14,6 +14,7 @@ class PunctuationTokenConstructor: TokenConstructor {
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
 
+        // que pasa si recibo ";;;;;" o ",hola"
         val firstChar = input[0].toString()
         if (punctuations.contains(firstChar)) {
             val tokenPosition = Position(offset, offset + 1)
