@@ -1,6 +1,36 @@
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm'
+    id 'jacoco'
+    id 'org.jlleitschuh.gradle.ktlint'
+    id 'io.gitlab.arturbosch.detekt'
+}
+
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.80
+            }
+        }
+    }
 }
 
 repositories {
@@ -30,3 +60,9 @@ kotlin {
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
+detekt {
+    config = files("$rootDir/detekt.yml")
+    buildUponDefaultConfig = true
+}
+
