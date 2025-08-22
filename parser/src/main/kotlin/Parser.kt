@@ -1,26 +1,28 @@
 package org.example.parser
 
+import com.sun.tools.example.debug.expr.ExpressionParser
 import org.example.common.ast.ASTNode
 import org.example.common.ast.Program
 import org.example.common.ast.statements.Statement
 import org.example.common.tokens.Token
-import org.example.common.tokens.enums.Punctuation
 import org.example.parser.parsers.AnalyzeStatementService
+import org.example.parser.parsers.FunctionCallParser
 import org.example.parser.parsers.StatementParser
+import org.example.parser.parsers.VariableAssignationParser
+import org.example.parser.parsers.VariableDeclarationAssignationParser
+import org.example.parser.parsers.VariableDeclarationParser
 
 class Parser {
 
-
-    //recibimos una lista de tokens
-    //la dividimos en segmentos si termina en punto y coma
-    //cada segmento es procesado -> AST
+    val validatorList: List<StatementParser> = listOf(FunctionCallParser(), //no se si hacer que el parse la reciba?
+        VariableAssignationParser(), VariableDeclarationAssignationParser(), VariableDeclarationParser())
 
     fun parse(tokenList: List<Token>): Program {
         val segments: List<List<Token>> = separate(tokenList)
         val programList = mutableListOf<Statement>()
 
         for (statement in segments) {
-            val node: ASTNode = parseStatement(statement)
+            val node: ASTNode = parseStatement(statement, validatorList)
             programList.add(node as Statement)
         }
         return Program(programList)

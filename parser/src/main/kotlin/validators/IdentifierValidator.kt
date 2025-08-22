@@ -4,7 +4,7 @@ import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.parser.ValidationResult
 
-class IdentifierValidator() : TokenValidator {
+class IdentifierValidator: TokenValidator {
 
     // por ahora lo dejo medio hardcodeado, pero dsp se podría pasar como parámetro
 
