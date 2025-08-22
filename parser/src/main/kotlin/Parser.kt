@@ -5,6 +5,7 @@ import org.example.common.ast.Program
 import org.example.common.ast.statements.Statement
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
+import org.example.parser.exceptions.UnsupportedParserException
 import org.example.parser.parsers.AnalyzeStatementService
 import org.example.parser.parsers.StatementParser
 
@@ -66,13 +67,12 @@ class Parser(val parsers: List<StatementParser>) {
             if (parser.canParse(statement)) {
                 val analysisResult: ValidationResult = AnalyzeStatementService.analyzeStatement(statement, parser.getPattern())
                 if (analysisResult is ValidationResult.Error) {
-                    // TODO(Check el tema de position... y el tipo de error que devuelvo)
                     throw SyntaxError("Error in statement: ${analysisResult.message} at index ${analysisResult.position}")
                 }
                 return parser.buildAST(statement)
             }
         }
-        throw SyntaxError("Invalid structure for statement: $statement")
+        throw UnsupportedParserException("Invalid structure for statement: $statement")
     }
 }
 
