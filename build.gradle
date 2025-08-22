@@ -12,3 +12,19 @@ dependencies {
 kotlin {
     jvmToolchain(8)
 }
+task testCoverage {
+    dependsOn 'lexer:jacocoTestReport', 'parser:jacocoTestReport', 'interpreter:jacocoTestReport'
+    doLast {
+        println "Coverage reports generated for all modules"
+    }
+}
+
+task formatCode {
+    dependsOn 'lexer:ktlintFormat', 'parser:ktlintFormat', 'interpreter:ktlintFormat'
+}
+
+task checkFormat {
+    dependsOn 'lexer:ktlintCheck', 'parser:ktlintCheck', 'interpreter:ktlintCheck'
+}
+
+
