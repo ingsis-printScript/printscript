@@ -4,7 +4,7 @@ import org.example.common.Range
 import org.example.common.ast.expressions.Expression
 import org.example.common.ast.expressions.IdentifierExpression
 
-class VariableAssigner(
+data class VariableAssigner(
     val name: IdentifierExpression,
     val value: Expression,
     override val range: Range
