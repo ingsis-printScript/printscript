@@ -5,7 +5,7 @@ import org.example.common.ast.expressions.Expression
 import org.example.common.ast.expressions.IdentifierExpression
 import org.example.parser.enums.Type
 
-class VariableDeclarator(
+data class VariableDeclarator(
     val identifier: IdentifierExpression,
     val type: Type,
     override val range: Range,
