@@ -4,5 +4,5 @@ import org.example.common.Position
 import org.example.common.ast.ASTNode
 
 sealed interface Expression : ASTNode {
-    val position: Position
+
 }

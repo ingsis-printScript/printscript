@@ -1,6 +1,7 @@
 package parsers
 
 import org.example.common.Position
+import org.example.common.Range
 import org.example.common.ast.expressions.BinaryExpression
 import org.example.common.ast.expressions.Expression
 import org.example.common.ast.expressions.IdentifierExpression
@@ -8,6 +9,7 @@ import org.example.common.ast.expressions.LiteralExpression
 import org.example.common.enums.Operator
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
+import org.example.parser.exceptions.UnexpectedTokenException
 
 class ExpressionBuilder {
 
@@ -22,7 +24,7 @@ class ExpressionBuilder {
                     IdentifierExpression(token.value, token.position)
 
                 else ->
-                    throw IllegalArgumentException("Unexpected token: ${token.value}")
+                    throw UnexpectedTokenException(token.value)
             }
 
 
@@ -33,18 +35,18 @@ class ExpressionBuilder {
             if (token.type == TokenType.OPERATOR) {
                 val operator = Operator.fromString(token.value)
                 if (operator == null) {
-                    throw IllegalArgumentException("Invalid operator: ${token.value}")
+                    throw quiero devolver el unsuportedCharacter("Invalid operator: ${token.value}")
                 }
 
                 val leftExpr = buildExpression(tokens, start, i)
                 val rightExpr = buildExpression(tokens, i + 1, end)
 
-                val position = Position(
-                    tokens[start].position.start,
-                    tokens[end - 1].position.end
+                val range = Range(
+                    Position(tokens[start].position.line, tokens[start].position.column),
+                    Position(tokens[end - 1].position.line, tokens[end - 1].position.column)
                 )
 
-                return BinaryExpression(leftExpr, operator, rightExpr, position)
+                return BinaryExpression(leftExpr, operator, rightExpr, range)
             }
         }
 

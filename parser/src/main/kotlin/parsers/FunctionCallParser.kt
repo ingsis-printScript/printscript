@@ -5,7 +5,6 @@ import org.example.common.Range
 import org.example.common.ast.ASTNode
 import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.statements.FunctionCall
-import org.example.common.ast.statements.VariableAssigner
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.parser.validators.ExpressionValidator

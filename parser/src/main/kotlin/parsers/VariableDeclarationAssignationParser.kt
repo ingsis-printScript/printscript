@@ -8,6 +8,7 @@ import org.example.common.ast.statements.VariableDeclarator
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.parser.enums.Type
+import org.example.parser.exceptions.UnsupportedTokenTypeException
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.KeywordValidator
@@ -57,7 +58,7 @@ class VariableDeclarationAssignationParser: StatementParser {
         return when (token.type) {
             TokenType.NUMBER -> Type.NUMBER
             TokenType.STRING -> Type.STRING
-            else -> throw IllegalArgumentException("Unsupported token type: ${token.type}")
+            else -> throw UnsupportedTokenTypeException("Unsupported token type: ${token.type}") //con el nombre le saco el texto?
         }
     }
 

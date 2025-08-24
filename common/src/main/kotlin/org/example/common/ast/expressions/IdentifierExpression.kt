@@ -4,6 +4,6 @@ import org.example.common.Position
 
 class IdentifierExpression(
     val name: String,
-    override val position: Position
+    val position: Position
 ): Expression{
 }
