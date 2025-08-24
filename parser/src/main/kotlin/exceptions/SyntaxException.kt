@@ -1,4 +1,5 @@
 package org.example.parser.exceptions
 
-class SyntaxException {
-}
+class SyntaxException(
+    message: String
+) : Exception()

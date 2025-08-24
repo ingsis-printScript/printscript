@@ -9,7 +9,7 @@ import org.example.common.ast.expressions.LiteralExpression
 import org.example.common.enums.Operator
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
-import org.example.parser.exceptions.UnexpectedTokenException
+import org.example.parser.exceptions.SyntaxException
 
 class ExpressionBuilder {
 
@@ -24,7 +24,7 @@ class ExpressionBuilder {
                     IdentifierExpression(token.value, token.position)
 
                 else ->
-                    throw UnexpectedTokenException(token.value)
+                    throw SyntaxException("Unexpected token with value: ${token.value} at position ${token.position}")
             }
 
 
@@ -35,7 +35,7 @@ class ExpressionBuilder {
             if (token.type == TokenType.OPERATOR) {
                 val operator = Operator.fromString(token.value)
                 if (operator == null) {
-                    throw quiero devolver el unsuportedCharacter("Invalid operator: ${token.value}")
+                    throw SyntaxException("Invalid operator: ${token.value}")
                 }
 
                 val leftExpr = buildExpression(tokens, start, i)
@@ -50,7 +50,7 @@ class ExpressionBuilder {
             }
         }
 
-        throw IllegalArgumentException("Invalid expression: ${tokens.subList(start, end)}")
+        throw SyntaxException("Invalid expression: ${tokens.subList(start, end)}")
     }
 
 }
