@@ -20,7 +20,7 @@ class Interpreter : ASTVisitor<Results>{
     //Para almacenar variables: (no se si la estructura de datos es la conveniente)
     private val symbolTable = mutableMapOf<String, Any?>()
 
-
+    //Interpreter recibe un program que puede tener varios statements
     private fun visitStatement(statement: Any): Results {
         return when (statement) {
             is VariableDeclarator -> visitVariableDeclarator(statement)

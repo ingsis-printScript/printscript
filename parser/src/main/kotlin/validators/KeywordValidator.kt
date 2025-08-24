@@ -10,10 +10,10 @@ class KeywordValidator(private val expectedKeyword: String) : TokenValidator {
     override fun validate(statement: List<Token>, position: Int): ValidationResult {
         val token: Token = statement[position]
         return if (token.type == TokenType.KEYWORD) {
-            if (token.type.name.equals(expectedKeyword, ignoreCase = true)) {
+            if (token.value.equals(expectedKeyword, ignoreCase = true)) {
                 ValidationResult.Success(1)
             } else {
-                ValidationResult.Error("Expected '$expectedKeyword', found '${token.type}'", position)
+                ValidationResult.Error("Expected '$expectedKeyword', found '${token.value}'", position)
             }
         } else ValidationResult.Error("Expected keyword, found ${token.type}", position)
     }

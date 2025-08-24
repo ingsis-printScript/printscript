@@ -28,7 +28,7 @@ class VariableDeclarationAssignationParser: StatementParser {
         PunctuationValidator(";")
     ))
 
-    override fun canParse(statement: List<Token>): Boolean {
+    override fun canParse(statement: List<Token>): Boolean { //Index vs contains, check size until max
         return statement.isNotEmpty() &&
                 statement[0].type == TokenType.KEYWORD &&
                 statement[0].value.equals("let", ignoreCase = true) &&
@@ -55,9 +55,9 @@ class VariableDeclarationAssignationParser: StatementParser {
     }
 
     fun detectType(token: Token): Type {
-        return when (token.type) {
-            TokenType.NUMBER -> Type.NUMBER
-            TokenType.STRING -> Type.STRING
+        return when (token.value.lowercase()) {
+            "number" -> Type.NUMBER
+            "string" -> Type.STRING
             else -> throw SyntaxException("Unsupported token type: ${token.type}")
         }
     }

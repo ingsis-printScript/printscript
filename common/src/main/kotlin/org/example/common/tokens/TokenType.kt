@@ -6,7 +6,7 @@ enum class TokenType {
 
     companion object {
         fun fromString(type: String): TokenType? {
-            return values().find { it.name.equals(type, ignoreCase = true) }
+            return TokenType.entries.find { it.name.equals(type, ignoreCase = true) }
         }
         fun isElement(type: TokenType): Boolean {
             return type == SYMBOL || type == NUMBER || type == STRING

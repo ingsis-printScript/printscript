@@ -15,7 +15,7 @@ class FunctionCallParser : StatementParser {
     private val pattern = StatementPattern(
         listOf(
             IdentifierValidator(),
-            PunctuationValidator("("),
+            PunctuationValidator("("), //Agregar argument validator
             ExpressionValidator(),
             PunctuationValidator(")"),
             PunctuationValidator(";")

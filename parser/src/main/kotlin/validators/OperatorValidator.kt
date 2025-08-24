@@ -9,7 +9,7 @@ class OperatorValidator : TokenValidator {
     override fun validate(statement: List<Token>, position: Int): ValidationResult {
         val token: Token = statement[position]
         return if (token.type == TokenType.OPERATOR) {
-            if (Operator.fromString(token.type.name) != null) {
+            if (Operator.fromString(token.value) != null) {
                 ValidationResult.Success(1)
             } else {
                 ValidationResult.Error(
