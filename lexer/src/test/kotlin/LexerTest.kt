@@ -1,12 +1,20 @@
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.common.tokens.constructors.NumberTokenConstructor
-import org.example.common.tokens.detectors.*
+import org.example.common.tokens.detectors.KeywordTokenConstructor
+import org.example.common.tokens.detectors.OperatorTokenConstructor
+import org.example.common.tokens.detectors.PunctuationTokenConstructor
+import org.example.common.tokens.detectors.StringTokenConstructor
+import org.example.common.tokens.detectors.SymbolTokenConstructor
+import org.example.common.tokens.detectors.TokenConstructor
 import org.example.lexer.Lexer
 import org.example.lexer.exceptions.NoMoreTokensAvailableException
 import org.example.lexer.exceptions.UnsupportedCharacterException
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 
 // TODO(test for errors and edge cases)
 class LexerTest {

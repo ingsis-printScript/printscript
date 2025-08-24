@@ -3,7 +3,7 @@ package org.example.common.ast.statements
 import org.example.common.Range
 import org.example.common.ast.expressions.Expression
 import org.example.common.ast.expressions.IdentifierExpression
-import org.example.parser.enums.Type
+import org.example.common.enums.Type
 
 data class VariableDeclarator(
     val identifier: IdentifierExpression,

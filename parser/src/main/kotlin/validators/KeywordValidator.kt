@@ -15,7 +15,9 @@ class KeywordValidator(private val expectedKeyword: String) : TokenValidator {
             } else {
                 ValidationResult.Error("Expected '$expectedKeyword', found '${token.value}'", position)
             }
-        } else ValidationResult.Error("Expected keyword, found ${token.type}", position)
+        } else {
+            ValidationResult.Error("Expected keyword, found ${token.type}", position)
+        }
     }
 
     override fun getExpectedDescription(): String {

@@ -1,4 +1,3 @@
 package org.example.parser
 
-class TokenFactory {
-}
+class TokenFactory

@@ -5,7 +5,7 @@ import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import java.util.*
 
-class OperatorTokenConstructor: TokenConstructor {
+class OperatorTokenConstructor : TokenConstructor {
 
     private val operators = setOf(
         "+", "-", "*", "/", "%", "!=", "<", "<=", ">", ">=", "&&", "||", "!"

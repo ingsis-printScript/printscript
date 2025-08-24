@@ -4,16 +4,20 @@ import org.example.common.Position
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.parser.exceptions.SyntaxException
-import org.example.parser.parsers.*
-import org.junit.jupiter.api.Test
+import org.example.parser.parsers.FunctionCallParser
+import org.example.parser.parsers.VariableAssignationParser
+import org.example.parser.parsers.VariableDeclarationAssignationParser
+import org.example.parser.parsers.VariableDeclarationParser
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class ParserTest {
 // crear tokenFactory
     // buscar manera de crear un astfactory (generalizar. mientras mas generico mejor.)
-    // cambiar throws / analizar throws es lo mejor (medio raro)
+    // todo cambiar throws / analizar throws es lo mejor (medio raro)
     private lateinit var parser: Parser
 
     @BeforeEach
@@ -22,7 +26,7 @@ class ParserTest {
             VariableDeclarationParser(),
             VariableDeclarationAssignationParser(),
             VariableAssignationParser(),
-            FunctionCallParser(),
+            FunctionCallParser()
         )
 
         parser = Parser(statementParsers)
@@ -43,7 +47,6 @@ class ParserTest {
         assertEquals(0, result.statements.size)
         assertTrue(result.statements.isEmpty())
     }
-
 
     @Test
     fun `parse variable declaration without assignment`() {
@@ -69,7 +72,7 @@ class ParserTest {
             createToken(TokenType.SYMBOL, "number"),
             createToken(TokenType.PUNCTUATION, "="),
             createToken(TokenType.NUMBER, "5"),
-            //meter expresion
+            // meter expresion
             createSemicolon()
         )
 
@@ -95,7 +98,6 @@ class ParserTest {
         assertEquals(1, result.statements.size)
     }
 
-
     @Test
     fun `parse simple variable assignment`() {
         val tokens = listOf(
@@ -109,7 +111,6 @@ class ParserTest {
 
         assertEquals(1, result.statements.size)
     }
-
 
     @Test
     fun `parse variable assignment with another variable`() {
@@ -125,7 +126,6 @@ class ParserTest {
         assertEquals(1, result.statements.size)
     }
 
-
     @Test
     fun `parse function call without parameters`() {
         val tokens = listOf(
@@ -135,30 +135,24 @@ class ParserTest {
             createSemicolon()
         )
 
-        assertThrows<SyntaxException> { parser.parse(tokens) }
+        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
+        assertEquals(exception.message, "Invalid expression: []")
     }
 
     @Test
     fun `parse function call with one parameter`() {
-        try {
-            val tokens = listOf(
-                createToken(TokenType.SYMBOL, "print"),
-                createToken(TokenType.PUNCTUATION, "("),
-                createToken(TokenType.STRING, "Hello"),
-                createToken(TokenType.PUNCTUATION, ")"),
-                createSemicolon()
-            )
+        val tokens = listOf(
+            createToken(TokenType.SYMBOL, "println"),
+            createToken(TokenType.PUNCTUATION, "("),
+            createToken(TokenType.STRING, "Hello"),
+            createToken(TokenType.PUNCTUATION, ")"),
+            createSemicolon()
+        )
 
-            val result = parser.parse(tokens)
+        val result = parser.parse(tokens)
 
-            assertEquals(1, result.statements.size)
-        } catch (e: SyntaxException) {
-            println("AAAAAAAAAAAAAA")
-            println(e.message)
-        }
+        assertEquals(1, result.statements.size)
     }
-
-
 
     @Test
     fun `parse multiple different statements`() {
@@ -176,7 +170,7 @@ class ParserTest {
             createToken(TokenType.NUMBER, "10"),
             createSemicolon(),
 
-            createToken(TokenType.SYMBOL, "print"),
+            createToken(TokenType.SYMBOL, "println"),
             createToken(TokenType.PUNCTUATION, "("),
             createToken(TokenType.SYMBOL, "x"),
             createToken(TokenType.PUNCTUATION, ")"),
@@ -186,7 +180,7 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        assertEquals(2, result.statements.size)
+        assertEquals(3, result.statements.size) // decía expected: 2, pero entiendo que expected = 3, no?
     }
 
     @Test
@@ -205,13 +199,9 @@ class ParserTest {
             createToken(TokenType.PUNCTUATION, ")")
         )
 
-        val exception = assertThrows<SyntaxException> {
-            parser.parse(tokens)
-        }
-        println("aaaaaaaaaaa")
-        println(exception.message)
+        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
+        assertTrue(exception.message?.contains("Expected enclosing ( ), found '(' and 'x'") == true)
     }
-
 
     @Test
     fun `throws SyntaxException for invalid syntax`() {
@@ -222,9 +212,8 @@ class ParserTest {
             createSemicolon()
         )
 
-        assertThrows<SyntaxException> {
-            parser.parse(tokens)
-        }
+        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
+        assertTrue(exception.message?.contains("Invalid structure for statement") == true)
     }
 
     @Test
@@ -235,10 +224,7 @@ class ParserTest {
             createSemicolon()
         )
 
-        val exception = assertThrows<SyntaxException> {
-            parser.parse(tokens)
-        }
-
+        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
         assertTrue(exception.message?.contains("Invalid structure for statement") == true)
     }
 
@@ -251,18 +237,15 @@ class ParserTest {
             createSemicolon()
         )
 
-        assertThrows<SyntaxException> {
-            parser.parse(tokens)
-        }
+        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
+        assertTrue(exception.message?.contains("Invalid structure for statement") == true)
     }
-
 
     @Test
     fun `handles single semicolon`() {
         val tokens = listOf(createSemicolon())
 
-        assertThrows<SyntaxException> {
-            parser.parse(tokens)
-        }
+        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
+        assertTrue(exception.message?.contains("Invalid structure for statement") == true)
     }
 }

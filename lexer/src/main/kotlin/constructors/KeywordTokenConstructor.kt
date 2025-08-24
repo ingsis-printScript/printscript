@@ -5,13 +5,13 @@ import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import java.util.*
 
-
-class KeywordTokenConstructor: TokenConstructor {
+class KeywordTokenConstructor : TokenConstructor {
 
     private val keywords = setOf(
         "if", "else", "while", "for", "function", "return", "let", "var", "const",
         "true", "false", "null", "print", "println", "number", "string", "boolean"
     )
+
     // DUDA: NUMBER y STRING no son literales? o sea, son 2, "hola"... no?
     // o sea, si recibo "number", eso es un keyword, pero con este map convierte a token de tipo literal
     private val literals = mapOf("number" to TokenType.NUMBER, "string" to TokenType.STRING)
@@ -30,5 +30,4 @@ class KeywordTokenConstructor: TokenConstructor {
 
         return Optional.of(Token(tokenType, firstWord, position))
     }
-
 }

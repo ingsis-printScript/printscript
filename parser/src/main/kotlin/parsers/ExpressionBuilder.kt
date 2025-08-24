@@ -26,8 +26,8 @@ class ExpressionBuilder {
         for (i in start until end) {
             val token = tokens[i]
             if (token.type == TokenType.OPERATOR) {
-                val operator = Operator.fromString(token.value)?:
-                throw SyntaxException("Invalid operator: ${token.value}")
+                val operator = Operator.fromString(token.value)
+                    ?: throw SyntaxException("Invalid operator: ${token.value}")
 
                 val leftExpr = buildExpression(tokens, start, i)
                 val rightExpr = buildExpression(tokens, i + 1, end)
@@ -49,5 +49,4 @@ class ExpressionBuilder {
 
     private fun isAlphaNum(token: Token) =
         token.type == TokenType.NUMBER || token.type == TokenType.STRING
-
 }

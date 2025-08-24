@@ -1,5 +1,5 @@
 package org.example.lexer.exceptions
 
-class NoMoreTokensAvailableException (
+class NoMoreTokensAvailableException(
     message: String = "No more tokens available"
-    ) : Exception(message)
+) : Exception(message)

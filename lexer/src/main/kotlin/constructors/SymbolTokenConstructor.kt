@@ -7,7 +7,6 @@ import java.util.*
 
 class SymbolTokenConstructor : TokenConstructor {
 
-
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
 
@@ -22,5 +21,4 @@ class SymbolTokenConstructor : TokenConstructor {
 
         return Optional.of(Token(TokenType.SYMBOL, identifier, tokenPosition))
     }
-
 }

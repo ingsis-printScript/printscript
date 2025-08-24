@@ -1,12 +1,12 @@
-//package org.example.lexer
+// package org.example.lexer
 //
-//import org.example.common.tokens.detectors.KeywordTokenConstructor
-//import org.example.lexer.TokenCollector
+// import org.example.common.tokens.detectors.KeywordTokenConstructor
+// import org.example.lexer.TokenCollector
 //
-//import org.junit.jupiter.api.Assertions.assertEquals
-//import java.io.File
+// import org.junit.jupiter.api.Assertions.assertEquals
+// import java.io.File
 //
-//internal class LexerFileTest {
+// internal class LexerFileTest {
 //    var should: Lexer? = null
 //    var a: tokenize? = null
 //    var file: line? = null
@@ -43,4 +43,4 @@
 //        val firstTokenValue: `val` = "print" // ejemplo si tu primer token es "print"
 //        assertEquals(firstTokenValue, tokens.first().value)
 //    }
-//}
+// }

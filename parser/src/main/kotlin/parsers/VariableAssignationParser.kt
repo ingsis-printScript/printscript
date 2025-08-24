@@ -12,7 +12,7 @@ import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.PunctuationValidator
 import parsers.ExpressionBuilder
 
-class VariableAssignationParser: StatementParser {
+class VariableAssignationParser : StatementParser {
 
     private val pattern = StatementPattern(
         listOf(
@@ -23,27 +23,28 @@ class VariableAssignationParser: StatementParser {
         )
     )
 
+    private val idPos = 0
+    private val equalsPos = 1
+
     override fun canParse(statement: List<Token>): Boolean {
-        return statement.isNotEmpty() &&
-                statement[0].type == TokenType.SYMBOL &&
-                statement[1].type == TokenType.PUNCTUATION &&
-                statement[1].value == "="
+        return statement.size > equalsPos &&
+            statement[idPos].type == TokenType.SYMBOL &&
+            statement[equalsPos].type == TokenType.PUNCTUATION &&
+            statement[equalsPos].value == "="
     }
 
-
-    /*override fun analyzeStatement(statement: List<Token>): ValidationResult {
-        return AnalyzeStatementService.analyzeStatement(statement, pattern)
-    }*/
-
     override fun buildAST(statement: List<Token>): ASTNode {
-        val identifier = IdentifierExpression(statement[0].value,
-            Position(statement[0].position.line, statement[0].position.column))
+        val identifier = IdentifierExpression(
+            statement[idPos].value,
+            Position(statement[idPos].position.line, statement[idPos].position.column)
+        )
         val range = Range(
             Position(statement[0].position.line, statement[0].position.column),
-            Position(statement[statement.size - 1].position.line, statement[statement.size - 1].position.column))
+            Position(statement[statement.size - 1].position.line, statement[statement.size - 1].position.column)
+        )
 
-        val expressionBuilder = ExpressionBuilder() //es re feo que me tengo que crear un expression builder
-        val expression = expressionBuilder.buildExpression(statement, 2, statement.size - 1)
+        val expressionBuilder = ExpressionBuilder()
+        val expression = expressionBuilder.buildExpression(statement, equalsPos + 1, statement.size - 1)
 
         return VariableAssigner(identifier, expression, range)
     }

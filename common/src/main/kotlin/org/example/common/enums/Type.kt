@@ -1,4 +1,4 @@
-package org.example.parser.enums
+package org.example.common.enums
 
 enum class Type {
     STRING,

@@ -29,7 +29,6 @@ class Parser(val parsers: List<StatementParser>) {
         return Program(programList)
     }
 
-
     private fun separate(tokens: List<Token>): List<List<Token>> {
         if (tokens.isEmpty()) return emptyList()
 
@@ -39,37 +38,36 @@ class Parser(val parsers: List<StatementParser>) {
         for (token in tokens) {
             currentStatement.add(token)
 
-            //TODO("hacer rules.rule? -> o sea, inyectar END condition")
+            // TODO("hacer rules.rule? -> o sea, inyectar END condition")
             if (isEndToken(token)) {
                 statements.add(currentStatement.toList())
                 currentStatement.clear()
             }
         }
 
-        if (currentStatement.isNotEmpty()) {
-            statements.add(currentStatement.toList())
-        }
+        if (currentStatement.isNotEmpty()) statements.add(currentStatement.toList())
 
         return statements
     }
 
     private fun isEndToken(token: Token) = token.type == TokenType.PUNCTUATION && token.value == ";"
 
-
-    //List<StatementParser>
-    //canParse
-    //analyzeStatement
-    //buildAST
+    // List<StatementParser>
+    // canParse
+    // analyzeStatement
+    // buildAST
 
     // dejé canParse porque así los errores propios de un tipo de statement se pueden comunicar
     private fun parseStatement(statement: List<Token>, parsers: List<StatementParser>): ASTNode {
-        for (parser in parsers){
+        for (parser in parsers) {
             if (parser.canParse(statement)) {
-                val analysisResult: ValidationResult = AnalyzeStatementService.
-                                                            analyzeStatement(statement, parser.getPattern())
+                val analysisResult: ValidationResult = AnalyzeStatementService
+                    .analyzeStatement(statement, parser.getPattern())
                 if (analysisResult is ValidationResult.Error) {
-                    throw SyntaxException("Error in statement: " +
-                            "${analysisResult.message} at index ${analysisResult.position}")
+                    throw SyntaxException(
+                        "Error in statement: " +
+                            "${analysisResult.message} at index ${analysisResult.position}"
+                    )
                 }
                 return parser.buildAST(statement)
             }
@@ -78,7 +76,7 @@ class Parser(val parsers: List<StatementParser>) {
     }
 }
 
-//} let a: Int = 2
-//} a = 3
-//} print(a)
-//} let a: Int
+// } let a: Int = 2
+// } a = 3
+// } print(a)
+// } let a: Int

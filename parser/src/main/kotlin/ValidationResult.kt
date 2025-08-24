@@ -1,6 +1,6 @@
 package org.example.parser
 
-sealed class ValidationResult{
+sealed class ValidationResult {
     data class Success(
         val consumed: Int
     ) : ValidationResult()

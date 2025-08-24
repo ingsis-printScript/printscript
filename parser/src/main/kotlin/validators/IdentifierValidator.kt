@@ -4,7 +4,7 @@ import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.parser.ValidationResult
 
-class IdentifierValidator: TokenValidator {
+class IdentifierValidator : TokenValidator {
 
     // por ahora lo dejo medio hardcodeado, pero dsp se podría pasar como parámetro
 
@@ -18,9 +18,10 @@ class IdentifierValidator: TokenValidator {
             } else {
                 ValidationResult.Error("Invalid identifier format: '${token.value}'", position)
             }
+        } else {
+            ValidationResult.Error("Expected identifier, found ${token::class.simpleName}", position)
         }
-        else ValidationResult.Error("Expected identifier, found ${token::class.simpleName}", position)
-        }
+    }
 
     private fun isValidIdentifierFormat(name: String): Boolean {
         return name.matches(identifierPattern)

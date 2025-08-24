@@ -7,4 +7,3 @@ interface TokenValidator {
     fun validate(statement: List<Token>, position: Int): ValidationResult
     fun getExpectedDescription(): String
 }
-

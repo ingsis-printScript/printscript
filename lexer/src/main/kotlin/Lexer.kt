@@ -9,7 +9,7 @@ import org.example.lexer.exceptions.UnsupportedCharacterException
 import java.util.*
 
 class Lexer(
-    private val reader: Iterator<String>, //el reader lee lines? chars? o el input completo?
+    private val reader: Iterator<String>, // el reader lee lines? chars? o el input completo?
     private val constructors: Collection<TokenConstructor>,
     private val keywords: KeywordTokenConstructor,
     private val whiteSpaces: List<Char>
@@ -79,7 +79,7 @@ class Lexer(
             }
     }
 
-    private fun skipWhiteSpace(tokenOffset: Int) : Int {
+    private fun skipWhiteSpace(tokenOffset: Int): Int {
         var offset: Int = tokenOffset
         while (offset < currentLine.length && whiteSpaces.contains(currentLine[offset])) {
             offset++

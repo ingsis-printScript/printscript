@@ -14,15 +14,17 @@ class OperatorValidator : TokenValidator {
             } else {
                 ValidationResult.Error(
                     "Expected operator (${Operator.entries.joinToString { it.symbol }}), " +
-                            "found '${token.value}'", position)
+                        "found '${token.value}'",
+                    position
+                )
             }
-        }
-        else {
+        } else {
             ValidationResult.Error(
-                "Expected operator, found '${token.type}'", position)
+                "Expected operator, found '${token.type}'",
+                position
+            )
         }
     }
-
 
     override fun getExpectedDescription(): String = "Expected operator"
 }

@@ -5,7 +5,7 @@ import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import java.util.*
 
-class StringTokenConstructor: TokenConstructor {
+class StringTokenConstructor : TokenConstructor {
 
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()

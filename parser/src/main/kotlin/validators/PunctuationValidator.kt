@@ -8,15 +8,19 @@ class PunctuationValidator(private val expected: String) : TokenValidator {
     override fun validate(statement: List<Token>, position: Int): ValidationResult {
         val token: Token = statement[position]
         return if (token.type == TokenType.PUNCTUATION) {
-                if (token.value.equals(expected)) {
-                    ValidationResult.Success(1)
-                } else {
-                    ValidationResult.Error("Expected '${expected}', found '${token.value}'", position)
-                }
+            if (token.value.equals(expected)) {
+                ValidationResult.Success(1)
+            } else {
+                ValidationResult.Error("Expected '$expected', found '${token.value}'", position)
             }
-            else ValidationResult.Error("Expected punctuation '${expected}'," +
-                    " found ${token.type}", position)
+        } else {
+            ValidationResult.Error(
+                "Expected punctuation '$expected'," +
+                    " found ${token.type}",
+                position
+            )
         }
+    }
 
-    override fun getExpectedDescription(): String = "Expected punctuation '${expected}'"
+    override fun getExpectedDescription(): String = "Expected punctuation '$expected'"
 }

@@ -5,7 +5,7 @@ import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import java.util.*
 
-class PunctuationTokenConstructor: TokenConstructor {
+class PunctuationTokenConstructor : TokenConstructor {
 
     private val punctuations = setOf(
         "=", ";", ":", ",", "(", ")", "{", "}", "[", "]"

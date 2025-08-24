@@ -5,22 +5,22 @@ import org.example.common.ast.expressions.BinaryExpression
 import org.example.common.ast.expressions.Expression
 import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.expressions.LiteralExpression
-import org.example.common.ast.statements.VariableDeclarator
-import org.example.common.ast.statements.VariableAssigner
 import org.example.common.ast.statements.FunctionCall
+import org.example.common.ast.statements.VariableAssigner
+import org.example.common.ast.statements.VariableDeclarator
 import org.example.common.enums.Operator
+import org.example.interpreter.result.Error
 import org.example.interpreter.result.NoResult
 import org.example.interpreter.result.Results
 import org.example.interpreter.result.Success
-import org.example.interpreter.result.Error
 import org.example.interpreter.visitors.ASTVisitor
 
-class Interpreter : ASTVisitor<Results>{
+class Interpreter : ASTVisitor<Results> {
 
-    //Para almacenar variables: (no se si la estructura de datos es la conveniente)
+    // Para almacenar variables: (no se si la estructura de datos es la conveniente)
     private val symbolTable = mutableMapOf<String, Any?>()
 
-    //Interpreter recibe un program que puede tener varios statements
+    // Interpreter recibe un program que puede tener varios statements
     private fun visitStatement(statement: Any): Results {
         return when (statement) {
             is VariableDeclarator -> visitVariableDeclarator(statement)
@@ -78,13 +78,10 @@ class Interpreter : ASTVisitor<Results>{
                     output
                 }
                 else -> return Error("Function '${node.identifier}' not defined")
-
             }
 
             Success(result)
-        } catch (e: Exception) {
-            Error("Error calling function '${node.identifier}': ${e.message}")
-        }
+        } catch (e: Exception) { Error("Error calling function '${node.identifier}': ${e.message}") }
     }
 
     override fun visitBinaryExpression(node: BinaryExpression): Results {
@@ -120,8 +117,7 @@ class Interpreter : ASTVisitor<Results>{
         }
     }
 
-
-     fun visitExpression(expr: Expression): Results {
+    fun visitExpression(expr: Expression): Results {
         return when (expr) {
             is BinaryExpression -> visitBinaryExpression(expr)
             is IdentifierExpression -> visitIdentifierExpression(expr)
@@ -159,5 +155,4 @@ class Interpreter : ASTVisitor<Results>{
         }
         return lastResult
     }
-
 }

@@ -8,13 +8,16 @@ internal class AnalyzeStatementService {
         fun analyzeStatement(statement: List<Token>, pattern: StatementPattern): ValidationResult {
             if (statement.size < pattern.validators.size) {
                 return ValidationResult.Error(
-                    "Expected ${pattern.validators.size} tokens, found ${statement.size}", 0)
+                    "Expected ${pattern.validators.size} tokens, found ${statement.size}",
+                    0
+                )
             }
             var position = 0
-            pattern.validators.forEachIndexed { _, validator -> //TODO("iterate pattern, catch missing tokens")
+            pattern.validators.forEachIndexed { _, validator -> // TODO("iterate pattern, catch missing tokens")
                 if (statement.size <= position) {
                     return ValidationResult.Error(
-                        "Expected more tokens, found ${statement.size} at position $position", position
+                        "Expected more tokens, found ${statement.size} at position $position",
+                        position
                     )
                 }
                 when (val result = validator.validate(statement, position)) {

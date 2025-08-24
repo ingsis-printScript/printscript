@@ -8,13 +8,13 @@ class TokenBuffer(private val tokens: List<Token>) {
     private var currentIndex = 0
 
     fun peek(): Token {
-        if (currentIndex >= tokens.size) {throw NoMoreTokensAvailableException("No more tokens available")}
+        if (currentIndex >= tokens.size) { throw NoMoreTokensAvailableException("No more tokens available") }
         return tokens[currentIndex]
     }
 
-    fun consume(expectedType: TokenType): Token{
+    fun consume(expectedType: TokenType): Token {
         val token = peek()
-        if(token.type != expectedType){
+        if (token.type != expectedType) {
             throw RuntimeException("Expected token of type $expectedType but found ${token.type}")
         }
         currentIndex++
@@ -26,7 +26,7 @@ class TokenBuffer(private val tokens: List<Token>) {
     }
 
     fun advance() {
-        if(currentIndex >= tokens.size){
+        if (currentIndex >= tokens.size) {
             throw NoMoreTokensAvailableException("No more tokens available")
         }
         currentIndex++
