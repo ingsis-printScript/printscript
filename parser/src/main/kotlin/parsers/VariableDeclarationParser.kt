@@ -9,7 +9,11 @@ import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.parser.enums.Type
 import org.example.parser.exceptions.SyntaxException
-import org.example.parser.validators.*
+import org.example.parser.validators.IdentifierValidator
+import org.example.parser.validators.KeywordValidator
+import org.example.parser.validators.PunctuationValidator
+import org.example.parser.validators.TypeValidator
+
 
 class VariableDeclarationParser : StatementParser {
 
@@ -36,7 +40,8 @@ class VariableDeclarationParser : StatementParser {
         val identifier = IdentifierExpression(statement[1].value,
             Position(statement[1].position.line, statement[1].position.column))
         val range = Range(
-            Position(statement[0].position.line, statement[0].position.column), Position(statement[4].position.line, statement[4].position.column))
+            Position(statement[0].position.line, statement[0].position.column),
+            Position(statement[4].position.line, statement[4].position.column))
 
 
         return VariableDeclarator(identifier, detectType(statement[3]), range)

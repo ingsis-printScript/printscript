@@ -1,9 +1,8 @@
-package org.example.lexer
-
 import org.example.common.tokens.Token
 import org.example.common.tokens.TokenType
 import org.example.common.tokens.constructors.NumberTokenConstructor
 import org.example.common.tokens.detectors.*
+import org.example.lexer.Lexer
 import org.example.lexer.exceptions.NoMoreTokensAvailableException
 import org.example.lexer.exceptions.UnsupportedCharacterException
 import org.junit.jupiter.api.Test

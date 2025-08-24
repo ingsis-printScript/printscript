@@ -39,7 +39,8 @@ class VariableAssignationParser: StatementParser {
         val identifier = IdentifierExpression(statement[0].value,
             Position(statement[0].position.line, statement[0].position.column))
         val range = Range(
-            Position(statement[0].position.line, statement[0].position.column), Position(statement[statement.size - 1].position.line, statement[statement.size - 1].position.column))
+            Position(statement[0].position.line, statement[0].position.column),
+            Position(statement[statement.size - 1].position.line, statement[statement.size - 1].position.column))
 
         val expressionBuilder = ExpressionBuilder() //es re feo que me tengo que crear un expression builder
         val expression = expressionBuilder.buildExpression(statement, 2, statement.size - 1)

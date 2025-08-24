@@ -14,8 +14,7 @@ internal class AnalyzeStatementService {
             pattern.validators.forEachIndexed { _, validator ->
                 if (statement.size <= position) {
                     return ValidationResult.Error(
-                        "Expected more tokens, found ${statement.size} at position $position",
-                        position
+                        "Expected more tokens, found ${statement.size} at position $position", position
                     )
                 }
                 when (val result = validator.validate(statement, position)) {

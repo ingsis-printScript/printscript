@@ -44,13 +44,9 @@ class ExpressionValidator : TokenValidator {
             }
         }
 
-        if (parenStack.isNotEmpty()) {
-            return error(pos, "Unmatched opening parenthesis '('")
-        }
+        if (parenStack.isNotEmpty()) return error(pos, "Unmatched opening parenthesis '('")
 
-        if (expectingElement && pos > position) {
-            return error(pos, "Expression cannot end with an operator")
-        }
+        if (expectingElement && pos > position) return error(pos, "Expression cannot end with an operator")
 
         return ValidationResult.Success(pos - position)
     }

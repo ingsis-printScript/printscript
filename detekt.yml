@@ -6,10 +6,11 @@ complexity:
     active: true
     threshold: 4
   LongParameterList:
-    active: true
-    threshold: 6
+    functionThreshold: 6
+    constructorThreshold: 7
+    ignoreDefaultParameters: false
 
-style:
+empty-blocks:
   EmptyClassBlock:
     active: false
   EmptyFunctionBlock:

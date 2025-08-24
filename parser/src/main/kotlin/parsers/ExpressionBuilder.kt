@@ -17,26 +17,17 @@ class ExpressionBuilder {
         if (end - start == 1) {
             val token = tokens[start]
             return when {
-                token.type == TokenType.NUMBER || token.type == TokenType.STRING ->
-                    LiteralExpression(token.type, token.value, token.position)
-
-                token.type == TokenType.SYMBOL ->
-                    IdentifierExpression(token.value, token.position)
-
-                else ->
-                    throw SyntaxException("Unexpected token with value: ${token.value} at position ${token.position}")
+                isAlphaNum(token) -> LiteralExpression(token.type, token.value, token.position)
+                isSymbol(token) -> IdentifierExpression(token.value, token.position)
+                else -> throw SyntaxException(unexpectedTokenMessage(token))
             }
-
-
         }
 
         for (i in start until end) {
             val token = tokens[i]
             if (token.type == TokenType.OPERATOR) {
-                val operator = Operator.fromString(token.value)
-                if (operator == null) {
-                    throw SyntaxException("Invalid operator: ${token.value}")
-                }
+                val operator = Operator.fromString(token.value)?:
+                throw SyntaxException("Invalid operator: ${token.value}")
 
                 val leftExpr = buildExpression(tokens, start, i)
                 val rightExpr = buildExpression(tokens, i + 1, end)
@@ -45,12 +36,18 @@ class ExpressionBuilder {
                     Position(tokens[start].position.line, tokens[start].position.column),
                     Position(tokens[end - 1].position.line, tokens[end - 1].position.column)
                 )
-
                 return BinaryExpression(leftExpr, operator, rightExpr, range)
             }
         }
-
         throw SyntaxException("Invalid expression: ${tokens.subList(start, end)}")
     }
+
+    private fun isSymbol(token: Token) = token.type == TokenType.SYMBOL
+
+    private fun unexpectedTokenMessage(token: Token) =
+        "Unexpected token with value: ${token.value} at position ${token.position}"
+
+    private fun isAlphaNum(token: Token) =
+        token.type == TokenType.NUMBER || token.type == TokenType.STRING
 
 }

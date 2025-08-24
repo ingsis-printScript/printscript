@@ -65,9 +65,11 @@ class Parser(val parsers: List<StatementParser>) {
     private fun parseStatement(statement: List<Token>, parsers: List<StatementParser>): ASTNode {
         for (parser in parsers){
             if (parser.canParse(statement)) {
-                val analysisResult: ValidationResult = AnalyzeStatementService.analyzeStatement(statement, parser.getPattern())
+                val analysisResult: ValidationResult = AnalyzeStatementService.
+                                                            analyzeStatement(statement, parser.getPattern())
                 if (analysisResult is ValidationResult.Error) {
-                    throw SyntaxException("Error in statement: ${analysisResult.message} at index ${analysisResult.position}")
+                    throw SyntaxException("Error in statement: " +
+                            "${analysisResult.message} at index ${analysisResult.position}")
                 }
                 return parser.buildAST(statement)
             }
@@ -75,7 +77,6 @@ class Parser(val parsers: List<StatementParser>) {
         throw SyntaxException("Invalid structure for statement: $statement")
     }
 }
-
 
 //} let a: Int = 2
 //} a = 3
