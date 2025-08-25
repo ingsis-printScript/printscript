@@ -2,6 +2,7 @@ package org.example.interpreter.handlers
 
 import org.example.common.ast.statements.FunctionCall
 import org.example.interpreter.Executor
+import org.example.interpreter.Validator
 
 
 class FunctionCallHandler : ASTNodeHandler<FunctionCall> {
@@ -12,5 +13,9 @@ class FunctionCallHandler : ASTNodeHandler<FunctionCall> {
         } else {
             throw RuntimeException("Function ${node.identifier.name} not supported")
         }
+    }
+
+    override fun handleValidators(node: FunctionCall, validator: Validator) {
+        TODO("Not yet implemented")
     }
 }

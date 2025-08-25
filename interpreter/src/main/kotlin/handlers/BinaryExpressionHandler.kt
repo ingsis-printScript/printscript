@@ -3,7 +3,7 @@ package org.example.interpreter.handlers
 import org.example.common.ast.expressions.BinaryExpression
 import org.example.common.enums.Operator
 import org.example.interpreter.Executor
-
+import org.example.interpreter.Validator
 
 
 class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
@@ -18,5 +18,9 @@ class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
             else -> throw IllegalArgumentException("Unsupported operator: ${node.operator}")
         }
         executor.pushLiteral(result)
+    }
+
+    override fun handleValidators(node: BinaryExpression, validator: Validator) {
+        TODO("Not yet implemented")
     }
 }
