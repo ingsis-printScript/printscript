@@ -1,4 +1,7 @@
 package org.example.interpreter
 
-class Validator {
+import org.example.interpreter.visitors.ASTVisitor
+
+class Validator: ASTVisitor<> {
+
 }
