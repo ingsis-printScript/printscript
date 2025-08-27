@@ -12,7 +12,7 @@ class ExpressionValidator : TokenValidator {
         val parenStack = ArrayDeque<Token>()
 
         while (pos < statement.size) {
-            val token = statement[pos]
+            val token = statement[pos] // peek
 
             if (isSemicolon(token)) break
 
@@ -20,11 +20,11 @@ class ExpressionValidator : TokenValidator {
                 when {
                     TokenType.isElement(token.type) -> {
                         expectingElement = false
-                        pos++
+                        pos++ // advance
                     }
                     isStartingParen(token) -> {
                         parenStack.addLast(token)
-                        pos++
+                        pos++ // advance
                     }
                     else -> return error(pos, "Expected element or '(', found '${token.value}'")
                 }
@@ -32,12 +32,12 @@ class ExpressionValidator : TokenValidator {
                 when {
                     isOperator(token) -> {
                         expectingElement = true
-                        pos++
+                        pos++ // advance
                     }
                     isClosingParen(token) -> {
                         if (parenStack.isEmpty()) return error(pos, "Unmatched closing parenthesis ')'")
                         parenStack.removeLast()
-                        pos++
+                        pos++ // advance
                     }
                     else -> return error(pos, "Expected operator or ')', found '${token.value}'")
                 }
@@ -47,8 +47,9 @@ class ExpressionValidator : TokenValidator {
         if (parenStack.isNotEmpty()) return error(pos, "Unmatched opening parenthesis '('")
 
         if (expectingElement && pos > position) return error(pos, "Expression cannot end with an operator")
+        // ver como manejar pos usando buffer, quizas mantener pos y ademas hacer advance
 
-        return ValidationResult.Success(pos - position)
+        return ValidationResult.Success(pos - position) // ver como
     }
 
     private fun isSemicolon(token: Token) = isPunctuation(token) && token.value == ";"
