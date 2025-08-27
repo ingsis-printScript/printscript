@@ -12,12 +12,13 @@ dependencies {
 kotlin {
     jvmToolchain(8)
 }
-task testCoverage {
+task testCoverage { // debería correr TestReport o CoverageVerification??
     dependsOn 'lexer:jacocoTestReport', 'parser:jacocoTestReport', 'interpreter:jacocoTestReport'
     doLast {
         println "Coverage reports generated for all modules"
     }
 }
+
 
 task formatCode {
     dependsOn 'lexer:ktlintFormat', 'parser:ktlintFormat', 'interpreter:ktlintFormat'

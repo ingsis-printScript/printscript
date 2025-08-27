@@ -8,5 +8,4 @@ data class FunctionCall(
     val identifier: IdentifierExpression,
     val value: Expression,
     override val range: Range
-): Statement {
-}
+) : Statement

@@ -9,5 +9,5 @@ data class VariableDeclarator(
     val identifier: IdentifierExpression,
     val type: Type,
     override val range: Range,
-    val value: Expression? = null,
-    ): Statement
+    val value: Expression? = null
+) : Statement

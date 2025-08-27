@@ -7,7 +7,6 @@ enum class Operator(val symbol: String) {
     DIV("/"),
     MOD("%");
 
-
     companion object {
         fun fromString(symbol: String): Operator? {
             return Operator.entries.find { it.symbol == symbol }
