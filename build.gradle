@@ -1,31 +1,8 @@
-plugins {
-    id 'org.jetbrains.kotlin.jvm'
-}
 group = 'org.example'
 version = '1.0-SNAPSHOT'
-repositories {
-    mavenCentral()
-}
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
-kotlin {
-    jvmToolchain(8)
-}
-task testCoverage { // debería correr TestReport o CoverageVerification??
-    dependsOn 'lexer:jacocoTestReport', 'parser:jacocoTestReport', 'interpreter:jacocoTestReport'
-    doLast {
-        println "Coverage reports generated for all modules"
+
+allprojects {
+    repositories {
+        mavenCentral()
     }
 }
-
-
-task formatCode {
-    dependsOn 'lexer:ktlintFormat', 'parser:ktlintFormat', 'interpreter:ktlintFormat'
-}
-
-task checkFormat {
-    dependsOn 'lexer:ktlintCheck', 'parser:ktlintCheck', 'interpreter:ktlintCheck'
-}
-
-

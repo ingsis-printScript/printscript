@@ -6,11 +6,31 @@ plugins {
     id 'io.gitlab.arturbosch.detekt'
 }
 
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+kotlin {
+    jvmToolchain(17)
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
 jacoco {
     toolVersion = "0.8.10"
 }
 
 test {
+    useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
 
@@ -33,36 +53,15 @@ jacocoTestCoverageVerification {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-}
-
-test {
-    useJUnitPlatform()
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-kotlin {
-    jvmToolchain(17)
-}
-
-jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
 detekt {
     config = files("$rootDir/detekt.yml")
     buildUponDefaultConfig = true
 }
 
+check {
+    dependsOn jacocoTestCoverageVerification
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
