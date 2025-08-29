@@ -5,7 +5,6 @@ import org.example.common.enums.Operator
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 
-
 class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
     override fun handleExecution(node: BinaryExpression, executor: Executor) {
         val left = executor.evaluate(node.left)

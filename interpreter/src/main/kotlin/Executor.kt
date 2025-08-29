@@ -4,12 +4,11 @@ import org.example.common.ast.ASTNode
 import org.example.common.enums.Type
 import org.example.interpreter.handlers.ASTNodeHandler
 
-public class Executor (
+public class Executor(
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>
-){
+) {
     private val environment = mutableMapOf<String, Any?>()
     private val stack = mutableListOf<Any?>()
-
 
     fun execute(node: ASTNode) {
     }
@@ -35,7 +34,6 @@ public class Executor (
     fun pushLiteral(value: Any?) {
     }
 
-
     fun popLiteral(): Any? {
         return null
     }
@@ -45,5 +43,4 @@ public class Executor (
 
     private fun visit(node: ASTNode) {
     }
-
 }
