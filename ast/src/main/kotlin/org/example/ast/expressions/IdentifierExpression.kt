@@ -1,4 +1,4 @@
-package org.example.common.ast.expressions
+package org.example.ast.expressions
 
 import org.example.common.Position
 

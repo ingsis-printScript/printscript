@@ -1,4 +1,4 @@
-package org.example.common.tokens
+package org.example.token
 
 import org.example.common.Position
 import org.example.common.enums.TokenType

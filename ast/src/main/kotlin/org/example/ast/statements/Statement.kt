@@ -1,7 +1,7 @@
-package org.example.common.ast.statements
+package org.example.ast.statements
 
 import org.example.common.Range
-import org.example.common.ast.ASTNode
+import org.example.ast.ASTNode
 
 interface Statement : ASTNode {
     val range: Range

@@ -1,8 +1,8 @@
-package org.example.common.ast.statements.functions
+package org.example.ast.statements.functions
 
 import org.example.common.Range
-import org.example.common.ast.expressions.Expression
-import org.example.common.ast.expressions.IdentifierExpression
+import org.example.ast.expressions.Expression
+import org.example.ast.expressions.IdentifierExpression
 
 data class PrintFunction(
     val identifier: IdentifierExpression,

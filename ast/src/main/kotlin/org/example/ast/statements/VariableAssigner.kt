@@ -1,8 +1,8 @@
-package org.example.common.ast.statements
+package org.example.ast.statements
 
 import org.example.common.Range
-import org.example.common.ast.expressions.Expression
-import org.example.common.ast.expressions.IdentifierExpression
+import org.example.ast.expressions.Expression
+import org.example.ast.expressions.IdentifierExpression
 
 data class VariableAssigner(
     val name: IdentifierExpression,
