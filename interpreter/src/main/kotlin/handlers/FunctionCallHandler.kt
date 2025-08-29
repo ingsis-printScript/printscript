@@ -4,7 +4,6 @@ import org.example.common.ast.statements.FunctionCall
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 
-
 class FunctionCallHandler : ASTNodeHandler<FunctionCall> {
     override fun handleExecution(node: FunctionCall, executor: Executor) {
         val arg = executor.evaluate(node.value)
