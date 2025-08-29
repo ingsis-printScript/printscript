@@ -1,0 +1,8 @@
+plugins {
+    id 'common-library'
+}
+
+//ver que dependencias agregar aca
+dependencies {
+    implementation project(':common')
+}
