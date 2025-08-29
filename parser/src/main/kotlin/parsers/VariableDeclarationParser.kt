@@ -7,7 +7,7 @@ import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.statements.VariableDeclarator
 import org.example.common.enums.Type
 import org.example.common.tokens.Token
-import org.example.common.tokens.TokenType
+import org.example.common.enums.TokenType
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.KeywordValidator
@@ -18,7 +18,7 @@ class VariableDeclarationParser : StatementParser {
 
     private val pattern = StatementPattern(
         listOf(
-            KeywordValidator("let"), // mmmm hardcodeado
+            KeywordValidator(),
             IdentifierValidator(),
             PunctuationValidator(":"),
             TypeValidator(),

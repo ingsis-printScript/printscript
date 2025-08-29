@@ -1,7 +1,7 @@
 package org.example.lexer
 
 import org.example.common.tokens.Token
-import org.example.common.tokens.TokenType
+import org.example.common.enums.TokenType
 import org.example.lexer.exceptions.NoMoreTokensAvailableException
 
 class TokenBuffer(private val tokens: List<Token>) {

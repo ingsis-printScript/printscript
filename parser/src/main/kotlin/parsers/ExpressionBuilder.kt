@@ -8,7 +8,7 @@ import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.expressions.LiteralExpression
 import org.example.common.enums.Operator
 import org.example.common.tokens.Token
-import org.example.common.tokens.TokenType
+import org.example.common.enums.TokenType
 import org.example.parser.exceptions.SyntaxException
 
 class ExpressionBuilder {

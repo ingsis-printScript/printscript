@@ -6,7 +6,7 @@ import org.example.common.ast.ASTNode
 import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.statements.VariableAssigner
 import org.example.common.tokens.Token
-import org.example.common.tokens.TokenType
+import org.example.common.enums.TokenType
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.PunctuationValidator

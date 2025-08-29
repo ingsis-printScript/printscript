@@ -2,9 +2,9 @@ package org.example.parser
 
 import org.example.common.Position
 import org.example.common.tokens.Token
-import org.example.common.tokens.TokenType
+import org.example.common.enums.TokenType
 import org.example.parser.exceptions.SyntaxException
-import org.example.parser.parsers.FunctionCallParser
+import org.example.parser.parsers.functionparsers.PrintParser
 import org.example.parser.parsers.VariableAssignationParser
 import org.example.parser.parsers.VariableDeclarationAssignationParser
 import org.example.parser.parsers.VariableDeclarationParser
@@ -26,7 +26,7 @@ class ParserTest {
             VariableDeclarationParser(),
             VariableDeclarationAssignationParser(),
             VariableAssignationParser(),
-            FunctionCallParser()
+            PrintParser()
         )
 
         parser = Parser(statementParsers)

@@ -1,10 +1,9 @@
 package org.example.interpreter.visitors
 
-import org.example.common.ast.Program
 import org.example.common.ast.expressions.BinaryExpression
 import org.example.common.ast.expressions.IdentifierExpression
 import org.example.common.ast.expressions.LiteralExpression
-import org.example.common.ast.statements.FunctionCall
+import org.example.common.ast.statements.functions.FunctionCall
 import org.example.common.ast.statements.VariableAssigner
 import org.example.common.ast.statements.VariableDeclarator
 
