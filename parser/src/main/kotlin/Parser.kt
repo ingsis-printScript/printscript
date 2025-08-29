@@ -1,10 +1,8 @@
 package org.example.parser
 
 import org.example.common.ast.ASTNode
-import org.example.common.ast.Program
 import org.example.common.ast.statements.Statement
 import org.example.common.tokens.Token
-import org.example.common.tokens.TokenType
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.parsers.AnalyzeStatementService
 import org.example.parser.parsers.StatementParser
@@ -18,39 +16,10 @@ class Parser(val parsers: List<StatementParser>) {
 
     // isEndToken podría ajustarse con args -> recibir expected (TokenType y symbol)
 
-    fun parse(tokenList: List<Token>): Program {
-        val segments: List<List<Token>> = separate(tokenList)
-        val programList = mutableListOf<Statement>()
-
-        for (statement in segments) {
-            val node: ASTNode = parseStatement(statement, parsers)
-            programList.add(node as Statement)
-        }
-        return Program(programList)
+    fun parse(tokenList: List<Token>): Statement {
+        val node: ASTNode = parseStatement(tokenList, parsers)
+        return node as Statement
     }
-
-    private fun separate(tokens: List<Token>): List<List<Token>> {
-        if (tokens.isEmpty()) return emptyList()
-
-        val statements = mutableListOf<List<Token>>()
-        val currentStatement = mutableListOf<Token>()
-
-        for (token in tokens) {
-            currentStatement.add(token)
-
-            // TODO("hacer rules.rule? -> o sea, inyectar END condition")
-            if (isEndToken(token)) {
-                statements.add(currentStatement.toList())
-                currentStatement.clear()
-            }
-        }
-
-        if (currentStatement.isNotEmpty()) statements.add(currentStatement.toList())
-
-        return statements
-    }
-
-    private fun isEndToken(token: Token) = token.type == TokenType.PUNCTUATION && token.value == ";"
 
     // List<StatementParser>
     // canParse

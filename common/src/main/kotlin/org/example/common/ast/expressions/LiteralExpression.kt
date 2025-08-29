@@ -1,7 +1,7 @@
 package org.example.common.ast.expressions
 
 import org.example.common.Position
-import org.example.common.tokens.TokenType
+import org.example.common.enums.TokenType
 
 data class LiteralExpression<T>(
     val type: TokenType,
