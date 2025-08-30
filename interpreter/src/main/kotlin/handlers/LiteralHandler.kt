@@ -1,6 +1,6 @@
 package org.example.interpreter.handlers
 
-import org.example.common.ast.expressions.LiteralExpression
+import org.example.ast.expressions.LiteralExpression
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 

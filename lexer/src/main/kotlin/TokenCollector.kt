@@ -1,7 +1,7 @@
 
 package org.example.lexer
 
-import org.example.common.tokens.Token
+import org.example.token.Token
 import org.example.lexer.exceptions.NoMoreTokensAvailableException
 
 class TokenCollector(private val lexer: PrintScriptIterator<Token>) {

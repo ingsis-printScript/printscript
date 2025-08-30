@@ -1,9 +1,9 @@
 package org.example.lexer
 
 import org.example.common.Position
-import org.example.common.tokens.Token
+import org.example.token.Token
 import org.example.common.tokens.detectors.KeywordTokenConstructor
-import org.example.common.tokens.detectors.TokenConstructor
+import constructors.TokenConstructor
 import org.example.lexer.exceptions.NoMoreTokensAvailableException
 import org.example.lexer.exceptions.UnsupportedCharacterException
 import java.util.*

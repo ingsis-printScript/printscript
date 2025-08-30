@@ -1,11 +1,11 @@
 package org.example.interpreter.visitors
 
-import org.example.common.ast.expressions.BinaryExpression
-import org.example.common.ast.expressions.IdentifierExpression
-import org.example.common.ast.expressions.LiteralExpression
-import org.example.common.ast.statements.functions.FunctionCall
-import org.example.common.ast.statements.VariableAssigner
-import org.example.common.ast.statements.VariableDeclarator
+import org.example.ast.expressions.BinaryExpression
+import org.example.ast.expressions.IdentifierExpression
+import org.example.ast.expressions.LiteralExpression
+import org.example.ast.statements.functions.FunctionCall
+import org.example.ast.statements.VariableAssigner
+import org.example.ast.statements.VariableDeclarator
 
 // El AST define nodos (Program, BinaryExpression, etc.) y cómo se relacionan.
 // El Visitor define qué hacer con cada tipo de nodo, sin meter esa lógica dentro del propio nodo.

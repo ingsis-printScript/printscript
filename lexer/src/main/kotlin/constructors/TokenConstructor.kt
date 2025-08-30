@@ -1,7 +1,7 @@
-package org.example.common.tokens.detectors
+package constructors
 
 import org.example.common.Position
-import org.example.common.tokens.Token
+import org.example.token.Token
 import java.util.*
 
 interface TokenConstructor {

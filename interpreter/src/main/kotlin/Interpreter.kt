@@ -1,12 +1,12 @@
 package org.example.interpreter
 
-import org.example.common.ast.expressions.BinaryExpression
-import org.example.common.ast.expressions.Expression
-import org.example.common.ast.expressions.IdentifierExpression
-import org.example.common.ast.expressions.LiteralExpression
-import org.example.common.ast.statements.functions.FunctionCall
-import org.example.common.ast.statements.VariableAssigner
-import org.example.common.ast.statements.VariableDeclarator
+import org.example.ast.expressions.BinaryExpression
+import org.example.ast.expressions.Expression
+import org.example.ast.expressions.IdentifierExpression
+import org.example.ast.expressions.LiteralExpression
+import org.example.ast.statements.functions.FunctionCall
+import org.example.ast.statements.VariableAssigner
+import org.example.ast.statements.VariableDeclarator
 import org.example.common.enums.Operator
 import org.example.interpreter.result.Error
 import org.example.interpreter.result.NoResult

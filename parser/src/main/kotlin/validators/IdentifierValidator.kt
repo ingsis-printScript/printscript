@@ -1,6 +1,6 @@
 package org.example.parser.validators
 
-import org.example.common.tokens.Token
+import org.example.token.Token
 import org.example.common.enums.TokenType
 import org.example.parser.ValidationResult
 

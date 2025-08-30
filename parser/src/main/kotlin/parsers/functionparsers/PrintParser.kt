@@ -2,9 +2,10 @@ package org.example.parser.parsers.functionparsers
 
 import org.example.common.Position
 import org.example.common.Range
-import org.example.common.ast.ASTNode
-import org.example.common.ast.expressions.IdentifierExpression
-import org.example.common.tokens.Token
+import org.example.ast.ASTNode
+import org.example.ast.expressions.IdentifierExpression
+import org.example.ast.statements.functions.PrintFunction
+import org.example.token.Token
 import org.example.common.enums.TokenType
 import org.example.parser.parsers.StatementParser
 import org.example.parser.parsers.StatementPattern
@@ -45,7 +46,7 @@ class PrintParser : StatementParser {
         // TODO revisar que en index 2 no este ")"? -> caso para empty params
         val expression = expressionBuilder.buildExpression(statement, leftParenPos + 1, statement.size - 2)
 
-        return org.example.common.ast.statements.functions.PrintFunction(identifier, expression, range)
+        return PrintFunction(identifier, expression, range)
     }
 
     override fun getPattern(): StatementPattern = pattern

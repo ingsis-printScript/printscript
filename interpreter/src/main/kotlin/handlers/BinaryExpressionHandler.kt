@@ -1,6 +1,6 @@
 package org.example.interpreter.handlers
 
-import org.example.common.ast.expressions.BinaryExpression
+import org.example.ast.expressions.BinaryExpression
 import org.example.common.enums.Operator
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator

@@ -2,12 +2,12 @@ package parsers
 
 import org.example.common.Position
 import org.example.common.Range
-import org.example.common.ast.expressions.BinaryExpression
-import org.example.common.ast.expressions.Expression
-import org.example.common.ast.expressions.IdentifierExpression
-import org.example.common.ast.expressions.LiteralExpression
+import org.example.ast.expressions.BinaryExpression
+import org.example.ast.expressions.Expression
+import org.example.ast.expressions.IdentifierExpression
+import org.example.ast.expressions.LiteralExpression
 import org.example.common.enums.Operator
-import org.example.common.tokens.Token
+import org.example.token.Token
 import org.example.common.enums.TokenType
 import org.example.parser.exceptions.SyntaxException
 

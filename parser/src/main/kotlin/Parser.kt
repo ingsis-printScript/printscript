@@ -1,8 +1,8 @@
 package org.example.parser
 
-import org.example.common.ast.ASTNode
-import org.example.common.ast.statements.Statement
-import org.example.common.tokens.Token
+import org.example.ast.ASTNode
+import org.example.ast.statements.Statement
+import org.example.token.Token
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.parsers.AnalyzeStatementService
 import org.example.parser.parsers.StatementParser

@@ -1,6 +1,6 @@
 package org.example.interpreter
 
-import org.example.common.ast.ASTNode
+import org.example.ast.ASTNode
 import org.example.common.enums.Type
 import org.example.interpreter.handlers.ASTNodeHandler
 
