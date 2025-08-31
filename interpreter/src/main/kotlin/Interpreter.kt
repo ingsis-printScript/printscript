@@ -2,7 +2,7 @@ package org.example.interpreter
 
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.Expression
-import org.example.ast.expressions.IdentifierExpression
+import org.example.ast.expressions.SymbolExpression
 import org.example.ast.expressions.LiteralExpression
 import org.example.ast.statements.functions.FunctionCall
 import org.example.ast.statements.VariableAssigner
@@ -37,28 +37,28 @@ class Interpreter : ASTVisitor<Results> {
                 (result as? Success<*>)?.value
             }
 
-            symbolTable[node.identifier.name] = value
+            symbolTable[node.symbol.name] = value
             Success(value)
         } catch (e: Exception) {
-            Error("Error declaring variable '${node.identifier.name}': ${e.message}")
+            Error("Error declaring variable '${node.symbol.name}': ${e.message}")
         }
     }
 
     override fun visitVariableAssigner(node: VariableAssigner): Results {
         return try {
-            if (!symbolTable.containsKey(node.name.name)) {
-                return Error("Undefined variable: '${node.name.name}'")
+            if (!symbolTable.containsKey(node.symbol.name)) {
+                return Error("Undefined variable: '${node.symbol.name}'")
             }
 
             val result = visitExpression(node.value)
             if (result is Error) return result
 
             val value = (result as? Success<*>)?.value
-            symbolTable[node.name.name] = value
+            symbolTable[node.symbol.name] = value
 
             Success(value)
         } catch (e: Exception) {
-            Error("Error assigning variable '${node.name.name}': ${e.message}")
+            Error("Error assigning variable '${node.symbol.name}': ${e.message}")
         }
     }
 
@@ -119,13 +119,13 @@ class Interpreter : ASTVisitor<Results> {
     fun visitExpression(expr: Expression): Results {
         return when (expr) {
             is BinaryExpression -> visitBinaryExpression(expr)
-            is IdentifierExpression -> visitIdentifierExpression(expr)
+            is SymbolExpression -> visitIdentifierExpression(expr)
             is LiteralExpression<*> -> visitLiteralExpression(expr)
             else -> Error("Unknown expression type: ${expr::class.simpleName}")
         }
     }
 
-    override fun visitIdentifierExpression(node: IdentifierExpression): Results {
+    override fun visitIdentifierExpression(node: SymbolExpression): Results {
         return try {
             val value = symbolTable[node.name]
             if (value == null && !symbolTable.containsKey(node.name)) {

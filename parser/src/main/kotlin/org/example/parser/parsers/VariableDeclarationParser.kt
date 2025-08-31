@@ -3,15 +3,15 @@ package org.example.parser.parsers
 import org.example.common.Position
 import org.example.common.Range
 import org.example.ast.ASTNode
-import org.example.ast.expressions.IdentifierExpression
+import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.common.enums.Type
 import org.example.token.Token
 import org.example.common.enums.TokenType
 import org.example.parser.exceptions.SyntaxException
-import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.KeywordValidator
 import org.example.parser.validators.PunctuationValidator
+import org.example.parser.validators.SymbolValidator
 import org.example.parser.validators.TypeValidator
 
 class VariableDeclarationParser : StatementParser {
@@ -19,7 +19,7 @@ class VariableDeclarationParser : StatementParser {
     private val pattern = StatementPattern(
         listOf(
             KeywordValidator(),
-            IdentifierValidator(),
+            SymbolValidator(),
             PunctuationValidator(":"),
             TypeValidator(),
             PunctuationValidator(";")
@@ -37,7 +37,7 @@ class VariableDeclarationParser : StatementParser {
     }
 
     override fun buildAST(statement: List<Token>): ASTNode {
-        val identifier = IdentifierExpression(
+        val symbol = SymbolExpression(
             statement[1].value,
             Position(statement[1].position.line, statement[1].position.column)
         )
@@ -46,7 +46,7 @@ class VariableDeclarationParser : StatementParser {
             Position(statement[4].position.line, statement[4].position.column)
         )
 
-        return VariableDeclarator(identifier, detectType(statement[3]), range)
+        return VariableDeclarator(symbol, detectType(statement[3]), range)
     }
 
     override fun getPattern(): StatementPattern = pattern

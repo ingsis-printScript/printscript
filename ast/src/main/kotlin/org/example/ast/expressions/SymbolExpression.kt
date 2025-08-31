@@ -2,7 +2,7 @@ package org.example.ast.expressions
 
 import org.example.common.Position
 
-data class IdentifierExpression(
+data class SymbolExpression(
     val name: String,
     val position: Position
 ) : Expression

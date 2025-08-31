@@ -2,6 +2,7 @@ package org.example.common.enums
 
 enum class TokenType {
     OPERATOR, PUNCTUATION, NUMBER, STRING, SYMBOL, KEYWORD;
+//en punctuation esta el "=" mmm
 
     companion object {
         fun isElement(type: TokenType): Boolean {

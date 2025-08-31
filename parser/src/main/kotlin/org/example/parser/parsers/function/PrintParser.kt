@@ -3,21 +3,21 @@ package org.example.parser.parsers.function
 import org.example.common.Position
 import org.example.common.Range
 import org.example.ast.ASTNode
-import org.example.ast.expressions.IdentifierExpression
+import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.functions.PrintFunction
 import org.example.token.Token
 import org.example.common.enums.TokenType
 import org.example.parser.parsers.StatementParser
 import org.example.parser.parsers.StatementPattern
 import org.example.parser.validators.ArgumentValidator
-import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.PunctuationValidator
-import org.example.parser.parsers.ExpressionBuilder
+import org.example.parser.expressionbuilder.ExpressionBuilder
+import org.example.parser.validators.SymbolValidator
 
 class PrintParser : StatementParser {
     private val pattern = StatementPattern(
         listOf(
-            IdentifierValidator(),
+            SymbolValidator(),
             ArgumentValidator(),
             PunctuationValidator(";")
         )
@@ -33,7 +33,7 @@ class PrintParser : StatementParser {
     }
 
     override fun buildAST(statement: List<Token>): ASTNode {
-        val identifier = IdentifierExpression(
+        val symbol = SymbolExpression(
             statement[idPos].value,
             Position(statement[idPos].position.line, statement[idPos].position.column)
         )
@@ -46,7 +46,7 @@ class PrintParser : StatementParser {
         // TODO revisar que en index 2 no este ")"? -> caso para empty params
         val expression = expressionBuilder.buildExpression(statement, leftParenPos + 1, statement.size - 2)
 
-        return PrintFunction(identifier, expression, range)
+        return PrintFunction(symbol, expression, range)
     }
 
     override fun getPattern(): StatementPattern = pattern

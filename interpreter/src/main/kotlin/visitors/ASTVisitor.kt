@@ -1,7 +1,7 @@
 package org.example.interpreter.visitors
 
 import org.example.ast.expressions.BinaryExpression
-import org.example.ast.expressions.IdentifierExpression
+import org.example.ast.expressions.SymbolExpression
 import org.example.ast.expressions.LiteralExpression
 import org.example.ast.statements.functions.FunctionCall
 import org.example.ast.statements.VariableAssigner
@@ -17,6 +17,6 @@ interface ASTVisitor<T> {
     fun visitVariableAssigner(node: VariableAssigner): T
     fun visitFunctionCall(node: FunctionCall): T
     fun visitBinaryExpression(node: BinaryExpression): T
-    fun visitIdentifierExpression(node: IdentifierExpression): T
+    fun visitIdentifierExpression(node: SymbolExpression): T
     fun visitLiteralExpression(node: LiteralExpression<*>): T
 }

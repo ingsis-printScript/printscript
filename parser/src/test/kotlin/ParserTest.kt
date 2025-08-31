@@ -1,8 +1,5 @@
 package org.example.parser
 
-import org.example.common.Position
-import org.example.common.tokens.Token
-import org.example.common.enums.TokenType
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.parsers.function.PrintParser
 import org.example.parser.parsers.VariableAssignationParser
@@ -16,8 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class ParserTest {
-// crear tokenFactory
-    // buscar manera de crear un astfactory (generalizar. mientras mas generico mejor.)
+
     // todo cambiar throws / analizar throws es lo mejor (medio raro)
     private lateinit var parser: Parser
     private val tokenFactory = TokenFactory()
@@ -70,7 +66,8 @@ class ParserTest {
             tokenFactory.createSymbol("number"),
             tokenFactory.createEquals(),
             tokenFactory.createNumber("5"),
-            // meter expresion
+            tokenFactory.createOperator("+"),
+            tokenFactory.createNumber("3"),
             tokenFactory.createSemicolon()
         )
 
@@ -83,7 +80,7 @@ class ParserTest {
     fun `parse variable declaration with string value`() {
         val tokens = listOf(
             tokenFactory.createKeyword("let"),
-            tokenFactory.createSymbol("name"),
+            tokenFactory.createSymbol("symbol"),
             tokenFactory.createPunctuation(":"),
             tokenFactory.createSymbol("String"),
             tokenFactory.createEquals(),
