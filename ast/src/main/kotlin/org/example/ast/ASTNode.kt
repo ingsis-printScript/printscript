@@ -1,3 +1,7 @@
 package org.example.ast
 
-interface ASTNode
+import org.example.interpreter.visitors.ASTVisitor
+
+interface ASTNode{
+    fun accept(visitor: ASTVisitor)
+}

@@ -3,10 +3,11 @@ package org.example.interpreter
 import org.example.ast.ASTNode
 import org.example.common.enums.Type
 import org.example.interpreter.handlers.ASTNodeHandler
+import org.example.interpreter.result.Results
+import org.example.interpreter.visitors.ASTVisitor
 
-public class Executor(
+class Executor : ASTVisitor<>{
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>
-) {
     private val environment = mutableMapOf<String, Any?>()
     private val stack = mutableListOf<Any?>()
 
@@ -41,6 +42,8 @@ public class Executor(
     fun output(value: String) {
     }
 
-    private fun visit(node: ASTNode) {
+    override fun visit(node: ASTNode): Results {
+        TODO("Not yet implemented")
     }
+
 }

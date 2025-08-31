@@ -4,35 +4,50 @@ import org.example.token.Token
 import org.example.common.enums.TokenType
 import org.example.lexer.exceptions.NoMoreTokensAvailableException
 
-class TokenBuffer(private val tokens: List<Token>) {
-    private var currentIndex = 0
+class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptIterator<Token> {
+    private val buffer = mutableListOf<Token>()
+    private var index = 0
+
+    private fun fillBuffer(n: Int = 1) {
+        while (buffer.size < index + n && tokens.hasNext()) {
+            buffer.add(tokens.getNext())
+        }
+    }
+
+    override fun hasNext(): Boolean {
+        fillBuffer()
+        return index < buffer.size
+    }
+
+    override fun getNext(): Token {
+        fillBuffer()
+        if (index >= buffer.size) throw NoMoreTokensAvailableException()
+        return buffer[index++]
+    }
 
     fun peek(): Token {
-        if (currentIndex >= tokens.size) { throw NoMoreTokensAvailableException("No more tokens available") }
-        return tokens[currentIndex]
+        fillBuffer()
+        if (index >= buffer.size) throw NoMoreTokensAvailableException()
+        return buffer[index]
+    }
+
+    fun lookahead(n: Int): Token {
+        fillBuffer(n)
+        if (index + n - 1 >= buffer.size) throw NoMoreTokensAvailableException()
+        return buffer[index + n - 1]
     }
 
     fun consume(expectedType: TokenType): Token {
         val token = peek()
         if (token.type != expectedType) {
-            throw RuntimeException("Expected token of type $expectedType but found ${token.type}")
+            throw RuntimeException("Expected $expectedType but found ${token.type}")
         }
-        currentIndex++
+        index++
         return token
     }
 
-    fun isNext(expectedType: TokenType): Boolean {
-        return currentIndex < tokens.size && tokens[currentIndex].type == expectedType
-    }
-
-    fun advance() {
-        if (currentIndex >= tokens.size) {
-            throw NoMoreTokensAvailableException("No more tokens available")
-        }
-        currentIndex++
-    }
-
     fun isAtEnd(): Boolean {
-        return currentIndex >= tokens.size
+        fillBuffer()
+        return index >= buffer.size && !tokens.hasNext()
     }
 }
