@@ -1,4 +1,4 @@
-package parsers
+package org.example.parser.parsers
 
 import org.example.common.Position
 import org.example.common.Range

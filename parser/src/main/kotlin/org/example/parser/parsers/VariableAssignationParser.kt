@@ -10,7 +10,6 @@ import org.example.common.enums.TokenType
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.PunctuationValidator
-import parsers.ExpressionBuilder
 
 class VariableAssignationParser : StatementParser {
 

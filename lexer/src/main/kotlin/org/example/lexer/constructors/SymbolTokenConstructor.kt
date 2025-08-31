@@ -1,4 +1,4 @@
-package constructors
+package org.example.lexer.constructors
 
 import org.example.common.Position
 import org.example.token.Token
@@ -12,7 +12,7 @@ class SymbolTokenConstructor : TokenConstructor {
 
         val firstChar = input[0]
         if (!firstChar.isLetter() && firstChar != '_') return Optional.empty()
-        // No me encanta interferir con análisis sintáctico en el Lexer
+        // No me encanta interferir con análisis en el Lexer
         // O sea, siento que el análisis (sintáctico y semántico)
         // quedo desperdigado entre L y P y además se duplica
 

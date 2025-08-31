@@ -1,3 +1,5 @@
+package org.example.cli
+
 interface Runner {
     fun validate(fileReader: Iterator<String>) : String
     fun execute(fileReader: Iterator<String>) : String

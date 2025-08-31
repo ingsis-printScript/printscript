@@ -4,7 +4,7 @@ import org.example.common.Position
 import org.example.common.tokens.Token
 import org.example.common.enums.TokenType
 import org.example.parser.exceptions.SyntaxException
-import org.example.parser.parsers.functionparsers.PrintParser
+import org.example.parser.parsers.function.PrintParser
 import org.example.parser.parsers.VariableAssignationParser
 import org.example.parser.parsers.VariableDeclarationAssignationParser
 import org.example.parser.parsers.VariableDeclarationParser

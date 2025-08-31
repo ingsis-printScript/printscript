@@ -14,7 +14,6 @@ import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.KeywordValidator
 import org.example.parser.validators.PunctuationValidator
 import org.example.parser.validators.TypeValidator
-import parsers.ExpressionBuilder
 
 class VariableDeclarationAssignationParser : StatementParser {
 

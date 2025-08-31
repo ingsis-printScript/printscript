@@ -2,7 +2,10 @@ plugins {
     id 'common-library'
 }
 
-//ver que dependencias agregar aca
 dependencies {
     implementation project(':common')
+    implementation project(':ast')
+    implementation project(':lexer')
+    implementation project(':parser')
+    implementation project(':interpreter')
 }

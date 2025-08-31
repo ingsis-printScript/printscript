@@ -1,3 +1,5 @@
+package org.example.cli
+
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*

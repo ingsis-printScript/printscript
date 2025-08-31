@@ -9,11 +9,11 @@ plugins {
 rootProject.name = 'printscript'
 
 include 'common'
+include 'token'
+include 'ast'
 include 'lexer'
 include 'parser'
 include 'interpreter'
-include 'token'
-include 'ast'
 include 'cli'
 include 'formatter'
 include 'linter'

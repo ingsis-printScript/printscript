@@ -1,4 +1,4 @@
-package org.example.parser.parsers.functionparsers
+package org.example.parser.parsers.function
 
 import org.example.common.Position
 import org.example.common.Range
@@ -12,7 +12,7 @@ import org.example.parser.parsers.StatementPattern
 import org.example.parser.validators.ArgumentValidator
 import org.example.parser.validators.IdentifierValidator
 import org.example.parser.validators.PunctuationValidator
-import parsers.ExpressionBuilder
+import org.example.parser.parsers.ExpressionBuilder
 
 class PrintParser : StatementParser {
     private val pattern = StatementPattern(

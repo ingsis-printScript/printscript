@@ -1,12 +1,12 @@
 import org.example.token.Token
 import org.example.common.enums.TokenType
-import constructors.NumberTokenConstructor
-import constructors.KeywordTokenConstructor
-import constructors.OperatorTokenConstructor
-import constructors.PunctuationTokenConstructor
-import constructors.StringTokenConstructor
-import constructors.SymbolTokenConstructor
-import constructors.TokenConstructor
+import org.example.lexer.constructors.NumberTokenConstructor
+import org.example.lexer.constructors.KeywordTokenConstructor
+import org.example.lexer.constructors.OperatorTokenConstructor
+import org.example.lexer.constructors.PunctuationTokenConstructor
+import org.example.lexer.constructors.StringTokenConstructor
+import org.example.lexer.constructors.SymbolTokenConstructor
+import org.example.lexer.constructors.TokenConstructor
 import org.example.lexer.Lexer
 import org.example.lexer.exceptions.NoMoreTokensAvailableException
 import org.example.lexer.exceptions.UnsupportedCharacterException
@@ -121,16 +121,13 @@ class LexerTest {
 
         println("=== DEBUGGING WHITESPACE ISSUE ===")
 
-        // Primera verificación
         println("1. First hasNext(): ${lexer.hasNext()}")
 
-        // Obtener primer token
         if (lexer.hasNext()) {
             val token = lexer.getNext()
             println("2. Got token: '${token.value}' (${token.type})")
         }
 
-        // Segunda verificación (aquí falla)
         val hasMoreTokens = lexer.hasNext()
         println("3. Second hasNext(): $hasMoreTokens")
 
@@ -143,7 +140,6 @@ class LexerTest {
             }
         }
 
-        // Lo que esperamos
         assertFalse(hasMoreTokens, "Should not have more tokens after 'let'")
     }
 
