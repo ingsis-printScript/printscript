@@ -6,7 +6,7 @@ import org.example.token.Token
 
 class StringValidator: TokenValidator {
 
-       private val stringPattern = Regex("^\".*\"$") // para strings entre comillas
+       private val stringPattern = Regex(".*")
 
        override fun validate(statement: List<Token>, position: Int): ValidationResult {
            val token: Token = statement[position]

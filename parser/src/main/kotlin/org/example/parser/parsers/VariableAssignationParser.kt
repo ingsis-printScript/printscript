@@ -3,6 +3,7 @@ package org.example.parser.parsers
 import org.example.common.Position
 import org.example.common.Range
 import org.example.ast.ASTNode
+import org.example.ast.expressions.Expression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableAssigner
 import org.example.token.Token

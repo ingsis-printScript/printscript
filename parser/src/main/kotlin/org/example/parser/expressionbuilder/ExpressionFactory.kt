@@ -11,8 +11,8 @@ import org.example.token.Token
 class ExpressionFactory {
     fun createExpression(token: Token): Expression {
         return when (token.type) {
-            TokenType.NUMBER -> NumberExpression(token.type, token.value, token.position)
-            TokenType.STRING -> StringExpression(token.type, token.value, token.position)
+            TokenType.NUMBER -> NumberExpression(token.value, token.position)
+            TokenType.STRING -> StringExpression(token.value, token.position)
             TokenType.SYMBOL -> SymbolExpression(token.value, token.position)
             else -> throw SyntaxException("Unexpected token type: ${token.type}")
         }

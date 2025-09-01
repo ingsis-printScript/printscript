@@ -2,6 +2,7 @@ package org.example.parser.expressionbuilder
 
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.Expression
+import org.example.ast.expressions.OptionalExpression
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Operator
@@ -17,8 +18,12 @@ class ExpressionBuilder {
     private val parenthesesHandler = ParenthesesHandler()
     private val expressionFactory = ExpressionFactory()
 
-    fun buildExpression(tokens: List<Token>, start: Int, end: Int): Expression {
-        return buildWithPrecedence(tokens, start, end, 0)
+    fun buildExpression(tokens: List<Token>, start: Int, end: Int): OptionalExpression {
+        if (hasNoExpression(start, end)) {
+            return OptionalExpression.NoExpression
+        }
+        val expression = buildWithPrecedence(tokens, start, end, 0)
+        return OptionalExpression.HasExpression(expression)
     }
 
     private fun buildWithPrecedence(tokens: List<Token>, start: Int, end: Int, minPrecedence: Int): Expression {
@@ -52,7 +57,7 @@ class ExpressionBuilder {
 
         if (parenthesesHandler.isOpenParen(token)) {
             val closeParenIndex = parenthesesHandler.findMatchingCloseParen(tokens, start)
-            return buildExpression(tokens, start + 1, closeParenIndex)
+            return buildExpression(tokens, start + 1, closeParenIndex) as Expression
         }
 
         return expressionFactory.createExpression(token)
@@ -91,5 +96,9 @@ class ExpressionBuilder {
             Position(startToken.position.line, startToken.position.column),
             Position(endToken.position.line, endToken.position.column)
         )
+    }
+
+    private fun hasNoExpression(start: Int, end: Int): Boolean {
+        return start >= end
     }
 }

@@ -3,6 +3,7 @@ package org.example.parser.parsers.function
 import org.example.common.Position
 import org.example.common.Range
 import org.example.ast.ASTNode
+import org.example.ast.expressions.Expression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.functions.PrintFunction
 import org.example.token.Token
@@ -33,10 +34,6 @@ class PrintParser : StatementParser {
     }
 
     override fun buildAST(statement: List<Token>): ASTNode {
-        val symbol = SymbolExpression(
-            statement[idPos].value,
-            Position(statement[idPos].position.line, statement[idPos].position.column)
-        )
         val range = Range(
             Position(statement[0].position.line, statement[0].position.column),
             Position(statement[statement.size - 1].position.line, statement[statement.size - 1].position.column)
@@ -46,7 +43,7 @@ class PrintParser : StatementParser {
         // TODO revisar que en index 2 no este ")"? -> caso para empty params
         val expression = expressionBuilder.buildExpression(statement, leftParenPos + 1, statement.size - 2)
 
-        return PrintFunction(symbol, expression, range)
+        return PrintFunction(expression, range)
     }
 
     override fun getPattern(): StatementPattern = pattern

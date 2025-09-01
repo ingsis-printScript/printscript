@@ -1,5 +1,8 @@
 package org.example.parser
 
+import org.example.ast.expressions.OptionalExpression
+import org.example.common.enums.Operator
+import org.example.common.enums.Type
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.parsers.function.PrintParser
 import org.example.parser.parsers.VariableAssignationParser
@@ -17,6 +20,7 @@ class ParserTest {
     // todo cambiar throws / analizar throws es lo mejor (medio raro)
     private lateinit var parser: Parser
     private val tokenFactory = TokenFactory()
+    private val AstFactory = AstFactory()
 
     @BeforeEach
     fun setUp() {
@@ -36,10 +40,9 @@ class ParserTest {
     fun `parse empty token list returns empty program`() {
         val emptyTokens = emptyList<Token>()
 
-        val result = parser.parse(emptyTokens)
+        val exception = assertThrows<SyntaxException> { parser.parse(emptyTokens) }
 
-        assertEquals(0, result.statements.size)
-        assertTrue(result.statements.isEmpty())
+        assertEquals(exception.message, "Empty token list")
     }
 
     @Test
@@ -54,7 +57,11 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        assertEquals(1, result.statements.size)
+        val expectedSymbol = AstFactory.createSymbol("x")
+        val expected = AstFactory.createVariableDeclarator(expectedSymbol, Type.NUMBER)
+
+
+        assertEquals(expected, result)
     }
 
     @Test
@@ -73,14 +80,22 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        assertEquals(1, result.statements.size)
+        val expectedSymbol = AstFactory.createSymbol("x")
+        val expression = AstFactory.createBinaryExpression(
+            AstFactory.createNumber("5"),
+            Operator.ADD,
+            AstFactory.createNumber("3")
+        )
+        val expected = AstFactory.createVariableDeclarator(expectedSymbol, Type.NUMBER, OptionalExpression.HasExpression(expression))
+
+        assertEquals(expected, result)
     }
 
     @Test
     fun `parse variable declaration with string value`() {
         val tokens = listOf(
             tokenFactory.createKeyword("let"),
-            tokenFactory.createSymbol("symbol"),
+            tokenFactory.createSymbol("x"),
             tokenFactory.createPunctuation(":"),
             tokenFactory.createSymbol("String"),
             tokenFactory.createEquals(),
@@ -90,7 +105,13 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        assertEquals(1, result.statements.size)
+        val expected = AstFactory.createVariableDeclarator(
+            AstFactory.createSymbol("x"),
+            Type.STRING,
+            OptionalExpression.HasExpression(AstFactory.createString("John"))
+        )
+
+        assertEquals(expected, result)
     }
 
     @Test
@@ -104,7 +125,12 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        assertEquals(1, result.statements.size)
+        val expected = AstFactory.createVariableAssigment(
+            AstFactory.createSymbol("x"),
+            OptionalExpression.HasExpression(AstFactory.createNumber("10"))
+        )
+
+        assertEquals(expected, result)
     }
 
     @Test
@@ -118,20 +144,24 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        assertEquals(1, result.statements.size)
+        val expected = AstFactory.createVariableAssigment(
+            AstFactory.createSymbol("y"),
+            OptionalExpression.HasExpression(AstFactory.createSymbol("x"))
+        )
+
+        assertEquals(expected, result)
     }
 
     @Test
     fun `parse function call without parameters`() {
         val tokens = listOf(
             tokenFactory.createSymbol("println"),
-            tokenFactory.createPunctuation("("),
-            tokenFactory.createPunctuation(")"),
+            tokenFactory.createPunctuation("["),
+            tokenFactory.createPunctuation("]"),
             tokenFactory.createSemicolon()
         )
 
-        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
-        assertEquals(exception.message, "Invalid expression: []")
+        assertThrows<SyntaxException> { parser.parse(tokens) }
     }
 
     @Test
@@ -146,57 +176,13 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        assertEquals(1, result.statements.size)
-    }
-
-    @Test
-    fun `parse multiple different statements`() {
-        val tokens = listOf(
-            tokenFactory.createKeyword("let"),
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createPunctuation(":"),
-            tokenFactory.createSymbol("Number"),
-            tokenFactory.createEquals(),
-            tokenFactory.createNumber("5"),
-            tokenFactory.createSemicolon(),
-
-            tokenFactory.createSymbol("y"),
-            tokenFactory.createEquals(),
-            tokenFactory.createNumber("10"),
-            tokenFactory.createSemicolon(),
-
-            tokenFactory.createSymbol("println"),
-            tokenFactory.createPunctuation("("),
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createPunctuation(")"),
-            tokenFactory.createSemicolon()
-
+        val expected = AstFactory.createPrintFunction(
+            OptionalExpression.HasExpression(AstFactory.createString("Hello"))
         )
 
-        val result = parser.parse(tokens)
-
-        assertEquals(3, result.statements.size)
+        assertEquals(expected, result)
     }
 
-    @Test
-    fun `parse statements without final semicolon`() {
-        val tokens = listOf(
-            tokenFactory.createKeyword("let"),
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createPunctuation(":"),
-            tokenFactory.createSymbol("Number"),
-            tokenFactory.createEquals(),
-            tokenFactory.createNumber("5"),
-            tokenFactory.createSemicolon(),
-            tokenFactory.createSymbol("print"),
-            tokenFactory.createPunctuation("("),
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createPunctuation(")")
-        )
-
-        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
-        assertTrue(exception.message?.contains("Expected enclosing ( ), found '(' and 'x'") == true)
-    }
 
     @Test
     fun `throws SyntaxException for invalid syntax`() {

@@ -7,7 +7,7 @@ import org.example.interpreter.Validator
 class VariableAssignerHandler : ASTNodeHandler<VariableAssigner> {
     override fun handleExecution(node: VariableAssigner, executor: Executor) {
         val value = executor.evaluate(node.value)
-        executor.assignVariable(node.symbol.name, value)
+        executor.assignVariable(node.symbol.value, value)
     }
 
     override fun handleValidators(node: VariableAssigner, validator: Validator) {

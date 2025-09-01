@@ -37,28 +37,28 @@ class Interpreter : ASTVisitor<Results> {
                 (result as? Success<*>)?.value
             }
 
-            symbolTable[node.symbol.name] = value
+            symbolTable[node.symbol.value] = value
             Success(value)
         } catch (e: Exception) {
-            Error("Error declaring variable '${node.symbol.name}': ${e.message}")
+            Error("Error declaring variable '${node.symbol.value}': ${e.message}")
         }
     }
 
     override fun visitVariableAssigner(node: VariableAssigner): Results {
         return try {
-            if (!symbolTable.containsKey(node.symbol.name)) {
-                return Error("Undefined variable: '${node.symbol.name}'")
+            if (!symbolTable.containsKey(node.symbol.value)) {
+                return Error("Undefined variable: '${node.symbol.value}'")
             }
 
             val result = visitExpression(node.value)
             if (result is Error) return result
 
             val value = (result as? Success<*>)?.value
-            symbolTable[node.symbol.name] = value
+            symbolTable[node.symbol.value] = value
 
             Success(value)
         } catch (e: Exception) {
-            Error("Error assigning variable '${node.symbol.name}': ${e.message}")
+            Error("Error assigning variable '${node.symbol.value}': ${e.message}")
         }
     }
 
@@ -127,14 +127,14 @@ class Interpreter : ASTVisitor<Results> {
 
     override fun visitIdentifierExpression(node: SymbolExpression): Results {
         return try {
-            val value = symbolTable[node.name]
-            if (value == null && !symbolTable.containsKey(node.name)) {
-                Error("Undefined variable: '${node.name}'")
+            val value = symbolTable[node.value]
+            if (value == null && !symbolTable.containsKey(node.value)) {
+                Error("Undefined variable: '${node.value}'")
             } else {
                 Success(value)
             }
         } catch (e: Exception) {
-            Error("Error accessing variable '${node.name}': ${e.message}")
+            Error("Error accessing variable '${node.value}': ${e.message}")
         }
     }
 

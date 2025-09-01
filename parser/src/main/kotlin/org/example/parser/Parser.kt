@@ -17,6 +17,7 @@ class Parser(val parsers: List<StatementParser>) {
     // isEndToken podría ajustarse con args -> recibir expected (TokenType y symbol)
 
     fun parse(tokenList: List<Token>): Statement {
+        if (tokenList.isEmpty()) { throw SyntaxException("Empty token list") }
         val node: ASTNode = parseStatement(tokenList, parsers)
         return node as Statement
     }
