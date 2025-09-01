@@ -1,6 +1,7 @@
 
 package org.example.lexer
 
+import org.example.common.PrintScriptIterator
 import org.example.token.Token
 import org.example.lexer.exceptions.NoMoreTokensAvailableException
 

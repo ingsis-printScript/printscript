@@ -1,4 +1,4 @@
-package org.example.lexer
+package org.example.common
 
 interface PrintScriptIterator<T> {
     fun hasNext(): Boolean
