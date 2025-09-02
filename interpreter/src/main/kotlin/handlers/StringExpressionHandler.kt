@@ -1,8 +1,10 @@
 package org.example.interpreter.handlers
 
 import org.example.ast.expressions.StringExpression
+import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
+import org.example.interpreter.result.Success
 
 class StringExpressionHandler: ASTNodeHandler<StringExpression> {
 
@@ -10,13 +12,13 @@ class StringExpressionHandler: ASTNodeHandler<StringExpression> {
         node: StringExpression,
         executor: Executor
     ) {
-        TODO("Not yet implemented")
-    }
+        executor.pushLiteral(node.value)
+        executor.returnResult(Success(node.value))    }
 
     override fun handleValidators(
         node: StringExpression,
         validator: Validator
     ) {
-        TODO("Not yet implemented")
-    }
+        validator.pushLiteral(Type.STRING)
+        validator.returnResult(Success("String"))    }
 }

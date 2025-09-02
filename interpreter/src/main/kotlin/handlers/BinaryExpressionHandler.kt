@@ -2,8 +2,10 @@ package org.example.interpreter.handlers
 
 import org.example.ast.expressions.BinaryExpression
 import org.example.common.enums.Operator
+import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
+import org.example.interpreter.result.Success
 
 class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
     override fun handleExecution(node: BinaryExpression, executor: Executor) {
@@ -17,9 +19,24 @@ class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
             else -> throw IllegalArgumentException("Unsupported operator: ${node.operator}")
         }
         executor.pushLiteral(result)
+        executor.returnResult(Success(result))
     }
 
     override fun handleValidators(node: BinaryExpression, validator: Validator) {
-        TODO("Not yet implemented")
+        val leftType = validator.evaluate(node.left)
+        val rightType = validator.evaluate(node.right)
+
+        // Ambos operandos deben ser enteros para operaciones aritméticas
+        if (leftType != Type.NUMBER || rightType != Type.NUMBER) {
+            throw IllegalStateException(
+                "Binary operation ${node.operator} requires INT operands, got $leftType and $rightType at ${node.range}"
+            )
+        }
+
+        // El resultado de una operación aritmética es INT
+        validator.pushLiteral(Type.NUMBER)
+        validator.returnResult(Success(Type.NUMBER))
     }
+
+
 }
