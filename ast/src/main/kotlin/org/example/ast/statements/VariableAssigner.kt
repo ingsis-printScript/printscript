@@ -3,7 +3,7 @@ package org.example.ast.statements
 import org.example.common.Range
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.interpreter.visitors.ASTVisitor
+import org.example.ast.visitors.ASTVisitor
 
 data class VariableAssigner(
     val symbol: SymbolExpression,

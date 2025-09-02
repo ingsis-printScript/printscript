@@ -1,4 +1,4 @@
-package org.example.interpreter.visitors
+package org.example.ast.visitors
 
 import org.example.ast.ASTNode
 

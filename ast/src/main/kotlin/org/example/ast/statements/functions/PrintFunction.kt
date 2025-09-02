@@ -1,13 +1,11 @@
 package org.example.ast.statements.functions
 
 import org.example.common.Range
-import org.example.ast.expressions.Expression
-import org.example.ast.expressions.SymbolExpression
-import org.example.interpreter.visitors.ASTVisitor
+import org.example.ast.expressions.OptionalExpression
+import org.example.ast.visitors.ASTVisitor
 
 data class PrintFunction(
-    val symbol: SymbolExpression,
-    val value: Expression,
+    val value: OptionalExpression,
     override val range: Range
 ): FunctionCall {
     override fun <T> accept(visitor: ASTVisitor<T>): T {
