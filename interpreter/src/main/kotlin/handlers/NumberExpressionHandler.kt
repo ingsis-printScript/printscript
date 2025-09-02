@@ -8,8 +8,8 @@ import org.example.interpreter.result.Success
 
 class NumberExpressionHandler: ASTNodeHandler<NumberExpression> {
     override fun handleExecution(node: NumberExpression, executor: Executor) {
-        executor.pushLiteral(node.value) // node.value is the number
-        executor.returnResult(Success(node.value)) // wrap it in Success
+        executor.pushLiteral(node.value)
+        executor.returnResult(Success(node.value))
     }
 
 
@@ -17,7 +17,7 @@ class NumberExpressionHandler: ASTNodeHandler<NumberExpression> {
         node: NumberExpression,
         validator: Validator
     ) {
-        validator.pushLiteral(Type.NUMBER) // or "Double", depending on your NumberExpression
-        validator.returnResult(Success("Int"))
+        validator.pushLiteral(Type.NUMBER)
+        validator.returnResult(Success("number"))
     }
 }
