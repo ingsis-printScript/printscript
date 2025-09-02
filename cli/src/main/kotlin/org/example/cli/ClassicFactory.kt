@@ -9,7 +9,7 @@ import org.example.parser.parsers.VariableDeclarationAssignationParser
 import org.example.parser.parsers.VariableDeclarationParser
 import org.example.parser.parsers.function.PrintParser
 
-
+// acá inyecto lo que necesito para 1.0, me armo otro para 1.1
 class ClassicFactory {
     fun lexer(fileReader : Iterator<String>) : Lexer {
         val constructors = listOf(

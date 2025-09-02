@@ -40,7 +40,6 @@ class PrintParser : StatementParser {
         )
 
         val expressionBuilder = ExpressionBuilder()
-        // TODO revisar que en index 2 no este ")"? -> caso para empty params
         val expression = expressionBuilder.buildExpression(statement, leftParenPos + 1, statement.size - 2)
 
         return PrintFunction(expression, range)

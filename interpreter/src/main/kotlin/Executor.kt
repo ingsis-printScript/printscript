@@ -4,17 +4,17 @@ import org.example.ast.ASTNode
 import org.example.common.enums.Type
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.result.NoResult
-import org.example.interpreter.result.Results
+import org.example.interpreter.result.Result
 import org.example.interpreter.result.Success
 import org.example.interpreter.visitors.ASTVisitor
 
 class Executor (
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>
-) : ASTVisitor<Results> {
+) : ASTVisitor<Result> {
 
     private val environment = mutableMapOf<String, Any?>()
     private val stack = mutableListOf<Any?>()
-    private var lastResult: Results = NoResult()
+    private var lastResult: Result = NoResult()
 
 
 
@@ -43,13 +43,13 @@ class Executor (
     }
 
 
-    override fun visit(node: ASTNode): Results {
+    override fun visit(node: ASTNode): Result {
         val handler = handlers[node::class.java] as ASTNodeHandler<ASTNode>
         handler.handleExecution(node, this)
         return Success(Unit)
     }
 
-    fun returnResult(result: Results) {
+    fun returnResult(result: Result) {
         lastResult = result
     }
 

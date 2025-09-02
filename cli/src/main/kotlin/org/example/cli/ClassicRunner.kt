@@ -10,7 +10,9 @@ class ClassicRunner : Runner {
         } catch (e: Exception) {
             return "Validation failed: ${e.message}"
         }
-    }
+    } // todo: chau try catch, recibo Result
+    // TODO: que no devuelva String, puede incluso devolver Result...
+    //  ...es como se comunica el interpreter after all
 
     override fun execute(fileReader: Iterator<String>): String {
         try {

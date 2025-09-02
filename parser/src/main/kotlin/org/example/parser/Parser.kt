@@ -9,11 +9,6 @@ import org.example.parser.parsers.StatementParser
 
 class Parser(val parsers: List<StatementParser>) {
 
-    // recibimos una lista de tokens
-    // la dividimos en segmentos si termina en punto y coma
-    //      (así acepta varios statements, aunque solo le mandemos 1)
-    // cada segmento es procesado -> AST -> Program
-
     // isEndToken podría ajustarse con args -> recibir expected (TokenType y symbol)
 
     fun parse(tokenList: List<Token>): Statement {
@@ -22,10 +17,10 @@ class Parser(val parsers: List<StatementParser>) {
         return node as Statement
     }
 
-    // List<StatementParser>
-    // canParse
-    // analyzeStatement
-    // buildAST
+    //TODO: chau canParse, devolver el error del que falle last...
+    // el que mas lejos llega (pero sin success, no llegó al final) me indica el error que obtuve.
+    // si sale bien, tiro success
+    // no can parse
 
     // dejé canParse porque así los errores propios de un tipo de statement se pueden comunicar
     private fun parseStatement(statement: List<Token>, parsers: List<StatementParser>): ASTNode {
@@ -45,8 +40,3 @@ class Parser(val parsers: List<StatementParser>) {
         throw SyntaxException("Invalid structure for statement: $statement")
     }
 }
-
-// } let a: Int = 2
-// } a = 3
-// } print(a)
-// } let a: Int

@@ -13,7 +13,7 @@ internal class AnalyzeStatementService {
                 )
             }
             var position = 0
-            pattern.validators.forEachIndexed { _, validator -> // TODO("iterate pattern, catch missing tokens")
+            pattern.validators.forEachIndexed { _, validator ->
                 if (statement.size <= position) {
                     return ValidationResult.Error(
                         "Expected more tokens, found ${statement.size} at position $position",

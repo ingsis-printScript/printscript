@@ -4,6 +4,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
 
+// clikt
+// que se ocupe de parsing, etc. Much to redo (yay!)
 class Cli(private val runner: Runner) {
     fun run(command: String) : String {
         val arguments: List<String> = command.split(" ")

@@ -4,19 +4,19 @@ import org.example.ast.ASTNode
 import org.example.common.enums.Type
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.result.NoResult
-import org.example.interpreter.result.Results
+import org.example.interpreter.result.Result
 import org.example.interpreter.result.Success
 import org.example.interpreter.visitors.ASTVisitor
 
 class Validator(
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>
-) : ASTVisitor<Results> {
+) : ASTVisitor<Result> {
 
     private val stack = mutableListOf<Type?>()
     private val environment = mutableMapOf<String, Type>()  // ahora guarda Type
-    private var lastResult: Results = NoResult()
+    private var lastResult: Result = NoResult()
 
-    override fun visit(node: ASTNode): Results {
+    override fun visit(node: ASTNode): Result {
         val handler = handlers[node::class.java] as ASTNodeHandler<ASTNode>
         handler.handleValidators(node, this)
         return Success(Unit)
@@ -47,7 +47,7 @@ class Validator(
         return stack.removeAt(stack.size - 1)
     }
 
-    fun returnResult(result: Results) {
+    fun returnResult(result: Result) {
         lastResult = result
     }
 
