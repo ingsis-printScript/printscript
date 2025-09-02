@@ -1,7 +1,7 @@
 package org.example.ast.expressions
 
 import org.example.common.Position
-import org.example.interpreter.visitors.ASTVisitor
+import org.example.ast.visitors.ASTVisitor
 
 data class SymbolExpression(
     val value: String,

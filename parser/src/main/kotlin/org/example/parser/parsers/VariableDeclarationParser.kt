@@ -3,6 +3,7 @@ package org.example.parser.parsers
 import org.example.common.Position
 import org.example.common.Range
 import org.example.ast.ASTNode
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.common.enums.Type
@@ -46,7 +47,7 @@ class VariableDeclarationParser : StatementParser {
             Position(statement[4].position.line, statement[4].position.column)
         )
 
-        return VariableDeclarator(symbol, detectType(statement[3]), range)
+        return VariableDeclarator(symbol, detectType(statement[3]), range, OptionalExpression.NoExpression)
     }
 
     override fun getPattern(): StatementPattern = pattern

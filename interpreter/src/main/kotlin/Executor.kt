@@ -6,7 +6,7 @@ import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.result.NoResult
 import org.example.interpreter.result.Result
 import org.example.interpreter.result.Success
-import org.example.interpreter.visitors.ASTVisitor
+import org.example.ast.visitors.ASTVisitor
 
 class Executor (
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>
