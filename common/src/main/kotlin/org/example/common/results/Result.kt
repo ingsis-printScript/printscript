@@ -1,4 +1,4 @@
-package org.example.interpreter.result
+package org.example.common.results
 
 sealed interface Result
 // pasar a common, do without the exceptions, everything se comunica igual, así

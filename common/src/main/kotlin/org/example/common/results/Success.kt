@@ -1,3 +1,3 @@
-package org.example.interpreter.result
+package org.example.common.results
 
 data class Success<T>(val value: T) : Result
