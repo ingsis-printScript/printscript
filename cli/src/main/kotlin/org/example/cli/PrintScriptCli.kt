@@ -7,7 +7,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
-import org.example.cli.operations.Operation
+import org.example.common.results.Result
 
 
 fun main(args: Array<String>) = PrintScriptCli().main(args)
@@ -25,7 +25,8 @@ class PrintScriptCli : CliktCommand(name = "printscript") {
         help = "Source file to process"
     ).file(mustExist = true, canBeDir = false, mustBeReadable = true)
 
-    // idem
+    // Idem
+    // DEFAULT CONFIG? -> creo que no... por ahora
     private val configFile by option(
         "--config", "-c",
         help = "Configuration file for appropriate operation"
@@ -42,12 +43,12 @@ class PrintScriptCli : CliktCommand(name = "printscript") {
         echo("Version: $version")
         configFile?.let { echo("Config: ${it.name}") }
 
-        val operator = Operation.get(operation)
+        val request = Request(operation, sourceFile.name, version, configFile?.name)
 
-        if (operator.isPresent) { // TODO: determinar que hago con config y Result
-            val config = configFile?.name
-            val request = Request(sourceFile.name, version, config)
-            val result: Result<String> = operator.get().execute(request)
+        val operator = OperationDispatch.getOperation(request)
+
+        if (operator.isPresent) {
+            val result: Result = operator.get().execute()
             // TODO: process result and echo output...
 
         } else echo("Invalid operation")

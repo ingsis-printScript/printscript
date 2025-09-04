@@ -10,7 +10,7 @@ import org.example.lexer.exceptions.UnsupportedCharacterException
 import java.util.*
 
 class Lexer(
-    private val reader: Iterator<String>, // el reader lee lines? chars? o el input completo?
+    private val reader: Iterator<String>,
     private val constructors: Collection<TokenConstructor>,
     private val keywords: KeywordTokenConstructor,
     private val whiteSpaces: List<Char>
@@ -18,7 +18,7 @@ class Lexer(
 
     private var currentLine: String = ""
     private var tokenOffset: Int = 0
-    private var line: Int = 0 // como currLine es "", line iniciada en 1 trae problemas
+    private var line: Int = 0
 
     override fun hasNext(): Boolean {
         if ((endedCurrentLine()) && !reader.hasNext()) {
@@ -29,12 +29,11 @@ class Lexer(
             currentLine = reader.next()
             tokenOffset = skipWhiteSpace(0)
             line++
-        } // quizás llamaría la condition "ontoNextLine" o algo así?
-        // no me encanta ese nombre porque se confunde con el loop de abajo igual...
+        }
 
         while (reader.hasNext() && currentLine.isEmpty()) {
             currentLine = reader.next()
-            tokenOffset = skipWhiteSpace(0) // hice que sWS devuelva para claridad
+            tokenOffset = skipWhiteSpace(0)
             line++
         }
 

@@ -1,26 +1,27 @@
 package org.example.parser
 
+import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
-import org.example.parser.exceptions.SyntaxException
+import org.example.common.results.Error
+import org.example.common.results.Success
 import org.example.parser.parsers.function.PrintParser
 import org.example.parser.parsers.VariableAssignationParser
 import org.example.parser.parsers.VariableDeclarationAssignationParser
 import org.example.parser.parsers.VariableDeclarationParser
 import org.example.token.Token
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class ParserTest {
 
-    // todo cambiar throws / analizar throws es lo mejor (medio raro)
     private lateinit var parser: Parser
     private val tokenFactory = TokenFactory()
-    private val AstFactory = AstFactory()
+    private val astFactory = AstFactory()
 
     @BeforeEach
     fun setUp() {
@@ -35,14 +36,11 @@ class ParserTest {
     }
 
 
-
     @Test
     fun `parse empty token list returns empty program`() {
         val emptyTokens = emptyList<Token>()
 
-        val exception = assertThrows<SyntaxException> { parser.parse(emptyTokens) }
-
-        assertEquals(exception.message, "Empty token list")
+        assertEquals(Error("Empty token list"), parser.parse(emptyTokens))
     }
 
     @Test
@@ -57,11 +55,10 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        val expectedSymbol = AstFactory.createSymbol("x")
-        val expected = AstFactory.createVariableDeclarator(expectedSymbol, Type.NUMBER)
+        val expectedSymbol = astFactory.createSymbol("x")
+        val expected = astFactory.createVariableDeclarator(expectedSymbol, Type.NUMBER)
 
-
-        assertEquals(expected, result)
+        assertSuccess<ASTNode>(result, expected)
     }
 
     @Test
@@ -80,15 +77,20 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        val expectedSymbol = AstFactory.createSymbol("x")
-        val expression = AstFactory.createBinaryExpression(
-            AstFactory.createNumber("5"),
+        val expectedSymbol = astFactory.createSymbol("x")
+        val expression = astFactory.createBinaryExpression(
+            astFactory.createNumber("5"),
             Operator.ADD,
-            AstFactory.createNumber("3")
+            astFactory.createNumber("3")
         )
-        val expected = AstFactory.createVariableDeclarator(expectedSymbol, Type.NUMBER, OptionalExpression.HasExpression(expression))
+        val expected = astFactory
+            .createVariableDeclarator(
+                expectedSymbol,
+                Type.NUMBER,
+                OptionalExpression.HasExpression(expression)
+            )
 
-        assertEquals(expected, result)
+        assertSuccess<ASTNode>(result, expected)
     }
 
     @Test
@@ -105,13 +107,13 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        val expected = AstFactory.createVariableDeclarator(
-            AstFactory.createSymbol("x"),
+        val expected = astFactory.createVariableDeclarator(
+            astFactory.createSymbol("x"),
             Type.STRING,
-            OptionalExpression.HasExpression(AstFactory.createString("John"))
+            OptionalExpression.HasExpression(astFactory.createString("John"))
         )
 
-        assertEquals(expected, result)
+        assertSuccess<ASTNode>(result, expected)
     }
 
     @Test
@@ -125,12 +127,12 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        val expected = AstFactory.createVariableAssigment(
-            AstFactory.createSymbol("x"),
-            OptionalExpression.HasExpression(AstFactory.createNumber("10"))
+        val expected = astFactory.createVariableAssigment(
+            astFactory.createSymbol("x"),
+            OptionalExpression.HasExpression(astFactory.createNumber("10"))
         )
 
-        assertEquals(expected, result)
+        assertSuccess<ASTNode>(result, expected)
     }
 
     @Test
@@ -144,12 +146,12 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        val expected = AstFactory.createVariableAssigment(
-            AstFactory.createSymbol("y"),
-            OptionalExpression.HasExpression(AstFactory.createSymbol("x"))
+        val expected = astFactory.createVariableAssigment(
+            astFactory.createSymbol("y"),
+            OptionalExpression.HasExpression(astFactory.createSymbol("x"))
         )
 
-        assertEquals(expected, result)
+        assertSuccess<ASTNode>(result, expected)
     }
 
     @Test
@@ -161,7 +163,7 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        assertThrows<SyntaxException> { parser.parse(tokens) }
+        assertTrue(parser.parse(tokens) is Error)
     }
 
     @Test
@@ -176,11 +178,11 @@ class ParserTest {
 
         val result = parser.parse(tokens)
 
-        val expected = AstFactory.createPrintFunction(
-            OptionalExpression.HasExpression(AstFactory.createString("Hello"))
+        val expected = astFactory.createPrintFunction(
+            OptionalExpression.HasExpression(astFactory.createString("Hello"))
         )
 
-        assertEquals(expected, result)
+        assertSuccess<ASTNode>(result, expected)
     }
 
 
@@ -193,8 +195,7 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
-        assertTrue(exception.message?.contains("Invalid structure for statement") == true)
+        assertInvalidStructure(tokens)
     }
 
     @Test
@@ -205,8 +206,7 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
-        assertTrue(exception.message?.contains("Invalid structure for statement") == true)
+        assertInvalidStructure(tokens)
     }
 
     @Test
@@ -218,15 +218,28 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
-        assertTrue(exception.message?.contains("Invalid structure for statement") == true)
+        assertInvalidStructure(tokens)
     }
 
     @Test
     fun `handles single semicolon`() {
         val tokens = listOf(tokenFactory.createSemicolon())
 
-        val exception = assertThrows<SyntaxException> { parser.parse(tokens) }
-        assertTrue(exception.message?.contains("Invalid structure for statement") == true)
+        assertInvalidStructure(tokens)
+    }
+
+    private fun assertInvalidStructure(tokens: List<Token>) {
+        val result = parser.parse(tokens)
+        assertTrue(
+            result is Error && result.message.contains("Invalid structure for statement")
+        )
+    }
+
+    private inline fun <reified T> assertSuccess(result: Any, expected: T) {
+        assertTrue(
+                result is Success<*>
+                && result.value is T
+                && result.value == expected
+        )
     }
 }

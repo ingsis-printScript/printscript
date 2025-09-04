@@ -1,9 +1,14 @@
 package org.example.cli.operations
 
-import org.example.cli.Request
+import org.example.common.results.Result
+import org.example.lexer.Lexer
+import org.example.parser.Parser
 
-class ValidationOperation : Operation {
-    override fun execute(args: Request) {
-        TODO("Not yet implemented")
+class ValidationOperation(lexer: Lexer, parser: Parser) : Operation {
+    override fun execute() : Result {
+        // lexer
+        // buffer
+        // parser
+        // result
     }
 }

@@ -1,6 +1,7 @@
 package org.example.cli
 
 import org.example.ast.ASTNode
+import org.example.cli.factory.ToolFactory
 
 class ClassicRunner : Runner {
     override fun validate(fileReader: Iterator<String>): String {
@@ -17,7 +18,7 @@ class ClassicRunner : Runner {
     override fun execute(fileReader: Iterator<String>): String {
         try {
             val ast = buildAst(fileReader)
-            val interpreter = ClassicFactory.interpreter()
+            val interpreter = ToolFactory.interpreter()
             val result = interpreter.visitStatement(ast) // ya no usamos program
             return "Execution successful: $ast" // no se si pasar el ast tho
         } catch (e: Exception) {
@@ -34,12 +35,12 @@ class ClassicRunner : Runner {
     }
 
     private fun buildAst(fileReader: Iterator<String>): ASTNode {
-        val lexer = ClassicFactory.lexer(fileReader)
+        val lexer = ToolFactory.lexer(fileReader)
         // algo pasa en el medio que idk que es
         // se llama al lexer para lex
         // idk como se carga el buffer
         // ese buffer se pasa a parser para hacer parse
-        val parser = ClassicFactory.parser()
+        val parser = ToolFactory.parser()
         return parser.parse(listOf()) // aca recibe el buffer cargado
     }
 }
