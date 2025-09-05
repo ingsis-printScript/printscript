@@ -2,6 +2,7 @@ package org.example.interpreter
 
 import org.example.common.PrintScriptIterator
 import org.example.ast.ASTNode
+import org.example.common.results.NoResult
 import org.example.common.results.Result
 
 class Interpreter(
@@ -23,4 +24,14 @@ class Interpreter(
         // Luego ejecutamos el nodo
         return executor.visit(node)
     }
+
+    fun run(): List<Result> {
+        val results = mutableListOf<Result>()
+        while (hasNext()) {
+            results.add(getNext())
+        }
+        return results
+    }
+
+
 }
