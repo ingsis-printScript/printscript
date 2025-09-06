@@ -5,8 +5,8 @@ import org.example.common.PrintScriptIterator
 import org.example.token.Token
 import org.example.lexer.constructors.KeywordTokenConstructor
 import org.example.lexer.constructors.TokenConstructor
-import org.example.lexer.exceptions.NoMoreTokensAvailableException
-import org.example.lexer.exceptions.UnsupportedCharacterException
+import org.example.common.exceptions.NoMoreTokensAvailableException
+import org.example.common.exceptions.UnsupportedCharacterException
 import java.util.*
 
 class Lexer(

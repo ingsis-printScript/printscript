@@ -2,14 +2,16 @@ package org.example.parser.validators
 
 import org.example.token.Token
 import org.example.common.enums.TokenType
+import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 
 class ArgumentValidator : TokenValidator {
-    override fun validate(statement: List<Token>, position: Int): ValidationResult {
-        val openingToken = statement.getOrNull(position)
-        val closingToken = statement.getOrNull(statement.size - 2)
+    override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
+        val openingToken = statementBuffer.lookahead(position)
+        val closingToken = statementBuffer.lookahead(statementBuffer.size - 2) // agregar find(;)?? -> daría index
+        // TODO (fix the fuck out of this. Or get rid of it and fix the fuck out of ExprValidator)
         if (isParenToken(openingToken, "(") && isParenToken(closingToken, ")")) {
-            val expression = statement.subList(position + 1, statement.size - 2) // diu diu diu
+            val expression = statementBuffer.subList(position + 1, statementBuffer.size - 2) // diu diu diu
             val validator = ExpressionValidator()
             return when (val result = validator.validate(expression, 0)) {
                 is ValidationResult.Success -> ValidationResult.Success(result.consumed + 2)

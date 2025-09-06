@@ -1,6 +1,7 @@
 package org.example.parser.validators
 
 import org.example.common.enums.TokenType
+import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.token.Token
 
@@ -8,8 +9,8 @@ class SymbolValidator: TokenValidator {
 
     private val symbolPattern = Regex("^[a-zA-Z_][a-zA-Z0-9_]*$")
 
-    override fun validate(statement: List<Token>, position: Int): ValidationResult {
-        val token: Token = statement[position]
+    override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
+        val token: Token = statementBuffer.lookahead(position)
         return when {
             token.type == TokenType.SYMBOL && isValidSymbolFormat(token.value) -> {
                 ValidationResult.Success(1)

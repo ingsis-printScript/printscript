@@ -1,9 +1,9 @@
 package org.example.parser.parsers
 
 import org.example.ast.ASTNode
-import org.example.token.Token
+import org.example.parser.TokenBuffer
 
 interface StatementParser {
-    fun buildAST(statement: List<Token>): ASTNode
+    fun buildAST(statementBuffer: TokenBuffer): ASTNode
     fun getPattern(): StatementPattern
 }

@@ -2,18 +2,19 @@ package org.example.parser.validators
 
 import org.example.token.Token
 import org.example.common.enums.TokenType
+import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.parser.exceptions.SyntaxException
 
 class ExpressionValidator : TokenValidator {
 
-    override fun validate(statement: List<Token>, position: Int): ValidationResult {
+    override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
         var pos = position
         var expectingElement = true
         val parenStack = ArrayDeque<Token>()
 
-        while (pos < statement.size) {
-            val token = statement[pos] // peek
+        while (statementBuffer.hasNext()) {
+            val token = statementBuffer.lookahead(pos)
 
             if (isSemicolon(token)) break
 
@@ -21,12 +22,12 @@ class ExpressionValidator : TokenValidator {
                 when {
                     TokenType.isElement(token.type) -> {
                         expectingElement = false
-                        validateElementToken(statement, pos)
+                        validateElementToken(statementBuffer, pos)
                         pos++
                     }
                     isStartingParen(token) -> {
                         parenStack.addLast(token)
-                        validatePunctuationToken(statement, pos, "(")
+                        validatePunctuationToken(statementBuffer, pos, "(")
                         pos++
                     }
                     else -> return error(pos, "Expected element or '(', found '${token.value}'")
@@ -35,11 +36,11 @@ class ExpressionValidator : TokenValidator {
                 when {
                     isOperator(token) -> {
                         expectingElement = true
-                        validateOperatorToken(statement, pos)
+                        validateOperatorToken(statementBuffer, pos)
                         pos++
                     }
                     isClosingParen(token) -> {
-                        validatePunctuationToken(statement, pos, ")")
+                        validatePunctuationToken(statementBuffer, pos, ")")
                         if (parenStack.isEmpty()) return error(pos, "Unmatched closing parenthesis ')'")
                         parenStack.removeLast()
                         pos++
@@ -52,9 +53,8 @@ class ExpressionValidator : TokenValidator {
         if (parenStack.isNotEmpty()) return error(pos, "Unmatched opening parenthesis '('")
 
         if (expectingElement && pos > position) return error(pos, "Expression cannot end with an operator")
-        // ver como manejar pos usando buffer, quizas mantener pos y ademas hacer advance
 
-        return ValidationResult.Success(pos - position) // ver como
+        return ValidationResult.Success(pos - position)
     }
 
     private fun isSemicolon(token: Token) = isPunctuation(token) && token.value == ";"
@@ -71,21 +71,21 @@ class ExpressionValidator : TokenValidator {
 
     private fun isStartingParen(token: Token) = isPunctuation(token) && token.value == "("
 
-    private fun validateElementToken(tokenList: List<Token>, pos: Int) {
-        val token = tokenList[pos]
+    private fun validateElementToken(tokens: TokenBuffer, pos: Int) {
+        val token = tokens.lookahead(pos)
         when (token.type) {
             TokenType.STRING -> {
-                StringValidator().validate(tokenList, pos).let {
+                StringValidator().validate(tokens, pos).let {
                     if (it is ValidationResult.Error) throw SyntaxException(it.message)
                 }
             }
             TokenType.NUMBER -> {
-                NumberValidator().validate(tokenList, pos).let {
+                NumberValidator().validate(tokens, pos).let {
                     if (it is ValidationResult.Error) throw SyntaxException(it.message)
                 }
             }
             TokenType.SYMBOL -> {
-                SymbolValidator().validate(tokenList, pos).let {
+                SymbolValidator().validate(tokens, pos).let {
                     if (it is ValidationResult.Error) throw SyntaxException(it.message)
                 }
             }
@@ -94,14 +94,14 @@ class ExpressionValidator : TokenValidator {
         }
     }
 
-    private fun validateOperatorToken(tokenList: List<Token>, pos: Int) {
-        OperatorValidator().validate(tokenList, pos).let {
+    private fun validateOperatorToken(tokens: TokenBuffer, pos: Int) {
+        OperatorValidator().validate(tokens, pos).let {
             if (it is ValidationResult.Error) throw SyntaxException(it.message)
         }
     }
 
-    private fun validatePunctuationToken(tokenList: List<Token>, pos: Int, expected: String) {
-        PunctuationValidator(expected).validate(tokenList, pos).let {
+    private fun validatePunctuationToken(tokens: TokenBuffer, pos: Int, expected: String) {
+        PunctuationValidator(expected).validate(tokens, pos).let {
             if (it is ValidationResult.Error) throw SyntaxException(it.message)
         }
     }

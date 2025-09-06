@@ -3,11 +3,8 @@ package org.example.parser.parsers.function
 import org.example.common.Position
 import org.example.common.Range
 import org.example.ast.ASTNode
-import org.example.ast.expressions.Expression
-import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.functions.PrintFunction
 import org.example.token.Token
-import org.example.common.enums.TokenType
 import org.example.parser.parsers.StatementParser
 import org.example.parser.parsers.StatementPattern
 import org.example.parser.validators.ArgumentValidator
@@ -25,14 +22,14 @@ class PrintParser : StatementParser {
     )
     private val leftParenPos = 1
 
-    override fun buildAST(statement: List<Token>): ASTNode {
+    override fun buildAST(statementBuffer: List<Token>): ASTNode {
         val range = Range(
-            Position(statement[0].position.line, statement[0].position.column),
-            Position(statement[statement.size - 1].position.line, statement[statement.size - 1].position.column)
+            Position(statementBuffer[0].position.line, statementBuffer[0].position.column),
+            Position(statementBuffer[statementBuffer.size - 1].position.line, statementBuffer[statementBuffer.size - 1].position.column)
         )
 
         val expressionBuilder = ExpressionBuilder()
-        val expression = expressionBuilder.buildExpression(statement, leftParenPos + 1, statement.size - 2)
+        val expression = expressionBuilder.buildExpression(statementBuffer, leftParenPos + 1, statementBuffer.size - 2)
 
         return PrintFunction(expression, range)
     }

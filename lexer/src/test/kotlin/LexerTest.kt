@@ -8,8 +8,8 @@ import org.example.lexer.constructors.StringTokenConstructor
 import org.example.lexer.constructors.SymbolTokenConstructor
 import org.example.lexer.constructors.TokenConstructor
 import org.example.lexer.Lexer
-import org.example.lexer.exceptions.NoMoreTokensAvailableException
-import org.example.lexer.exceptions.UnsupportedCharacterException
+import org.example.common.exceptions.NoMoreTokensAvailableException
+import org.example.common.exceptions.UnsupportedCharacterException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows

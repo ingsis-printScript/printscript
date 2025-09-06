@@ -1,26 +1,14 @@
 package org.example.parser.parsers
 
-import org.example.token.Token
+import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 
 internal class AnalyzeStatementService {
     companion object {
-        fun analyzeStatement(statement: List<Token>, pattern: StatementPattern): ValidationResult {
-            if (statement.size < pattern.validators.size) {
-                return ValidationResult.Error(
-                    "Expected ${pattern.validators.size} tokens, found ${statement.size}",
-                    0
-                )
-            }
-            var position = 0
+        fun analyzeStatement(statementBuffer: TokenBuffer, pattern: StatementPattern): ValidationResult {
+            var position = 1
             pattern.validators.forEachIndexed { _, validator ->
-                if (statement.size <= position) {
-                    return ValidationResult.Error(
-                        "Expected more tokens, found ${statement.size} at position $position",
-                        position
-                    )
-                }
-                when (val result = validator.validate(statement, position)) {
+                when (val result = validator.validate(statementBuffer, position)) {
                     is ValidationResult.Error -> return result
                     is ValidationResult.Success -> position += result.consumed
                 }

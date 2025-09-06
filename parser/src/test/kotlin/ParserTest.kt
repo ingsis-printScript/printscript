@@ -40,7 +40,7 @@ class ParserTest {
     fun `parse empty token list returns empty program`() {
         val emptyTokens = emptyList<Token>()
 
-        assertEquals(Error("Empty token list"), parser.parse(emptyTokens))
+        assertEquals(Error("No tokens to parse"), parser.parse(emptyTokens))
     }
 
     @Test

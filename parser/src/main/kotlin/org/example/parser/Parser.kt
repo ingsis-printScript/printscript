@@ -13,12 +13,10 @@ import org.example.parser.parsers.StatementParser
 
 class Parser(val parsers: List<StatementParser>) {
 
-    // isEndToken podría ajustarse con args -> recibir expected (TokenType y symbol)
-
-    fun parse(tokenList: List<Token>): Result {
-        if (tokenList.isEmpty()) { return Error("Empty token list") }
+    fun parse(tokenBuffer: TokenBuffer): Result {
+        if (!tokenBuffer.hasNext()) { return Error("No tokens to parse") }
         try {
-            val node: ASTNode = parseStatement(tokenList, parsers)
+            val node: ASTNode = parseStatement(tokenBuffer, parsers)
             return Success(node as Statement)
         } catch (e: SyntaxException) {
             return Error(e.message ?: "Unknown error")
@@ -32,22 +30,22 @@ class Parser(val parsers: List<StatementParser>) {
     // si sale bien, tiro success
     // no can parse
 
-    private fun parseStatement(statement: List<Token>, parsers: List<StatementParser>): ASTNode {
+    private fun parseStatement(statementBuffer: TokenBuffer, parsers: List<StatementParser>): ASTNode {
         var bestError: ValidationResult.Error? = null
         var maxTokensConsumed = -1
 
         for (parser in parsers) {
-            val result = AnalyzeStatementService.analyzeStatement(statement, parser.getPattern())
+            val result = AnalyzeStatementService.analyzeStatement(statementBuffer, parser.getPattern())
 
             when (result) {
-                is ValidationResult.Success -> return parser.buildAST(statement)
+                is ValidationResult.Success -> return parser.buildAST(statementBuffer)
                 is ValidationResult.Error -> {
                     bestError = updateBestError(result, bestError, maxTokensConsumed)
                         .also { maxTokensConsumed = maxOf(maxTokensConsumed, result.position) }
                 }
             }
         }
-        throw createParsingException(bestError, maxTokensConsumed, statement)
+        throw createParsingException(bestError, maxTokensConsumed)
     }
 
     private fun updateBestError(
@@ -60,11 +58,10 @@ class Parser(val parsers: List<StatementParser>) {
 
     private fun createParsingException(
         bestError: ValidationResult.Error?,
-        maxTokensConsumed: Int,
-        statement: List<Token>
+        maxTokensConsumed: Int
     ): SyntaxException {
         return if (bestError == null || maxTokensConsumed == 0) {
-            SyntaxException("Invalid structure for statement: $statement")
+            SyntaxException("Invalid structure for statement")
         } else {
             errorAt(bestError.message, bestError.position)
         }
