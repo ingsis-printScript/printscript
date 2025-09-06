@@ -4,6 +4,7 @@ import org.example.common.Position
 import org.example.common.Range
 import org.example.ast.ASTNode
 import org.example.ast.statements.functions.PrintFunction
+import org.example.parser.TokenBuffer
 import org.example.token.Token
 import org.example.parser.parsers.StatementParser
 import org.example.parser.parsers.StatementPattern

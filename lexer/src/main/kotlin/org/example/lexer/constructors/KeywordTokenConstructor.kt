@@ -9,14 +9,8 @@ class KeywordTokenConstructor : TokenConstructor {
 
     private val keywords = setOf(
         "if", "else", "while", "for", "function", "return", "let", "var", "const",
-        "true", "false", "null", "print", "println", "number", "string", "boolean"
-    )
-
-    // DUDA: NUMBER y STRING no son literales? o sea, son 2, "hola"... no?
-    // o sea, si recibo "number", eso es un keyword, pero con este map convierte a token de tipo literal
-    //RESPUESTA: pero tambien son propias del lenguaje, son tipos de datos
-    // en el let a: string = "hola" el "hola" es el StringTokenConstructor y el string es un keyword
-    private val literals = mapOf("number" to TokenType.NUMBER, "string" to TokenType.STRING)
+        "true", "false", "null", "print", "println", "boolean"
+    ) //TODO(cambiar a que reciba desde afuera)
 
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
@@ -26,7 +20,6 @@ class KeywordTokenConstructor : TokenConstructor {
 
         val tokenType = when {
             keywords.contains(firstWord) -> TokenType.KEYWORD
-            literals.containsKey(firstWord) -> literals[firstWord]!!
             else -> return Optional.empty()
         }
 

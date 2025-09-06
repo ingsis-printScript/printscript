@@ -6,6 +6,7 @@ import org.example.ast.ASTNode
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.common.enums.Type
+import org.example.parser.TokenBuffer
 import org.example.token.Token
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.expressionbuilder.ExpressionBuilder

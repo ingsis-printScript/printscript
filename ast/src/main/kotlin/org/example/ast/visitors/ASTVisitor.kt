@@ -2,7 +2,7 @@ package org.example.ast.visitors
 
 import org.example.ast.ASTNode
 
-// El AST define nodos (Program, BinaryExpression, etc.) y cómo se relacionan.
+// El AST define nodos (BinaryExpression, etc.) y cómo se relacionan.
 // El Visitor define qué hacer con cada tipo de nodo, sin meter esa lógica dentro del propio nodo.
 // Ventaja: Extensibilidad evita usar muchos "when"
 

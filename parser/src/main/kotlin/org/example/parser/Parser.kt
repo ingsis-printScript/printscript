@@ -5,10 +5,7 @@ import org.example.ast.statements.Statement
 import org.example.common.results.Error
 import org.example.common.results.Result
 import org.example.common.results.Success
-import org.example.token.Token
 import org.example.parser.exceptions.SyntaxException
-import org.example.parser.exceptions.errorAt
-import org.example.parser.parsers.AnalyzeStatementService
 import org.example.parser.parsers.StatementParser
 
 class Parser(val parsers: List<StatementParser>) {
@@ -25,23 +22,20 @@ class Parser(val parsers: List<StatementParser>) {
         }
     }
 
-    //TODO: chau canParse, devolver el error del que falle last...
-    // el que mas lejos llega (pero sin success, no llegó al final) me indica el error que obtuve.
-    // si sale bien, tiro success
-    // no can parse
 
     private fun parseStatement(statementBuffer: TokenBuffer, parsers: List<StatementParser>): ASTNode {
-        var bestError: ValidationResult.Error? = null
+        var bestError: ValidationResult.Error? = null //maneja un nullllll
         var maxTokensConsumed = -1
 
         for (parser in parsers) {
             val result = AnalyzeStatementService.analyzeStatement(statementBuffer, parser.getPattern())
 
             when (result) {
+                //TODO(Crear una lista que tenga todos los tokens que se consumieron y ahi buildear el ast)
                 is ValidationResult.Success -> return parser.buildAST(statementBuffer)
                 is ValidationResult.Error -> {
                     bestError = updateBestError(result, bestError, maxTokensConsumed)
-                        .also { maxTokensConsumed = maxOf(maxTokensConsumed, result.position) }
+                        .also { maxTokensConsumed = maxOf(maxTokensConsumed, result.position) } //TODO(Chequear tests)
                 }
             }
         }
@@ -63,7 +57,7 @@ class Parser(val parsers: List<StatementParser>) {
         return if (bestError == null || maxTokensConsumed == 0) {
             SyntaxException("Invalid structure for statement")
         } else {
-            errorAt(bestError.message, bestError.position)
+            SyntaxException.errorAt(bestError.message, bestError.position)
         }
     }
 }

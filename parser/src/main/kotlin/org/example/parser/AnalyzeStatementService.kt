@@ -1,7 +1,6 @@
-package org.example.parser.parsers
+package org.example.parser
 
-import org.example.parser.TokenBuffer
-import org.example.parser.ValidationResult
+import org.example.parser.parsers.StatementPattern
 
 internal class AnalyzeStatementService {
     companion object {

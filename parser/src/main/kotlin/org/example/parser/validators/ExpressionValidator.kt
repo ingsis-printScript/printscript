@@ -6,7 +6,7 @@ import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.parser.exceptions.SyntaxException
 
-class ExpressionValidator : TokenValidator {
+class ExpressionValidator(val terminatorToken: Token) : TokenValidator {
 
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
         var pos = position
@@ -16,7 +16,7 @@ class ExpressionValidator : TokenValidator {
         while (statementBuffer.hasNext()) {
             val token = statementBuffer.lookahead(pos)
 
-            if (isSemicolon(token)) break
+            if (isTerminatorToken(token)) break
 
             if (expectingElement) {
                 when {
@@ -105,6 +105,8 @@ class ExpressionValidator : TokenValidator {
             if (it is ValidationResult.Error) throw SyntaxException(it.message)
         }
     }
+
+    private fun isTerminatorToken(token: Token) = token.type == terminatorToken.type && token.value == terminatorToken.value
 
     override fun getExpectedDescription(): String {
         return "An expression with elements, operators, parentheses ending with ';'"

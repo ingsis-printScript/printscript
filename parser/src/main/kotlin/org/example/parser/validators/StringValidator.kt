@@ -7,7 +7,7 @@ import org.example.token.Token
 
 class StringValidator : TokenValidator {
 
-       private val stringPattern = Regex(".*")
+       private val stringPattern = Regex("^\\(.*\\)$")
 
        override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
            val token: Token = statementBuffer.lookahead(position)

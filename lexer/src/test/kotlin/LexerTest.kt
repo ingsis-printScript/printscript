@@ -119,25 +119,14 @@ class LexerTest {
     fun `debug whitespace trailing issue`() {
         val lexer = createLexer("   let   ")
 
-        println("=== DEBUGGING WHITESPACE ISSUE ===")
-
-        println("1. First hasNext(): ${lexer.hasNext()}")
-
         if (lexer.hasNext()) {
             val token = lexer.getNext()
-            println("2. Got token: '${token.value}' (${token.type})")
         }
 
         val hasMoreTokens = lexer.hasNext()
-        println("3. Second hasNext(): $hasMoreTokens")
 
         if (hasMoreTokens) {
-            try {
-                val nextToken = lexer.getNext()
-                println("4. Unexpected token: '${nextToken.value}' (${nextToken.type})")
-            } catch (e: Exception) {
-                println("4. Exception getting next token: ${e.message}")
-            }
+            lexer.getNext()
         }
 
         assertFalse(hasMoreTokens, "Should not have more tokens after 'let'")
@@ -210,7 +199,7 @@ class LexerTest {
 
     @Test
     fun `test complex PrintScript statement with arithmetic expression`() {
-        // Given - "let a: number=(2+2)/2;"
+        // Given - "a4 =(2+2)/2;"
         val arithmeticConstructors = listOf(
             NumberTokenConstructor(),
             SymbolTokenConstructor(),
@@ -218,14 +207,13 @@ class LexerTest {
             PunctuationTokenConstructor()
         )
         val config = buildConfigWithConstructors(*arithmeticConstructors.toTypedArray())
-        val lexer = createLexer("let a:number=(2+2) /2;", config)
+        val lexer = createLexer("a4:number =(2+2) /2;", config)
 
         // When & Then - Verify token sequence
         val expectedTokens = listOf(
-            TokenType.KEYWORD to "let",
-            TokenType.SYMBOL to "a",
+            TokenType.SYMBOL to "a4",
             TokenType.PUNCTUATION to ":",
-            TokenType.KEYWORD to "number",
+            TokenType.SYMBOL to "number",
             TokenType.PUNCTUATION to "=",
             TokenType.PUNCTUATION to "(",
             TokenType.NUMBER to "2",
