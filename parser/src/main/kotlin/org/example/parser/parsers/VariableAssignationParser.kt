@@ -27,13 +27,6 @@ class VariableAssignationParser : StatementParser {
     private val idPos = 0
     private val equalsPos = 1
 
-    override fun canParse(statement: List<Token>): Boolean {
-        return statement.size > equalsPos &&
-            statement[idPos].type == TokenType.SYMBOL &&
-            statement[equalsPos].type == TokenType.PUNCTUATION &&
-            statement[equalsPos].value == "="
-    }
-
     override fun buildAST(statement: List<Token>): ASTNode {
         val symbol = SymbolExpression(
             statement[idPos].value,

@@ -23,15 +23,7 @@ class PrintParser : StatementParser {
             PunctuationValidator(";")
         )
     )
-    private val idPos = 0
     private val leftParenPos = 1
-
-    override fun canParse(statement: List<Token>): Boolean {
-        return statement.size > leftParenPos &&
-            statement[idPos].type == TokenType.SYMBOL && // TODO(CHECK SYMBOL)
-            statement[leftParenPos].type == TokenType.PUNCTUATION &&
-            statement[leftParenPos].value == "("
-    }
 
     override fun buildAST(statement: List<Token>): ASTNode {
         val range = Range(
