@@ -3,24 +3,28 @@ package org.example.interpreter
 import org.example.ast.ASTNode
 import org.example.common.enums.Type
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.result.NoResult
-import org.example.interpreter.result.Results
-import org.example.interpreter.result.Success
+import org.example.common.results.Result
 import org.example.ast.visitors.ASTVisitor
+import org.example.common.results.NoResult
+import org.example.common.results.Success
 
 class Executor (
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>
-) : ASTVisitor<Results> {
+) : ASTVisitor<Result> {
 
     private val environment = mutableMapOf<String, Any?>()
     private val stack = mutableListOf<Any?>()
-    private var lastResult: Results = NoResult()
+    private var lastResult: Result = NoResult()
 
 
 
     fun evaluate(node: ASTNode): Any? {
         node.accept(this)
         return popLiteral()
+    }
+
+    fun printValue(value: Any?) {
+        println(value) // imprime en consola
     }
 
 
@@ -43,13 +47,13 @@ class Executor (
     }
 
 
-    override fun visit(node: ASTNode): Results {
+    override fun visit(node: ASTNode): Result {
         val handler = handlers[node::class.java] as ASTNodeHandler<ASTNode>
         handler.handleExecution(node, this)
         return Success(Unit)
     }
 
-    fun returnResult(result: Results) {
+    fun returnResult(result: Result) {
         lastResult = result
     }
 
