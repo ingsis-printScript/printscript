@@ -4,7 +4,7 @@ import org.example.ast.statements.functions.FunctionCall
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 
-class FunctionCallHandler : ASTNodeHandler<FunctionCall> {
+class PrintFunctionHandler : ASTNodeHandler<FunctionCall> {
     override fun handleExecution(
         node: FunctionCall,
         executor: Executor

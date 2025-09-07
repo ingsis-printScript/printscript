@@ -1,6 +1,6 @@
 package formatters
 
-class FunctionCallFormat: ASTFormat {
+class PrintFunctionFormat: ASTFormat {
     override fun formatNode() {
         TODO("Not yet implemented")
     }
