@@ -3,13 +3,12 @@ package org.example.lexer.constructors
 import org.example.common.Position
 import org.example.token.Token
 import org.example.common.enums.TokenType
+import org.example.common.enums.Operator
 import java.util.*
 
 class OperatorTokenConstructor : TokenConstructor {
 
-    private val operators = setOf(
-        "+", "-", "*", "/", "%", "!=", "<", "<=", ">", ">=", "&&", "||", "!"
-    )
+    val operators = Operator.entries.map { it.symbol }
 
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()

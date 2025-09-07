@@ -3,14 +3,16 @@ package org.example.lexer.constructors
 import org.example.common.Position
 import org.example.token.Token
 import org.example.common.enums.TokenType
+import org.example.common.enums.keywords.ConditionalKeyword
+import org.example.common.enums.keywords.DeclaratorKeyword
+import org.example.common.enums.keywords.LoopKeyword
 import java.util.*
 
 class KeywordTokenConstructor : TokenConstructor {
 
-    private val keywords = setOf(
-        "if", "else", "while", "for", "function", "return", "let", "var", "const",
-        "true", "false", "null", "print", "println", "boolean"
-    ) //TODO(cambiar a que reciba desde afuera)
+    private val keywords = DeclaratorKeyword.entries.map { it.value }.toSet() +
+        LoopKeyword.entries.map { it.value } +
+        ConditionalKeyword.entries.map { it.value }
 
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
