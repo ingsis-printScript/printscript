@@ -3,7 +3,7 @@ package org.example.lexer.constructors
 import org.example.common.Position
 import org.example.token.Token
 import org.example.common.enums.TokenType
-import org.example.common.interfaces.Keyword
+import org.example.common.tokens.Keyword
 import java.util.*
 
 class KeywordTokenConstructor(private val keywords: Set<Keyword>) : TokenConstructor {

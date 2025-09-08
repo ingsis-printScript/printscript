@@ -3,7 +3,7 @@ package org.example.lexer.constructors
 import org.example.common.Position
 import org.example.token.Token
 import org.example.common.enums.TokenType
-import org.example.common.interfaces.Operator
+import org.example.common.tokens.Operator
 import java.util.*
 
 class OperatorTokenConstructor(private val operators: Set<Operator>) : TokenConstructor {

@@ -1,4 +1,4 @@
-package org.example.common.interfaces
+package org.example.common.tokens
 
 interface Keyword {
     val value: String

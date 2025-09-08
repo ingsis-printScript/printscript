@@ -3,7 +3,7 @@ package org.example.lexer.constructors
 import org.example.common.Position
 import org.example.token.Token
 import org.example.common.enums.TokenType
-import org.example.common.interfaces.Punctuation
+import org.example.common.tokens.Punctuation
 import java.util.*
 
 class PunctuationTokenConstructor(private val punctuations: Set<Punctuation>) : TokenConstructor {
