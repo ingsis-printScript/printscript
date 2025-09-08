@@ -3,16 +3,10 @@ package org.example.lexer.constructors
 import org.example.common.Position
 import org.example.token.Token
 import org.example.common.enums.TokenType
-import org.example.common.enums.keywords.ConditionalKeyword
-import org.example.common.enums.keywords.DeclaratorKeyword
-import org.example.common.enums.keywords.LoopKeyword
+import org.example.common.interfaces.Keyword
 import java.util.*
 
-class KeywordTokenConstructor : TokenConstructor {
-
-    private val keywords = DeclaratorKeyword.entries.map { it.value }.toSet() +
-        LoopKeyword.entries.map { it.value } +
-        ConditionalKeyword.entries.map { it.value }
+class KeywordTokenConstructor(private val keywords: Set<Keyword>) : TokenConstructor {
 
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
@@ -21,7 +15,7 @@ class KeywordTokenConstructor : TokenConstructor {
         if (firstWord.isEmpty()) return Optional.empty()
 
         val tokenType = when {
-            keywords.contains(firstWord) -> TokenType.KEYWORD
+            keywords.any { it.value.equals(firstWord, ignoreCase = true) } -> TokenType.KEYWORD
             else -> return Optional.empty()
         }
 

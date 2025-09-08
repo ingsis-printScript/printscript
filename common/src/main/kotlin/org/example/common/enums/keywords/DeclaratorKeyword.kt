@@ -1,5 +1,7 @@
 package org.example.common.enums.keywords
 
+import org.example.common.interfaces.Keyword
+
 enum class DeclaratorKeyword(override val value: String): Keyword {
     LET("let"),
     VAR("var"),
