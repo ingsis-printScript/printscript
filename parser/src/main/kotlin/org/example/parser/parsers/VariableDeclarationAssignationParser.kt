@@ -33,7 +33,7 @@ class VariableDeclarationAssignationParser : StatementParser {
     private val idPos = 1
     private val equalsPos = 4
 
-    override fun buildAST(statementBuffer: List<Token>): ASTNode {
+    override fun buildAST(statementBuffer: TokenBuffer): ASTNode {
         val symbol = SymbolExpression(
             statementBuffer[idPos].value,
             Position(statementBuffer[idPos].position.line, statementBuffer[idPos].position.column)

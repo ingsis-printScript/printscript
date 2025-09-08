@@ -4,111 +4,90 @@ import org.example.token.Token
 import org.example.common.enums.TokenType
 import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
-import org.example.parser.exceptions.SyntaxException
 
-class ExpressionValidator(val terminatorToken: Token) : TokenValidator {
+class ExpressionValidator (
+    private val isElement: (Token) -> Boolean = { t ->
+        t.type == TokenType.NUMBER || t.type == TokenType.STRING || t.type == TokenType.SYMBOL
+    },
+    private val isOperator: (Token) -> Boolean = { t -> t.type == TokenType.OPERATOR },
+    private val isGroupStart: (Token) -> Boolean = { t -> t.type == TokenType.PUNCTUATION && t.value == "(" },
+    private val isGroupEnd:   (Token) -> Boolean = { t -> t.type == TokenType.PUNCTUATION && t.value == ")" }
+) : TokenValidator {
+
+    override fun getExpectedDescription(): String {
+        return "An expression with elements, operators, parentheses"
+    }
 
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
         var pos = position
-        var expectingElement = true
-        val parenStack = ArrayDeque<Token>()
+        var needElem = true
+        var depth = 0
 
         while (statementBuffer.hasNext()) {
-            val token = statementBuffer.lookahead(pos)
+            val t = statementBuffer.lookahead(pos)
 
-            if (isTerminatorToken(token)) break
+            if (softEnd(t, needElem, depth)) break
 
-            if (expectingElement) {
-                when {
-                    TokenType.isElement(token.type) -> {
-                        expectingElement = false
-                        validateElementToken(statementBuffer, pos)
-                        pos++
-                    }
-                    isStartingParen(token) -> {
-                        parenStack.addLast(token)
-                        validatePunctuationToken(statementBuffer, pos, "(")
-                        pos++
-                    }
-                    else -> return error(pos, "Expected element or '(', found '${token.value}'")
+            if (needElem) {
+                when (val r = consumeElementOrGroup(statementBuffer, pos, depth)) {
+                    is Step.Fail      -> return r.err
+                    is Step.Advanced  -> { pos = r.pos; needElem = false; depth = r.depth }
+                    is Step.Stop  -> return ValidationResult.Error("Internal bug!", pos) // should not happen
                 }
             } else {
-                when {
-                    isOperator(token) -> {
-                        expectingElement = true
-                        validateOperatorToken(statementBuffer, pos)
-                        pos++
-                    }
-                    isClosingParen(token) -> {
-                        validatePunctuationToken(statementBuffer, pos, ")")
-                        if (parenStack.isEmpty()) return error(pos, "Unmatched closing parenthesis ')'")
-                        parenStack.removeLast()
-                        pos++
-                    }
-                    else -> return error(pos, "Expected operator or ')', found '${token.value}'")
+                when (val r = afterElementStep(statementBuffer, pos, depth)) {
+                    is Step.Fail      -> return r.err
+                    is Step.Stop      -> break
+                    is Step.Advanced  -> { pos = r.pos; needElem = r.needElem; depth = r.depth }
                 }
             }
         }
-
-        if (parenStack.isNotEmpty()) return error(pos, "Unmatched opening parenthesis '('")
-
-        if (expectingElement && pos > position) return error(pos, "Expression cannot end with an operator")
-
-        return ValidationResult.Success(pos - position)
+        return finalize(position, pos, needElem, depth)
     }
 
-    private fun isSemicolon(token: Token) = isPunctuation(token) && token.value == ";"
+    // ---------- helpers ----------
 
-    private fun error(pos: Int, message: String): ValidationResult.Error {
-        return ValidationResult.Error(message, pos)
-    }
+    private fun softEnd(t: Token, needElem: Boolean, depth: Int): Boolean =
+        !needElem && depth == 0 && !isOperator(t)
 
-    private fun isOperator(token: Token) = token.type == TokenType.OPERATOR
-
-    private fun isClosingParen(token: Token) = isPunctuation(token) && token.value == ")"
-
-    private fun isPunctuation(token: Token) = token.type == TokenType.PUNCTUATION
-
-    private fun isStartingParen(token: Token) = isPunctuation(token) && token.value == "("
-
-    private fun validateElementToken(tokens: TokenBuffer, pos: Int) {
-        val token = tokens.lookahead(pos)
-        when (token.type) {
-            TokenType.STRING -> {
-                StringValidator().validate(tokens, pos).let {
-                    if (it is ValidationResult.Error) throw SyntaxException(it.message)
-                }
-            }
-            TokenType.NUMBER -> {
-                NumberValidator().validate(tokens, pos).let {
-                    if (it is ValidationResult.Error) throw SyntaxException(it.message)
-                }
-            }
-            TokenType.SYMBOL -> {
-                SymbolValidator().validate(tokens, pos).let {
-                    if (it is ValidationResult.Error) throw SyntaxException(it.message)
-                }
-            }
-
-            else -> {throw SyntaxException("Expecting element, got '${token.value}'")}
+   private fun consumeElementOrGroup(buf: TokenBuffer, pos0: Int, depth0: Int): Step {
+        val t = buf.lookahead(pos0)
+        return when {
+            isElement(t) -> Step.Advanced(pos0 + 1, needElem = false, depth = depth0)
+            isGroupStart(t) -> Step.Advanced(pos0 + 1, needElem = true, depth = depth0 + 1)
+            else -> Step.Fail(err(pos0, "Expected element or '(', found '${t.value}'"))
         }
     }
 
-    private fun validateOperatorToken(tokens: TokenBuffer, pos: Int) {
-        OperatorValidator().validate(tokens, pos).let {
-            if (it is ValidationResult.Error) throw SyntaxException(it.message)
+    private fun afterElementStep(buf: TokenBuffer, pos0: Int, depth0: Int): Step {
+        val t = buf.lookahead(pos0)
+        return when {
+            isOperator(t) ->
+                Step.Advanced(pos0 + 1, needElem = true, depth = depth0)
+            isGroupEnd(t) && depth0 > 0 ->
+                Step.Advanced(pos0 + 1, needElem = false, depth = depth0 - 1)
+            isGroupEnd(t) && depth0 == 0 ->
+                Step.Stop
+            else ->
+                if (depth0 == 0) Step.Stop
+                else Step.Fail(err(pos0, "Expected operator or ')', found '${t.value}'"))
         }
     }
 
-    private fun validatePunctuationToken(tokens: TokenBuffer, pos: Int, expected: String) {
-        PunctuationValidator(expected).validate(tokens, pos).let {
-            if (it is ValidationResult.Error) throw SyntaxException(it.message)
-        }
+    private fun finalize(start: Int, pos: Int, needElem: Boolean, depth: Int): ValidationResult {
+        if (depth != 0) return err(pos, "Unmatched '('")
+        if (needElem && pos > start) return err(pos, "Expression cannot end with operator")
+        return ValidationResult.Success(pos - start)
     }
 
-    private fun isTerminatorToken(token: Token) = token.type == terminatorToken.type && token.value == terminatorToken.value
+    // ---------- util ----------
 
-    override fun getExpectedDescription(): String {
-        return "An expression with elements, operators, parentheses ending with ';'"
+    private fun err(p: Int, m: String) = ValidationResult.Error(m, p)
+
+    private sealed class Step {
+        data class Advanced(val pos: Int, val needElem: Boolean, val depth: Int) : Step()
+        data object Stop : Step()
+        data class Fail(val err: ValidationResult.Error) : Step()
     }
 }
+
