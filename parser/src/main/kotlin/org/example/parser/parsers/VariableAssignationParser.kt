@@ -5,7 +5,7 @@ import org.example.common.Range
 import org.example.ast.ASTNode
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableAssigner
-import org.example.token.Token
+import org.example.parser.TokenBuffer
 import org.example.parser.expressionbuilder.ExpressionBuilder
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.PunctuationValidator
@@ -25,7 +25,7 @@ class VariableAssignationParser : StatementParser {
     private val idPos = 0
     private val equalsPos = 1
 
-    override fun buildAST(statementBuffer: List<Token>): ASTNode {
+    override fun buildAST(statementBuffer: TokenBuffer): ASTNode {
         val symbol = SymbolExpression(
             statementBuffer[idPos].value,
             Position(statementBuffer[idPos].position.line, statementBuffer[idPos].position.column)

@@ -27,7 +27,7 @@ class VariableDeclarationParser : StatementParser {
         )
     )
 
-    override fun buildAST(statementBuffer: List<Token>): ASTNode {
+    override fun buildAST(statementBuffer: TokenBuffer): ASTNode {
         val symbol = SymbolExpression(
             statementBuffer[1].value,
             Position(statementBuffer[1].position.line, statementBuffer[1].position.column)

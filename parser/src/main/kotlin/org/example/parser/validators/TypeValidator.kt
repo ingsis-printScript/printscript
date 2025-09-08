@@ -12,7 +12,7 @@ class TypeValidator : TokenValidator {
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
         val token: Token = statementBuffer.lookahead(position)
         return if (token.type == TokenType.SYMBOL) {
-            if (Type.fromString(token.value) != null) {
+            if (Type.fromString(token.value) != null) { // TODO: issue con BOOLEAN; debe poder declararse según la vers
                 ValidationResult.Success(1)
             } else {
                 ValidationResult.Error(

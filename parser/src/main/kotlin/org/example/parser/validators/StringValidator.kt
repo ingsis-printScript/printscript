@@ -12,7 +12,7 @@ class StringValidator : TokenValidator {
        override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
            val token: Token = statementBuffer.lookahead(position)
            return when {
-               token.type == TokenType.STRING && token.value.matches(stringPattern) -> {
+               token.type == TokenType.STRING && isValidStringFormat(token.value) -> {
                    ValidationResult.Success(1)
                }
                else -> {
