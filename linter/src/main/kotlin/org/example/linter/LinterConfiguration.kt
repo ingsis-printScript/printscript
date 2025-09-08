@@ -13,5 +13,3 @@ data class LinterConfiguration(private val data: Map<String, Any>){
         return data[key] as? Int
     }
 }
-
-//en cualquier caso tengo que agregar un metodo aca pero bueno.

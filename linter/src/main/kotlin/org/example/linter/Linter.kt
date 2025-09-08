@@ -1,37 +1,36 @@
 package org.example.linter
 
 import org.example.ast.ASTNode
+import org.example.linter.configurationreaders.ConfigurationReader
+import org.example.linter.data.LinterReport
+import org.example.linter.data.LinterViolation
 import org.example.linter.rules.Rule
+import org.example.linter.rules.rulefactory.RuleFactory
 
 class Linter(
-    private val rules: List<Rule>,
-    private val configurationReader: ConfigurationReader,
-    private val configurationFactory: ConfigurationFactory
-    ) {
-        fun analyze(ast: ASTNode, configPath: String): LinterReport {
-            val configData = configurationReader.read(configPath)
-            val configuration = configurationFactory.createConfiguration(configData)
-
-            val violations = mutableListOf<LinterViolation>()
-            val enabledRules = rules.filter { it.isEnabled(configuration) }
-
-            for (rule in enabledRules) {
-                violations.addAll(rule.check(ast, configuration))
-            }
-
-            return LinterReport(violations, enabledRules.map { it.getName() })
-        }
-    }
-
-data class LinterReport(
-    val violations: List<LinterViolation>,
-    val appliedRules: List<String>
+    private val ruleFactories: List<(RuleFactory)>,
+    private val configurationReader: ConfigurationReader
 ) {
-    fun hasViolations(): Boolean = violations.isNotEmpty()
 
-    fun getViolationCount(): Int = violations.size
+    fun analyze(ast: ASTNode, configPath: String): LinterReport {
+        val configData = configurationReader.read(configPath)
+        val configuration = LinterConfiguration(configData)
 
-    fun getViolationsByType(): Map<Severity, List<LinterViolation>> {
-        return violations.groupBy { it.severity }
+
+        val rules = mutableListOf<Rule>()
+        for (factory in ruleFactories) {
+            val rule = factory.create(configuration)
+            rules.add(rule)
+        }
+
+        val enabledRules = rules.filter { it.isEnabled() }
+        val violations = mutableListOf<LinterViolation>()
+        for (rule in enabledRules) {
+            violations.addAll(rule.check(ast))
+        }
+
+        return LinterReport(
+            violations = violations,
+        )
     }
 }

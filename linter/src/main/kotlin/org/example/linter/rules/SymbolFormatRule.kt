@@ -13,7 +13,7 @@ import org.example.ast.statements.functions.PrintFunction
 import org.example.common.Range
 import org.example.common.enums.SymbolFormat
 import org.example.linter.LinterConfiguration
-import org.example.linter.LinterViolation
+import org.example.linter.data.LinterViolation
 
 class SymbolFormatRule(private val config: LinterConfiguration): Rule {
 

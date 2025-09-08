@@ -6,7 +6,7 @@ import org.example.ast.expressions.Expression
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.functions.PrintFunction
 import org.example.linter.LinterConfiguration
-import org.example.linter.LinterViolation
+import org.example.linter.data.LinterViolation
 
 class PrintArgumentRule(private val config: LinterConfiguration): Rule {
 
@@ -25,7 +25,10 @@ class PrintArgumentRule(private val config: LinterConfiguration): Rule {
     }
 
     override fun visit(node: ASTNode): List<LinterViolation> {
-        //no quiero un when, hagamos un mapa mejor y que lo reciba (es de los nodos)
+        //recibiria un mapa?
+        when (node) {
+            is PrintFunction -> checkPrintlnArguments(node)
+        }
         return violations
     }
 
@@ -35,7 +38,9 @@ class PrintArgumentRule(private val config: LinterConfiguration): Rule {
             is OptionalExpression.NoExpression -> {return}
             is OptionalExpression.HasExpression -> {
                 val expression: Expression = value.expression
-                if (expression is BinaryExpression) violations.add(LinterViolation("println() should only be called with identifiers or literals, not expressions",
+                if (expression is BinaryExpression) violations
+                    .add(LinterViolation(
+                        "println() should only be called with identifiers or literals, not expressions",
                     expression.range))
             } //tambien puedo crear un mapa (osea recibirlo) y entonces hacerlo MAS extensible y marcar en el mapa los nodos que quiero que me rompan esto
         }

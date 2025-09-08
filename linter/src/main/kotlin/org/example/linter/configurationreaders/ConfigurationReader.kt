@@ -26,7 +26,4 @@ class ConfigurationReader(private val strategies: List<MapperStrategy> ) {
             throw IllegalArgumentException("Invalid format in file: $filePath. Error: ${e.message}")
         }
     }
-
-
-
 }
