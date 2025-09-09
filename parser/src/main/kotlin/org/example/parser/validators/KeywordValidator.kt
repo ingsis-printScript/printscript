@@ -14,7 +14,7 @@ class KeywordValidator() : TokenValidator {
         val token: Token = statementBuffer.lookahead(position)
         return if (token.type == TokenType.KEYWORD) {
             if (expectedKeyword.isDeclaratorKeyword(token.value)) {
-                ValidationResult.Success(1)
+                ValidationResult.Success(listOf(token))
             } else {
                 ValidationResult.Error("Expected '$expectedKeyword', found '${token.value}'", position)
             }

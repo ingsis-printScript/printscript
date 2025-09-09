@@ -31,11 +31,10 @@ class Parser(val parsers: List<StatementParser>) {
             val result = AnalyzeStatementService.analyzeStatement(statementBuffer, parser.getPattern())
 
             when (result) {
-                //TODO(Crear una lista que tenga todos los tokens que se consumieron y ahi buildear el ast)
-                is ValidationResult.Success -> return parser.buildAST(statementBuffer)
+                is ValidationResult.Success -> return parser.buildAST(result.consumed)
                 is ValidationResult.Error -> {
                     bestError = updateBestError(result, bestError, maxTokensConsumed)
-                        .also { maxTokensConsumed = maxOf(maxTokensConsumed, result.position) } //TODO(Chequear tests)
+                        .also { maxTokensConsumed = maxOf(maxTokensConsumed, result.position) }
                 }
             }
         }

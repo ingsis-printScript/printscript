@@ -13,7 +13,7 @@ class SymbolValidator: TokenValidator {
         val token: Token = statementBuffer.lookahead(position)
         return when {
             token.type == TokenType.SYMBOL && isValidSymbolFormat(token.value) -> {
-                ValidationResult.Success(1)
+                ValidationResult.Success(listOf(token))
             }
             else -> {
                 ValidationResult.Error("Invalid symbol format: '${token.value}'", position)

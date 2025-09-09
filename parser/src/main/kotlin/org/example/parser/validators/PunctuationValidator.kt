@@ -10,7 +10,7 @@ class PunctuationValidator(private val expected: String) : TokenValidator {
         val token: Token = statementBuffer.lookahead(position)
         return if (token.type == TokenType.PUNCTUATION) {
             if (token.value.equals(expected)) {
-                ValidationResult.Success(1)
+                ValidationResult.Success(listOf(token))
             } else {
                 ValidationResult.Error("Expected '$expected', found '${token.value}'", position)
             }

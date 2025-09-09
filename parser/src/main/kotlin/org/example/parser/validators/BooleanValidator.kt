@@ -10,7 +10,7 @@ class BooleanValidator : TokenValidator {
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
         val token: Token = statementBuffer.lookahead(position)
         return if (token.type == TokenType.BOOLEAN && (token.value == "true" || token.value == "false")) {
-            ValidationResult.Success(1)
+            ValidationResult.Success(listOf(token))
         } else {
             ValidationResult.Error("boolean expected, but found ${token.type}", position)
         }

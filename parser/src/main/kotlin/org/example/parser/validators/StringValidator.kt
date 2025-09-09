@@ -13,7 +13,7 @@ class StringValidator : TokenValidator {
            val token: Token = statementBuffer.lookahead(position)
            return when {
                token.type == TokenType.STRING && isValidStringFormat(token.value) -> {
-                   ValidationResult.Success(1)
+                   ValidationResult.Success(listOf(token))
                }
                else -> {
                    ValidationResult.Error("Invalid string format: '${token.value}'", position)

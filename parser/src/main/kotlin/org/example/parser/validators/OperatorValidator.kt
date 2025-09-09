@@ -11,7 +11,7 @@ class OperatorValidator : TokenValidator {
         val token: Token = statementBuffer.lookahead(position)
         return if (token.type == TokenType.OPERATOR) {
             if (Operator.fromString(token.value) != null) {
-                ValidationResult.Success(1)
+                ValidationResult.Success(listOf(token))
             } else {
                 ValidationResult.Error(
                     "Expected operator (${Operator.entries.joinToString { it.symbol }}), " +

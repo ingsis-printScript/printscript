@@ -13,7 +13,7 @@ class TypeValidator : TokenValidator {
         val token: Token = statementBuffer.lookahead(position)
         return if (token.type == TokenType.SYMBOL) {
             if (Type.fromString(token.value) != null) { // TODO: issue con BOOLEAN; debe poder declararse según la vers
-                ValidationResult.Success(1)
+                ValidationResult.Success(listOf(token))
             } else {
                 ValidationResult.Error(
                     "Expected type (${Type.entries.joinToString { it.name }}), " +

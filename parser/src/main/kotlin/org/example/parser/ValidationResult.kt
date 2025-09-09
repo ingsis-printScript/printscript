@@ -1,8 +1,10 @@
 package org.example.parser
 
+import org.example.token.Token
+
 sealed class ValidationResult {
     data class Success(
-        val consumed: Int
+        val consumed: List<Token>
     ) : ValidationResult()
 
     data class Error(

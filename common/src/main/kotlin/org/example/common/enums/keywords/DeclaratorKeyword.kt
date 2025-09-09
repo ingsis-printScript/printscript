@@ -4,7 +4,6 @@ import org.example.common.tokens.Keyword
 
 enum class DeclaratorKeyword(override val value: String): Keyword {
     LET("let"),
-    VAR("var"),
     CONST("const");
 
     companion object {

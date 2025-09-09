@@ -2,6 +2,8 @@ package org.example.parser
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
+import org.example.ast.statements.VariableDeclarator
+import org.example.ast.statements.VariableInmutableDeclarator
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.common.results.Error
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 class ParserTest {
 
@@ -25,9 +28,14 @@ class ParserTest {
 
     @BeforeEach
     fun setUp() {
+        val factoryMap: Map<String, VariableStatementFactory> = mapOf(
+            "let" to { symbol, type, range, optionalExpr -> VariableDeclarator(symbol, type, range, optionalExpr) },
+            "const" to { symbol, type, range, optionalExpr -> VariableInmutableDeclarator(symbol, type, range, optionalExpr) }
+        )
+
         val statementParsers = listOf(
             VariableDeclarationParser(),
-            VariableDeclarationAssignationParser(),
+            VariableDeclarationAssignationParser(factoryMap),
             VariableAssignationParser(),
             PrintParser()
         )
@@ -38,22 +46,24 @@ class ParserTest {
 
     @Test
     fun `parse empty token list returns empty program`() {
-        val emptyTokens = emptyList<Token>()
+        val iterator = MockPSIterator(LinkedList())
 
-        assertEquals(Error("No tokens to parse"), parser.parse(emptyTokens))
+        assertEquals(Error("No tokens to parse"), parser.parse(TokenBuffer(iterator)))
     }
 
     @Test
     fun `parse variable declaration without assignment`() {
-        val tokens = listOf(
+        val tokens = LinkedList(listOf(
             tokenFactory.createKeyword( "let"),
             tokenFactory.createSymbol("x"),
             tokenFactory.createPunctuation(":"),
             tokenFactory.createSymbol("number"),
             tokenFactory.createSemicolon()
-        )
+        ))
 
-        val result = parser.parse(tokens)
+        val iterator = MockPSIterator(tokens)
+
+        val result = parser.parse(TokenBuffer(iterator))
 
         val expectedSymbol = astFactory.createSymbol("x")
         val expected = astFactory.createVariableDeclarator(expectedSymbol, Type.NUMBER)
@@ -75,7 +85,9 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        val result = parser.parse(tokens)
+        val iterator = MockPSIterator(LinkedList(tokens))
+
+        val result = parser.parse(TokenBuffer(iterator))
 
         val expectedSymbol = astFactory.createSymbol("x")
         val expression = astFactory.createBinaryExpression(
@@ -105,7 +117,9 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        val result = parser.parse(tokens)
+        val iterator = MockPSIterator(LinkedList(tokens))
+
+        val result = parser.parse(TokenBuffer(iterator))
 
         val expected = astFactory.createVariableDeclarator(
             astFactory.createSymbol("x"),
@@ -125,7 +139,9 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        val result = parser.parse(tokens)
+        val iterator = MockPSIterator(LinkedList(tokens))
+
+        val result = parser.parse(TokenBuffer(iterator))
 
         val expected = astFactory.createVariableAssigment(
             astFactory.createSymbol("x"),
@@ -144,7 +160,9 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        val result = parser.parse(tokens)
+        val iterator = MockPSIterator(LinkedList(tokens))
+
+        val result = parser.parse(TokenBuffer(iterator))
 
         val expected = astFactory.createVariableAssigment(
             astFactory.createSymbol("y"),
@@ -163,7 +181,9 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        assertTrue(parser.parse(tokens) is Error)
+        val iterator = MockPSIterator(LinkedList(tokens))
+
+        assertTrue(parser.parse(TokenBuffer(iterator)) is Error)
     }
 
     @Test
@@ -176,7 +196,9 @@ class ParserTest {
             tokenFactory.createSemicolon()
         )
 
-        val result = parser.parse(tokens)
+        val iterator = MockPSIterator(LinkedList(tokens))
+
+        val result = parser.parse(TokenBuffer(iterator))
 
         val expected = astFactory.createPrintFunction(
             OptionalExpression.HasExpression(astFactory.createString("Hello"))
@@ -229,9 +251,12 @@ class ParserTest {
     }
 
     private fun assertInvalidStructure(tokens: List<Token>) {
-        val result = parser.parse(tokens)
+        val iterator = MockPSIterator(LinkedList(tokens))
+
+        val result = parser.parse(TokenBuffer(iterator))
         assertTrue(
-            result is Error && result.message.contains("Invalid structure for statement")
+            result is Error &&
+                    result.message.contains("Error in statement: ")
         )
     }
 

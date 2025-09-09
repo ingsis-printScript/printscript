@@ -13,7 +13,7 @@ class NumberValidator: TokenValidator {
         val token: Token = statementBuffer.lookahead(position)
         return when {
             token.type == TokenType.NUMBER && isValNumberFormat(token.value) -> {
-                ValidationResult.Success(1)
+                ValidationResult.Success(listOf(token))
             }
             else -> {
                 ValidationResult.Error("Invalid number format: '${token.value}'", position)
