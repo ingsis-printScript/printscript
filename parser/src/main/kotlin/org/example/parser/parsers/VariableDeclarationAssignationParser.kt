@@ -6,7 +6,7 @@ import org.example.ast.ASTNode
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.common.enums.Type
-import org.example.parser.TokenBuffer
+import org.example.parser.VariableStatementFactory
 import org.example.token.Token
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.expressionbuilder.ExpressionBuilder
@@ -16,7 +16,8 @@ import org.example.parser.validators.PunctuationValidator
 import org.example.parser.validators.SymbolValidator
 import org.example.parser.validators.TypeValidator
 
-class VariableDeclarationAssignationParser : StatementParser {
+class VariableDeclarationAssignationParser(private val keywordFactoryMap: Map<String, VariableStatementFactory>) : StatementParser {
+
 
     private val pattern = StatementPattern(
         listOf(
@@ -33,20 +34,28 @@ class VariableDeclarationAssignationParser : StatementParser {
     private val idPos = 1
     private val equalsPos = 4
 
-    override fun buildAST(statementBuffer: TokenBuffer): ASTNode {
+    override fun buildAST(statements: List<Token>): ASTNode {
+        val keyword = statements[0].value.lowercase()
+        val factory = keywordFactoryMap[keyword]
+            ?: throw SyntaxException(
+                "Unsupported variable declaration keyword: $keyword. " +
+                        "Supported keywords: ${keywordFactoryMap.keys.joinToString(", ")}"
+            )
+
+
         val symbol = SymbolExpression(
-            statementBuffer[idPos].value,
-            Position(statementBuffer[idPos].position.line, statementBuffer[idPos].position.column)
+            statements[idPos].value,
+            Position(statements[idPos].position.line, statements[idPos].position.column)
         )
         val range = Range(
-            Position(statementBuffer[0].position.line, statementBuffer[0].position.column),
-            Position(statementBuffer[statementBuffer.size - 1].position.line, statementBuffer[statementBuffer.size - 1].position.column)
+            Position(statements[0].position.line, statements[0].position.column),
+            Position(statements[statements.size - 1].position.line, statements[statements.size - 1].position.column)
         )
 
         val expressionBuilder = ExpressionBuilder()
-        val expression = expressionBuilder.buildExpression(statementBuffer, equalsPos + 1, statementBuffer.size - 1)
+        val expression = expressionBuilder.buildExpression(statements, equalsPos + 1, statements.size - 1)
 
-        return VariableDeclarator(symbol, detectType(statementBuffer[3]), range, expression)
+        return factory(symbol, detectType(statements[3]), range, expression)
     }
 
     private fun detectType(token: Token): Type {

@@ -7,7 +7,6 @@ import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.common.enums.Type
-import org.example.parser.TokenBuffer
 import org.example.token.Token
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.validators.KeywordValidator
@@ -27,17 +26,17 @@ class VariableDeclarationParser : StatementParser {
         )
     )
 
-    override fun buildAST(statementBuffer: TokenBuffer): ASTNode {
+    override fun buildAST(statements: List<Token>): ASTNode {
         val symbol = SymbolExpression(
-            statementBuffer[1].value,
-            Position(statementBuffer[1].position.line, statementBuffer[1].position.column)
+            statements[1].value,
+            Position(statements[1].position.line, statements[1].position.column)
         )
         val range = Range(
-            Position(statementBuffer[0].position.line, statementBuffer[0].position.column),
-            Position(statementBuffer[4].position.line, statementBuffer[4].position.column)
+            Position(statements[0].position.line, statements[0].position.column),
+            Position(statements[4].position.line, statements[4].position.column)
         )
 
-        return VariableDeclarator(symbol, detectType(statementBuffer[3]), range, OptionalExpression.NoExpression)
+        return VariableDeclarator(symbol, detectType(statements[3]), range, OptionalExpression.NoExpression)
     }
 
     override fun getPattern(): StatementPattern = pattern
