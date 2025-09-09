@@ -5,5 +5,5 @@ import org.example.token.Token
 
 interface StatementParser {
     fun buildAST(statements: List<Token>): ASTNode
-    fun getPattern(): StatementPattern
+    fun getPatterns(): List<StatementPattern>
 }

@@ -13,13 +13,15 @@ import org.example.parser.validators.SymbolValidator
 import org.example.token.Token
 
 class PrintParser : StatementParser {
-    private val pattern = StatementPattern(
-        listOf(
-            SymbolValidator(),
-            PunctuationValidator("("),
-            ExpressionValidator(),
-            PunctuationValidator(")"),
-            PunctuationValidator(";")
+    private val patterns = listOf(
+        StatementPattern(
+            listOf(
+                SymbolValidator(),
+                PunctuationValidator("("),
+                ExpressionValidator(),
+                PunctuationValidator(")"),
+                PunctuationValidator(";")
+            )
         )
     )
     private val leftParenPos = 1
@@ -36,5 +38,5 @@ class PrintParser : StatementParser {
         return PrintFunction(expression, range)
     }
 
-    override fun getPattern(): StatementPattern = pattern
+    override fun getPatterns(): List<StatementPattern> = patterns
 }

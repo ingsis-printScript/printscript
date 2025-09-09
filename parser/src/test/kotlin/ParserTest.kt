@@ -3,14 +3,12 @@ package org.example.parser
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
-import org.example.ast.statements.VariableInmutableDeclarator
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.common.results.Error
 import org.example.common.results.Success
 import org.example.parser.parsers.function.PrintParser
 import org.example.parser.parsers.VariableAssignationParser
-import org.example.parser.parsers.VariableDeclarationAssignationParser
 import org.example.parser.parsers.VariableDeclarationParser
 import org.example.token.Token
 
@@ -29,13 +27,11 @@ class ParserTest {
     @BeforeEach
     fun setUp() {
         val factoryMap: Map<String, VariableStatementFactory> = mapOf(
-            "let" to { symbol, type, range, optionalExpr -> VariableDeclarator(symbol, type, range, optionalExpr) },
-            "const" to { symbol, type, range, optionalExpr -> VariableInmutableDeclarator(symbol, type, range, optionalExpr) }
+            "let" to { symbol, type, range, optionalExpr -> VariableDeclarator(symbol, type, range, optionalExpr) }
         )
 
         val statementParsers = listOf(
-            VariableDeclarationParser(),
-            VariableDeclarationAssignationParser(factoryMap),
+            VariableDeclarationParser(factoryMap),
             VariableAssignationParser(),
             PrintParser()
         )

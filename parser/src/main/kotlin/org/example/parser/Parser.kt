@@ -28,7 +28,7 @@ class Parser(val parsers: List<StatementParser>) {
         var maxTokensConsumed = -1
 
         for (parser in parsers) {
-            val result = AnalyzeStatementService.analyzeStatement(statementBuffer, parser.getPattern())
+            val result = AnalyzeStatementService.analyzeStatement(statementBuffer, parser.getPatterns())
 
             when (result) {
                 is ValidationResult.Success -> return parser.buildAST(result.consumed)

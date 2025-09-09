@@ -13,12 +13,14 @@ import org.example.token.Token
 
 class VariableAssignationParser : StatementParser {
 
-    private val pattern = StatementPattern(
-        listOf(
-            SymbolValidator(),
-            PunctuationValidator("="),
-            ExpressionValidator(),
-            PunctuationValidator(";")
+    private val patterns = listOf(
+        StatementPattern(
+            listOf(
+                SymbolValidator(),
+                PunctuationValidator("="),
+                ExpressionValidator(),
+                PunctuationValidator(";")
+            )
         )
     )
 
@@ -41,5 +43,5 @@ class VariableAssignationParser : StatementParser {
         return VariableAssigner(symbol, expression, range)
     }
 
-    override fun getPattern(): StatementPattern = pattern
+    override fun getPatterns(): List<StatementPattern> = patterns
 }

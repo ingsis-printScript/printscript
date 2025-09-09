@@ -3,43 +3,71 @@ package org.example.parser.parsers
 import org.example.common.Position
 import org.example.common.Range
 import org.example.ast.ASTNode
-import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.ast.statements.VariableDeclarator
 import org.example.common.enums.Type
+import org.example.parser.VariableStatementFactory
 import org.example.token.Token
 import org.example.parser.exceptions.SyntaxException
+import org.example.parser.expressionbuilder.ExpressionBuilder
+import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.KeywordValidator
 import org.example.parser.validators.PunctuationValidator
 import org.example.parser.validators.SymbolValidator
 import org.example.parser.validators.TypeValidator
 
-class VariableDeclarationParser : StatementParser {
+class VariableDeclarationParser(
+    private val keywordFactoryMap: Map<String, VariableStatementFactory>
+) : StatementParser {
 
-    private val pattern = StatementPattern(
-        listOf(
-            KeywordValidator(),
-            SymbolValidator(),
-            PunctuationValidator(":"),
-            TypeValidator(),
-            PunctuationValidator(";")
+    private val patterns = listOf(
+        StatementPattern(
+            listOf(
+                KeywordValidator(),
+                SymbolValidator(),
+                PunctuationValidator(":"),
+                TypeValidator(),
+                PunctuationValidator("="),
+                ExpressionValidator(),
+                PunctuationValidator(";")
+            )
+        ),
+        StatementPattern(
+            listOf(
+                KeywordValidator(),
+                SymbolValidator(),
+                PunctuationValidator(":"),
+                TypeValidator(),
+                PunctuationValidator(";")
+            )
         )
     )
 
+    private val idPos = 1
+    private val equalsPos = 4
+
     override fun buildAST(statements: List<Token>): ASTNode {
+        val keyword = statements[0].value.lowercase()
+        val factory = keywordFactoryMap[keyword]
+            ?: throw SyntaxException(
+                "Unsupported variable declaration keyword: $keyword. " +
+                        "Supported keywords: ${keywordFactoryMap.keys.joinToString(", ")}"
+            )
+
+
         val symbol = SymbolExpression(
-            statements[1].value,
-            Position(statements[1].position.line, statements[1].position.column)
+            statements[idPos].value,
+            Position(statements[idPos].position.line, statements[idPos].position.column)
         )
         val range = Range(
             Position(statements[0].position.line, statements[0].position.column),
-            Position(statements[4].position.line, statements[4].position.column)
+            Position(statements[statements.size - 1].position.line, statements[statements.size - 1].position.column)
         )
 
-        return VariableDeclarator(symbol, detectType(statements[3]), range, OptionalExpression.NoExpression)
-    }
+        val expressionBuilder = ExpressionBuilder()
+        val expression = expressionBuilder.buildExpression(statements, equalsPos + 1, statements.size - 1)
 
-    override fun getPattern(): StatementPattern = pattern
+        return factory(symbol, detectType(statements[3]), range, expression)
+    }
 
     private fun detectType(token: Token): Type {
         return when (token.value.lowercase()) {
@@ -48,4 +76,6 @@ class VariableDeclarationParser : StatementParser {
             else -> throw SyntaxException("Unsupported token type: ${token.type}")
         }
     }
+
+    override fun getPatterns(): List<StatementPattern> = patterns
 }
