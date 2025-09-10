@@ -38,13 +38,11 @@ class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptI
         return buffer[index + n - 1]
     }
 
-    fun consume(expectedType: TokenType): Token {
-        val token = peek()
-        if (token.type != expectedType) {
-            throw RuntimeException("Expected $expectedType but found ${token.type}")
+    fun commit(consumed: Int) {
+        if (consumed > 0) {
+            buffer.subList(0, consumed).clear()
+            index = 0
         }
-        index++
-        return token
     }
 
     fun isAtEnd(): Boolean {

@@ -22,7 +22,7 @@ class Cli(private val runner: Runner) {
                 val configFilePath: Optional<Iterator<String>> = getConfigReader(version, arguments)
                 return runner.format(reader.get(), configFilePath.get())
             }
-            "analyze" -> {
+            "analyzeStatement" -> {
                 val configFilePath: Optional<Iterator<String>> = getConfigReader(version, arguments)
                 return runner.analyze(reader.get(), configFilePath.get())
             }
