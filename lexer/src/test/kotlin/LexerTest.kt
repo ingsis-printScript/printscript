@@ -1,4 +1,6 @@
+
 import org.example.common.enums.TokenType
+import org.example.common.enums.keywords.DeclaratorKeyword
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.common.exceptions.UnsupportedCharacterException
 import org.example.lexer.Lexer
@@ -22,7 +24,7 @@ class LexerTest {
     // Config
     private data class LexerConfig(
         val constructors: List<TokenConstructor> = emptyList(),
-        val keywords: KeywordTokenConstructor = KeywordTokenConstructor(),
+        val keywords: KeywordTokenConstructor = KeywordTokenConstructor(setOf(DeclaratorKeyword.LET)),
         val whiteSpaces: List<Char> = listOf(' ', '\t', '\n')
     )
 

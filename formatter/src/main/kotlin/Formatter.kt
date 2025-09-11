@@ -20,8 +20,7 @@ class Formatter(
         astFormat.formatNode(node, sb, rules, nestingLevel)
     }
 
-
-    //standard rules I'll probably have to use in most formatters, I made them private functions
+    // standard rules I'll probably have to use in most formatters, I made them private functions
     private fun checkNewLines(): String {
         val rule = rules["newLines"]
         return if (rule?.rule == true) "\n" else ""

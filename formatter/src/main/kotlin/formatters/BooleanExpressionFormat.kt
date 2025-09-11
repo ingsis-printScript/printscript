@@ -3,7 +3,7 @@ package formatters
 import Rule
 import org.example.ast.ASTNode
 
-class BooleanExpressionFormat: ASTFormat {
+class BooleanExpressionFormat : ASTFormat {
     override fun formatNode(
         node: ASTNode,
         result: StringBuilder,

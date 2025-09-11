@@ -7,9 +7,9 @@ class Ruler(private val rules: Map<String, Rule>) {
             val file = File(filePath)
             val jsonString = file.readText()
 
-            //val map = Json.decodeFromString<Map<String, Rule>>(jsonString)
-            //return Ruler(map)
-            return Ruler(emptyMap());
+            // val map = Json.decodeFromString<Map<String, Rule>>(jsonString)
+            // return Ruler(map)
+            return Ruler(emptyMap())
         }
     }
 
