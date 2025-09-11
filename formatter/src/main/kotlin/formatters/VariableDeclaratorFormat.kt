@@ -4,8 +4,7 @@ import Rule
 import org.example.ast.ASTNode
 import org.example.ast.statements.VariableDeclarator
 
-class VariableDeclaratorFormat: ASTFormat {
-
+class VariableDeclaratorFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,
@@ -20,7 +19,7 @@ class VariableDeclaratorFormat: ASTFormat {
         repeat(nestingLevel * indentQty) { result.append(" ") }
 
         // Escribir tipo y nombre
-        result.append(declarator.type.name)  // asumiendo que Type tiene .name
+        result.append(declarator.type.name) // asumiendo que Type tiene .name
         result.append(" ")
         result.append(declarator.symbol.value)
 

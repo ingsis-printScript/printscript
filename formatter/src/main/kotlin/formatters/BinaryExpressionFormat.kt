@@ -4,7 +4,7 @@ import Rule
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
 
-class BinaryExpressionFormat: ASTFormat {
+class BinaryExpressionFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,
@@ -25,5 +25,6 @@ class BinaryExpressionFormat: ASTFormat {
         result.append("$space${expr.operator}$space")
 
         // formateo right expr
-        result.append(expr.right.toString())    }
+        result.append(expr.right.toString())
+    }
 }

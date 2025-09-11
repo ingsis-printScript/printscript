@@ -5,7 +5,7 @@ import org.example.common.enums.TokenType
 import org.example.token.Token
 import java.util.Optional
 
-class BooleanTokenConstructor: TokenConstructor {
+class BooleanTokenConstructor : TokenConstructor {
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.startsWith("true")) {
             val tokenPosition = Position(offset, offset + 4)
@@ -17,5 +17,4 @@ class BooleanTokenConstructor: TokenConstructor {
         }
         return Optional.empty()
     }
-
 }

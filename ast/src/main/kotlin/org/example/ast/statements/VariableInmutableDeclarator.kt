@@ -14,6 +14,5 @@ data class VariableInmutableDeclarator(
 ) : Statement {
     override fun <T> accept(visitor: ASTVisitor<T>): T {
         return visitor.visit(this)
-
     }
 }

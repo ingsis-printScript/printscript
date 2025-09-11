@@ -4,8 +4,7 @@ import Rule
 import org.example.ast.ASTNode
 import org.example.ast.expressions.NumberExpression
 
-class NumberExpressionFormat: ASTFormat {
-
+class NumberExpressionFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,

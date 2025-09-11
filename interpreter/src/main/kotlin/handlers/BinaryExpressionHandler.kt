@@ -35,6 +35,4 @@ class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
         validator.pushLiteral(Type.NUMBER)
         validator.returnResult(Success(Type.NUMBER))
     }
-
-
 }

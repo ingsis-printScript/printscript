@@ -5,7 +5,7 @@ import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.token.Token
 
-class NumberValidator: TokenValidator {
+class NumberValidator : TokenValidator {
 
     private val numberPattern = Regex("^[0-9]+(\\.[0-9]+)?$")
 

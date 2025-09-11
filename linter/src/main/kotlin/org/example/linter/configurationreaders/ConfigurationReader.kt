@@ -4,7 +4,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.example.linter.configurationreaders.mappers.MapperStrategy
 import java.io.File
 
-class ConfigurationReader(private val strategies: List<MapperStrategy> ) {
+class ConfigurationReader(private val strategies: List<MapperStrategy>) {
 
     fun read(filePath: String): Map<String, Any> {
         val file = File(filePath)

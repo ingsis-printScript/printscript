@@ -1,7 +1,16 @@
+console-reports:
+  active: true
+  exclude:
+    - 'ProjectStatisticsReport'
+    - 'ComplexityReport'
+    - 'NotificationReport'
+    - 'FindingsReport'
+    - 'FileBasedFindingsReport'
+
 complexity:
   LongMethod:
     active: true
-    threshold: 20
+    threshold: 25
   NestedBlockDepth:
     active: true
     threshold: 4
@@ -10,8 +19,16 @@ complexity:
     constructorThreshold: 7
     ignoreDefaultParameters: false
 
-empty-blocks:
-  EmptyClassBlock:
-    active: false
-  EmptyFunctionBlock:
-    active: false
+style:
+  ReturnCount:
+    active: true
+    max: 4
+    excludedFunctions: ['equals']
+    excludeReturnFromLambda: true
+    excludeGuardClauses: true
+
+  ThrowsCount:
+    active: true
+    max: 4
+
+

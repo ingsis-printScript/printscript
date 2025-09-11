@@ -1,9 +1,8 @@
 package org.example.parser
 
 import org.example.common.PrintScriptIterator
-import org.example.token.Token
-import org.example.common.enums.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
+import org.example.token.Token
 
 class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptIterator<Token> {
     private val buffer = mutableListOf<Token>()

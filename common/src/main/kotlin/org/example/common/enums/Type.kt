@@ -13,20 +13,19 @@ enum class Type {
     }
 }
 
-
-//sealed class Type(val name: String) {
+// sealed class Type(val name: String) {
 //    object NUMBER : Type("number")
 //    object STRING : Type("string")
 //    object BOOLEAN : Type("boolean")
 //    data class Custom(val typeName: String) : Type(typeName)
-//}
+// }
 //
-//private fun detectType(token: Token): Type {
+// private fun detectType(token: Token): Type {
 //    return when (token.value.lowercase()) {
 //        "number" -> Type.NUMBER
 //        "string" -> Type.STRING
 //        "boolean" -> Type.BOOLEAN
 //        else -> Type.Custom(token.value)
 //    }
-//}
-//}
+// }
+// }

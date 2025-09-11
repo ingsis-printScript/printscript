@@ -22,11 +22,10 @@ class Parser(
 
     override fun getNext(): ASTNode {
         // dudas:
-            // return ASTNode o Result? (keep 'parse' intact, or use it?)
-            // if ASTNode, upon error, throw exception?
+        // return ASTNode o Result? (keep 'parse' intact, or use it?)
+        // if ASTNode, upon error, throw exception?
         return parseStatement(tokenBuffer, parsers)
     }
-
 
     // Safe and type-oriented/expressive version of getNext()
     // Still used in testing (for individual statements), and possibly in validating without interpreting
@@ -43,12 +42,12 @@ class Parser(
         }
     }
 
-    private fun parseStatement(statementBuffer: TokenBuffer, parsers: List<StatementParser>) : ASTNode {
+    private fun parseStatement(statementBuffer: TokenBuffer, parsers: List<StatementParser>): ASTNode {
         val successfulAnalysisOutcome = analyzeStatement(statementBuffer, parsers)
         return buildAST(successfulAnalysisOutcome)
     }
 
-    private fun analyzeStatement(buffer: TokenBuffer, parsers: List<StatementParser>) : AnalysisOutcome {
+    private fun analyzeStatement(buffer: TokenBuffer, parsers: List<StatementParser>): AnalysisOutcome {
         val outcomes: List<AnalysisOutcome> =
             parsers.map { parser ->
                 val result = parser.analyze(buffer)
@@ -63,7 +62,6 @@ class Parser(
         val statementTokens = analysisResult.consumed
         return outcome.parser.buildAST(statementTokens)
     }
-
 
     // --- Express most accurate error if analysis fails ---
 

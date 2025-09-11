@@ -1,7 +1,6 @@
 package org.example.interpreter.handlers
 
 import org.example.ast.expressions.OptionalExpression
-import org.example.ast.statements.functions.FunctionCall
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.results.Success
 import org.example.interpreter.Executor
@@ -27,4 +26,3 @@ class PrintFunctionHandler : ASTNodeHandler<PrintFunction> {
         validator.returnResult(Success(valueType))
     }
 }
-

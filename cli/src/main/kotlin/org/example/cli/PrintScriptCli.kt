@@ -3,12 +3,11 @@ package org.example.cli
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.arguments.argument
-import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
 import org.example.common.results.Result
-
 
 fun main(args: Array<String>) = PrintScriptCli().main(args)
 
@@ -28,12 +27,14 @@ class PrintScriptCli : CliktCommand(name = "printscript") {
     // Idem
     // DEFAULT CONFIG? -> creo que no... por ahora
     private val configFile by option(
-        "--config", "-c",
+        "--config",
+        "-c",
         help = "Configuration file for appropriate operation"
     ).file(mustExist = true, canBeDir = false, mustBeReadable = true)
 
     private val version by option(
-        "--version", "-v",
+        "--version",
+        "-v",
         help = "PrintScript version"
     ).default("1.0")
 
@@ -50,7 +51,8 @@ class PrintScriptCli : CliktCommand(name = "printscript") {
         if (operator.isPresent) {
             val result: Result = operator.get().execute()
             // TODO: process result and echo output...
-
-        } else echo("Invalid operation")
+        } else {
+            echo("Invalid operation")
+        }
     }
 }

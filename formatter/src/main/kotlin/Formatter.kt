@@ -25,13 +25,13 @@ class Formatter(
         return if (rule?.rule == true) {
             val qty = rule.quantity ?: 4
             " ".repeat(nestingLevel * qty)
-        } else ""
+        } else {
+            ""
+        }
     }
 
     private fun checkRules(ruleName: String, append: String): String {
         val rule = rules[ruleName]
         return if (rule?.rule == true) append else ""
     }
-
-
 }

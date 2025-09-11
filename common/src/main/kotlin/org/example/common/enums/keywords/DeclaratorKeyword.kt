@@ -2,7 +2,7 @@ package org.example.common.enums.keywords
 
 import org.example.common.tokens.Keyword
 
-enum class DeclaratorKeyword(override val value: String): Keyword {
+enum class DeclaratorKeyword(override val value: String) : Keyword {
     LET("let"),
     CONST("const");
 

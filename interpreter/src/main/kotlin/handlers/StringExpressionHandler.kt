@@ -6,19 +6,21 @@ import org.example.common.results.Success
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 
-class StringExpressionHandler: ASTNodeHandler<StringExpression> {
+class StringExpressionHandler : ASTNodeHandler<StringExpression> {
 
     override fun handleExecution(
         node: StringExpression,
         executor: Executor
     ) {
         executor.pushLiteral(node.value)
-        executor.returnResult(Success(node.value))    }
+        executor.returnResult(Success(node.value))
+    }
 
     override fun handleValidators(
         node: StringExpression,
         validator: Validator
     ) {
         validator.pushLiteral(Type.STRING)
-        validator.returnResult(Success("String"))    }
+        validator.returnResult(Success("String"))
+    }
 }

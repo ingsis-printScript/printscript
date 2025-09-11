@@ -1,8 +1,8 @@
 package org.example.ast.expressions
 
+import org.example.ast.visitors.ASTVisitor
 import org.example.common.Range
 import org.example.common.enums.Operator
-import org.example.ast.visitors.ASTVisitor
 
 data class BinaryExpression(
     val left: Expression,

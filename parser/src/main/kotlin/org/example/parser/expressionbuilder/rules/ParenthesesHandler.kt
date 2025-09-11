@@ -16,7 +16,7 @@ class ParenthesesHandler {
                 }
             }
         }
-        throw SyntaxException("Unmatched opening parenthesis at position ${tokens[openParenIndex].position}") //ya lo chequeo antes en teoria
+        throw SyntaxException("Unmatched opening parenthesis at position ${tokens[openParenIndex].position}")
     }
 
     fun isOpenParen(token: Token): Boolean {

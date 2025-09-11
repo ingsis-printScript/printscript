@@ -3,7 +3,6 @@ package org.example.interpreter.handlers
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.common.results.Error
-
 import org.example.common.results.Success
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
@@ -32,4 +31,3 @@ class VariableDeclaratorHandler : ASTNodeHandler<VariableDeclarator> {
         }
     }
 }
-

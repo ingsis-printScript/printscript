@@ -3,10 +3,8 @@ package formatters
 import Rule
 import org.example.ast.ASTNode
 import org.example.ast.expressions.SymbolExpression
-import org.example.ast.visitors.ASTVisitor
 
-class SymbolExpressionFormat: ASTFormat {
-
+class SymbolExpressionFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,
@@ -15,5 +13,6 @@ class SymbolExpressionFormat: ASTFormat {
         nestingLevel: Int
     ) {
         val symbolExpr = node as SymbolExpression
-        result.append(symbolExpr.value)    }
+        result.append(symbolExpr.value)
+    }
 }

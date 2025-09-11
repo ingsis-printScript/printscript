@@ -1,10 +1,10 @@
 package org.example.ast.statements
 
-import org.example.common.Range
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.common.enums.Type
 import org.example.ast.visitors.ASTVisitor
+import org.example.common.Range
+import org.example.common.enums.Type
 
 data class VariableDeclarator(
     val symbol: SymbolExpression,
@@ -14,6 +14,5 @@ data class VariableDeclarator(
 ) : Statement {
     override fun <T> accept(visitor: ASTVisitor<T>): T {
         return visitor.visit(this)
-
     }
 }

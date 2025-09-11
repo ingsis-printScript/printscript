@@ -1,6 +1,6 @@
 package org.example.linter
 
-data class LinterConfiguration(private val data: Map<String, Any>){
+data class LinterConfiguration(private val data: Map<String, Any>) {
     fun getString(key: String): String? {
         return data[key]?.toString()
     }

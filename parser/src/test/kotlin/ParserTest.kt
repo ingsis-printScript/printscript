@@ -1,5 +1,3 @@
-package org.example.parser
-
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
@@ -7,11 +5,13 @@ import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.common.results.Error
 import org.example.common.results.Success
-import org.example.parser.parsers.function.PrintParser
+import org.example.parser.Parser
+import org.example.parser.TokenBuffer
+import org.example.parser.VariableStatementFactory
 import org.example.parser.parsers.VariableAssignationParser
 import org.example.parser.parsers.VariableDeclarationParser
+import org.example.parser.parsers.function.PrintParser
 import org.example.token.Token
-
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -73,7 +73,6 @@ class ParserTest {
 
     // tests ================================
 
-
     @Test
     fun `parse empty token list returns empty program`() {
         val parser = parserWith(emptyList())
@@ -122,8 +121,13 @@ class ParserTest {
         )
         assertParsed(
             tokens(
-                keyword("let"), symbol("x"), punct(":"), symbol("String"),
-                equals(), string("John"), semi()
+                keyword("let"),
+                symbol("x"),
+                punct(":"),
+                symbol("String"),
+                equals(),
+                string("John"),
+                semi()
             ),
             expected
         )
@@ -143,10 +147,7 @@ class ParserTest {
 
     @Test
     fun `parse variable assignment with another variable`() {
-        val expected = astFactory.createVariableAssigment(
-            astFactory.createSymbol("y"),
-            OptionalExpression.HasExpression(astFactory.createSymbol("x"))
-        )
+        val expected = getVariableAssignment()
         assertParsed(
             tokens(symbol("y"), equals(), symbol("x"), semi()),
             expected
@@ -172,7 +173,6 @@ class ParserTest {
             expected
         )
     }
-
 
     @Test
     fun `throws SyntaxException for invalid syntax`() {
@@ -212,23 +212,25 @@ class ParserTest {
 
         assertEquals(3, nodes.size)
 
-        val expectedVarDecl = astFactory.createVariableDeclarator(
-            astFactory.createSymbol("x"),
-            Type.NUMBER,
-            OptionalExpression.HasExpression(astFactory.createNumber("5"))
-        )
-        assertEquals(expectedVarDecl, nodes[0])
+        assertEquals(getVariableDeclarator(), nodes[0])
 
-        val expectedAssign = astFactory.createVariableAssigment(
-            astFactory.createSymbol("y"),
-            OptionalExpression.HasExpression(astFactory.createSymbol("x"))
-        )
-        assertEquals(expectedAssign, nodes[1])
+        assertEquals(getVariableAssignment(), nodes[1])
 
-        val expectedPrint = astFactory.createPrintFunction(
-            OptionalExpression.HasExpression(astFactory.createString("done"))
-        )
-        assertEquals(expectedPrint, nodes[2])
+        assertEquals(getPrintFunction(), nodes[2])
     }
 
+    private fun getPrintFunction() = astFactory.createPrintFunction(
+        OptionalExpression.HasExpression(astFactory.createString("done"))
+    )
+
+    private fun getVariableAssignment() = astFactory.createVariableAssigment(
+        astFactory.createSymbol("y"),
+        OptionalExpression.HasExpression(astFactory.createSymbol("x"))
+    )
+
+    private fun getVariableDeclarator() = astFactory.createVariableDeclarator(
+        astFactory.createSymbol("x"),
+        Type.NUMBER,
+        OptionalExpression.HasExpression(astFactory.createNumber("5"))
+    )
 }

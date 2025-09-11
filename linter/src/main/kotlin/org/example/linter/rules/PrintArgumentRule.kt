@@ -8,7 +8,7 @@ import org.example.ast.statements.functions.PrintFunction
 import org.example.linter.LinterConfiguration
 import org.example.linter.data.LinterViolation
 
-class PrintArgumentRule(private val config: LinterConfiguration): Rule {
+class PrintArgumentRule(private val config: LinterConfiguration) : Rule {
 
     private val violations = mutableListOf<LinterViolation>()
 
@@ -25,7 +25,7 @@ class PrintArgumentRule(private val config: LinterConfiguration): Rule {
     }
 
     override fun visit(node: ASTNode): List<LinterViolation> {
-        //recibiria un mapa?
+        // recibiria un mapa?
         when (node) {
             is PrintFunction -> checkPrintlnArguments(node)
         }
@@ -35,14 +35,19 @@ class PrintArgumentRule(private val config: LinterConfiguration): Rule {
     private fun checkPrintlnArguments(printFunction: PrintFunction) {
         val value: OptionalExpression = printFunction.value
         when (value) {
-            is OptionalExpression.NoExpression -> {return}
+            is OptionalExpression.NoExpression -> { return }
             is OptionalExpression.HasExpression -> {
                 val expression: Expression = value.expression
-                if (expression is BinaryExpression) violations
-                    .add(LinterViolation(
-                        "println() should only be called with identifiers or literals, not expressions",
-                    expression.range))
-            } //tambien puedo crear un mapa (osea recibirlo) y entonces hacerlo MAS extensible y marcar en el mapa los nodos que quiero que me rompan esto
+                if (expression is BinaryExpression) {
+                    violations
+                        .add(
+                            LinterViolation(
+                                "println() should only be called with identifiers or literals, not expressions",
+                                expression.range
+                            )
+                        )
+                }
+            } // tambien puedo crear un mapa (osea recibirlo) y entonces hacerlo MAS extensible y marcar en el mapa los nodos que quiero que me rompan esto
         }
     }
 }

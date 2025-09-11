@@ -5,7 +5,7 @@ import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.token.Token
 
-class SymbolValidator: TokenValidator {
+class SymbolValidator : TokenValidator {
 
     private val symbolPattern = Regex("^[a-zA-Z_][a-zA-Z0-9_]*$")
 
