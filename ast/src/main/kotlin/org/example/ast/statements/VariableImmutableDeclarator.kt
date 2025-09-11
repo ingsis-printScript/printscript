@@ -6,7 +6,7 @@ import org.example.ast.visitors.ASTVisitor
 import org.example.common.Range
 import org.example.common.enums.Type
 
-data class VariableInmutableDeclarator(
+data class VariableImmutableDeclarator(
     val symbol: SymbolExpression,
     val type: Type,
     override val range: Range,

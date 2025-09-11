@@ -29,8 +29,6 @@ class Linter(
             violations.addAll(rule.check(ast))
         }
 
-        return LinterReport(
-            violations = violations,
-        )
+        return LinterReport(violations)
     }
 }

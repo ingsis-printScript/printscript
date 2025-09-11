@@ -1,4 +1,4 @@
-package org.example.parser.expressionbuilder.rules
+package org.example.parser.parsers.expressionbuilder.rules
 
 import org.example.common.enums.TokenType
 import org.example.parser.exceptions.SyntaxException

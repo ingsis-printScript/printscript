@@ -7,7 +7,7 @@ import org.example.ast.statements.functions.PrintFunction
 import org.example.parser.parsers.StatementParser
 import org.example.parser.parsers.StatementPattern
 import org.example.parser.validators.PunctuationValidator
-import org.example.parser.expressionbuilder.ExpressionBuilder
+import org.example.parser.parsers.expressionbuilder.ExpressionBuilder
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.SymbolValidator
 import org.example.token.Token

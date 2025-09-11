@@ -2,10 +2,7 @@ package org.example.linter.rules
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
-import org.example.ast.expressions.Expression
-import org.example.ast.expressions.NumberExpression
 import org.example.ast.expressions.OptionalExpression
-import org.example.ast.expressions.StringExpression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
@@ -55,24 +52,24 @@ class SymbolFormatRule(private val config: LinterConfiguration): Rule {
     private fun checkSymbolFormat(symbol: SymbolExpression) {
         val formatString = config.getString("identifier_format") ?: return
         val expectedFormat = parseSymbolFormat(formatString) ?: return
-
+//recibir un mapa de cada regla y lo que chequea
         when (expectedFormat) {
              SymbolFormat.CAMEL_CASE -> {
                 if (!isCamelCase(symbol.value)) {
+                    val range = Range(symbol.position, symbol.position)
                     violations.add(
                         LinterViolation(
-                            "Identifier '$symbol.value' should be in camelCase format", Range(
-                                symbol.position, symbol.position)
+                            "Identifier '$symbol.value' at $range should be in camelCase format", range
                         )
                     )
                 }
             }
             SymbolFormat.SNAKE_CASE -> {
                 if (!isSnakeCase(symbol.value)) {
+                    val range = Range(symbol.position, symbol.position)
                     violations.add(
                         LinterViolation(
-                            message = "Identifier '$symbol.value' should be in snake_case format", Range(
-                                symbol.position, symbol.position)
+                            message = "Identifier '$symbol.value' at $range should be in snake_case format", range
                         )
                     )
                 }

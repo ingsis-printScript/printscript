@@ -77,7 +77,7 @@ class ParserTest {
             tokenFactory.createEquals(),
             tokenFactory.createNumber("5"),
             tokenFactory.createOperator("+"),
-            tokenFactory.createNumber("3"),
+            tokenFactory.createNumber("3.04"),
             tokenFactory.createSemicolon()
         )
 
@@ -89,7 +89,7 @@ class ParserTest {
         val expression = astFactory.createBinaryExpression(
             astFactory.createNumber("5"),
             Operator.ADD,
-            astFactory.createNumber("3")
+            astFactory.createNumber("3.04")
         )
         val expected = astFactory
             .createVariableDeclarator(

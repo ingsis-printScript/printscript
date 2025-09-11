@@ -16,7 +16,7 @@ class PrintArgumentRule(private val config: LinterConfiguration): Rule {
         if (!isEnabled()) return emptyList()
 
         violations.clear()
-        node.accept(this)
+        this.visit(node)
         return violations.toList()
     }
 
@@ -40,9 +40,9 @@ class PrintArgumentRule(private val config: LinterConfiguration): Rule {
                 val expression: Expression = value.expression
                 if (expression is BinaryExpression) violations
                     .add(LinterViolation(
-                        "println() should only be called with identifiers or literals, not expressions",
+                        "println() at $expression.range should only be called with identifiers or literals, not expressions",
                     expression.range))
             } //tambien puedo crear un mapa (osea recibirlo) y entonces hacerlo MAS extensible y marcar en el mapa los nodos que quiero que me rompan esto
-        }
+        }//checkBynaryExpression y asi. HACER "checkOnPrintFunctionArguments"
     }
 }

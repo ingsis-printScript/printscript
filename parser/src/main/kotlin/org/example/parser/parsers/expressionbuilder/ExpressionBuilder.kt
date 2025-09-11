@@ -1,4 +1,4 @@
-package org.example.parser.expressionbuilder
+package org.example.parser.parsers.expressionbuilder
 
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.Expression
@@ -8,8 +8,8 @@ import org.example.common.Range
 import org.example.common.enums.Operator
 import org.example.common.enums.TokenType
 import org.example.parser.exceptions.SyntaxException
-import org.example.parser.expressionbuilder.rules.OperatorPrecedence
-import org.example.parser.expressionbuilder.rules.ParenthesesHandler
+import org.example.parser.parsers.expressionbuilder.rules.OperatorPrecedence
+import org.example.parser.parsers.expressionbuilder.rules.ParenthesesHandler
 import org.example.token.Token
 
 class ExpressionBuilder {

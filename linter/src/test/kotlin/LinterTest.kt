@@ -20,13 +20,11 @@ class LinterTest {
     lateinit var tempDir: Path
 
     private lateinit var linter: Linter
-    private lateinit var astFactory: AstFactory
+    private val astFactory = AstFactory()
     private lateinit var configReader: ConfigurationReader
 
     @BeforeEach
     fun setUp() {
-        astFactory = AstFactory()
-
         val strategies = listOf(JsonMapper(), YamlMapper())
         configReader = ConfigurationReader(strategies)
 
@@ -85,7 +83,7 @@ class LinterTest {
     fun `should accept valid camelCase identifiers`() {
         val configFile = createJsonConfig(mapOf("identifier_format" to "camel_case"))
 
-        // AST: Variable declaration with camelCase name - let userName: string = "test";
+        // camelCase let userName: string = "test";
         val symbol = astFactory.createSymbol("userName")
         val value = OptionalExpression.HasExpression(astFactory.createString("test"))
         val ast = astFactory.createVariableDeclarator(symbol, Type.STRING, value)
@@ -145,7 +143,7 @@ class LinterTest {
         val ast = astFactory.createBinaryExpression(leftSymbol, Operator.ADD, rightSymbol)
 
         val report = linter.analyze(ast, configFile)
-        assertEquals(2, report.violations.size) // Both symbols should violate
+        assertEquals(2, report.violations.size)
     }
 
     @Test
@@ -248,14 +246,13 @@ class LinterTest {
         ))
 
         // AST: println(user_name + other_var);
-        // Should violate both rules: wrong identifier format AND binary expression in println
-        val leftSymbol = astFactory.createSymbol("user_name")  // Invalid camelCase
-        val rightSymbol = astFactory.createSymbol("other_var") // Invalid camelCase
+        val leftSymbol = astFactory.createSymbol("user_name")
+        val rightSymbol = astFactory.createSymbol("other_var")
         val binaryExpr = astFactory.createBinaryExpression(leftSymbol, Operator.ADD, rightSymbol)
         val ast = astFactory.createPrintFunction(OptionalExpression.HasExpression(binaryExpr))
 
         val report = linter.analyze(ast, configFile)
-        assertEquals(3, report.violations.size) // 2 symbol format + 1 print argument
+        assertEquals(3, report.violations.size)
     }
 
     @Test
@@ -265,19 +262,17 @@ class LinterTest {
             "println_only_literals_and_identifiers" to true
         ))
 
-        // AST: Represents code like:
         // let userName: string = "test";
         // userName = userName + someVar;
         // println(userName + someVar);
 
-        // First create variable declaration
-        val symbol1 = astFactory.createSymbol("userName") // Invalid snake_case
+        val symbol1 = astFactory.createSymbol("userName")
         val value1 = OptionalExpression.HasExpression(astFactory.createString("test"))
         val declaration = astFactory.createVariableDeclarator(symbol1, Type.STRING, value1)
 
         // Then create assignment with binary expression
-        val symbol2 = astFactory.createSymbol("userName") // Invalid snake_case
-        val symbol3 = astFactory.createSymbol("someVar") // Invalid snake_case
+        val symbol2 = astFactory.createSymbol("userName")
+        val symbol3 = astFactory.createSymbol("someVar")
         val binaryExpr = astFactory.createBinaryExpression(symbol2, Operator.ADD, symbol3)
         val assignment = astFactory.createVariableAssigment(symbol1, OptionalExpression.HasExpression(binaryExpr))
 
@@ -289,9 +284,9 @@ class LinterTest {
         val report2 = linter.analyze(assignment, configFile)
         val report3 = linter.analyze(printFunction, configFile)
 
-        assertTrue(report1.hasViolations()) // Invalid symbol format
-        assertTrue(report2.hasViolations()) // Multiple invalid symbol formats
-        assertTrue(report3.hasViolations()) // Both symbol format and println rule
+        assertTrue(report1.hasViolations())
+        assertTrue(report2.hasViolations())
+        assertTrue(report3.hasViolations()) //cambiar a size check
     }
 
     // ========== HELPER METHODS ==========
