@@ -1,7 +1,7 @@
 package org.example.ast.expressions
 
-import org.example.common.Position
 import org.example.ast.visitors.ASTVisitor
+import org.example.common.Position
 
 data class SymbolExpression(
     val value: String,
@@ -10,9 +10,5 @@ data class SymbolExpression(
 ) : Expression {
     override fun <T> accept(visitor: ASTVisitor<T>): T {
         return visitor.visit(this)
-
     }
 }
-
-
-

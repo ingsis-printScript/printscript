@@ -7,7 +7,7 @@ import java.util.*
 // clikt
 // que se ocupe de parsing, etc. Much to redo (yay!)
 class Cli(private val runner: Runner) {
-    fun run(command: String) : String {
+    fun run(command: String): String {
         val arguments: List<String> = command.split(" ")
         if (!valid(arguments)) { return "Invalid arguments. Usage: <operation> <file_path>" }
         val reader: Optional<Iterator<String>> = createReader(arguments[1])
@@ -15,18 +15,12 @@ class Cli(private val runner: Runner) {
         val version: Optional<String> = getVersion(arguments) // por ahora redirige everything al runner 1.0
         // dsp se puede tener map de runners, acorde a las versiones... algo por el estilo
 
-        when (val operation = arguments[0]) {
-            "validate" -> return runner.validate(reader.get())
-            "execute" -> return runner.execute(reader.get())
-            "format" -> {
-                val configFilePath: Optional<Iterator<String>> = getConfigReader(version, arguments)
-                return runner.format(reader.get(), configFilePath.get())
-            }
-            "analyze" -> {
-                val configFilePath: Optional<Iterator<String>> = getConfigReader(version, arguments)
-                return runner.analyze(reader.get(), configFilePath.get())
-            }
-            else -> return "Unknown operation: $operation"
+        return when (val operation = arguments[0]) {
+            "validate" -> runner.validate(reader.get())
+            "execute" -> runner.execute(reader.get())
+            "format" -> runner.format(reader.get(), getConfigReader(version, arguments).get())
+            "analyzeStatement" -> return runner.analyze(reader.get(), getConfigReader(version, arguments).get())
+            else -> "Unknown operation: $operation"
         }
     }
 
@@ -58,6 +52,7 @@ class Cli(private val runner: Runner) {
             Optional.empty()
         }
     }
+
     // esto ata configInput a statementInput (both file, both...whatever)
     // not ideal but also maybe even good? depende de lo que busquemos, ig
     // for now, considerando que se recibe file, dejo both así...

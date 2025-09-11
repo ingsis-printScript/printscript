@@ -1,7 +1,7 @@
 package org.example.interpreter
 
-import org.example.common.PrintScriptIterator
 import org.example.ast.ASTNode
+import org.example.common.PrintScriptIterator
 import org.example.common.results.Result
 
 class Interpreter(
@@ -31,6 +31,4 @@ class Interpreter(
         }
         return results
     }
-
-
 }

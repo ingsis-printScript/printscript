@@ -6,5 +6,5 @@ import org.example.interpreter.Validator
 
 interface ASTNodeHandler<T : ASTNode> {
     fun handleExecution(node: T, executor: Executor)
-    fun handleValidators(node: T, validator: Validator)
+    fun handleValidation(node: T, validator: Validator)
 }

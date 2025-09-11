@@ -1,5 +1,3 @@
-package org.example.parser
-
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
@@ -7,260 +5,232 @@ import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.common.results.Error
 import org.example.common.results.Success
-import org.example.parser.parsers.function.PrintParser
+import org.example.parser.Parser
+import org.example.parser.TokenBuffer
+import org.example.parser.VariableStatementFactory
 import org.example.parser.parsers.VariableAssignationParser
 import org.example.parser.parsers.VariableDeclarationParser
+import org.example.parser.parsers.function.PrintParser
 import org.example.token.Token
-
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
 class ParserTest {
 
-    private lateinit var parser: Parser
     private val tokenFactory = TokenFactory()
     private val astFactory = AstFactory()
 
-    @BeforeEach
-    fun setUp() {
+    private fun parserWith(tokens: List<Token>): Parser {
         val factoryMap: Map<String, VariableStatementFactory> = mapOf(
-            "let" to { symbol, type, range, optionalExpr -> VariableDeclarator(symbol, type, range, optionalExpr) }
+            "let" to { symbol, type, range, optionalExpr ->
+                VariableDeclarator(symbol, type, range, optionalExpr)
+            }
         )
-
         val statementParsers = listOf(
             VariableDeclarationParser(factoryMap),
             VariableAssignationParser(),
             PrintParser()
         )
-
-        parser = Parser(statementParsers)
+        return Parser(statementParsers, TokenBuffer(MockPSIterator(LinkedList(tokens))))
     }
 
+    // helpers ================================
+
+    private fun tokens(vararg t: Token): List<Token> = listOf(*t)
+
+    private fun keyword(value: String) = tokenFactory.createKeyword(value)
+    private fun symbol(value: String) = tokenFactory.createSymbol(value)
+    private fun punct(value: String) = tokenFactory.createPunctuation(value)
+    private fun number(value: String) = tokenFactory.createNumber(value)
+    private fun string(value: String) = tokenFactory.createString(value)
+    private fun equals() = tokenFactory.createEquals()
+    private fun op(value: String) = tokenFactory.createOperator(value)
+    private fun semi() = tokenFactory.createSemicolon()
+
+    private fun parseAll(parser: Parser): List<ASTNode> {
+        val nodes = mutableListOf<ASTNode>()
+        while (parser.hasNext()) {
+            val result = parser.parse()
+            require(result is Success<*>) { "Expected success but got $result" }
+            nodes.add(result.value as ASTNode)
+        }
+        return nodes
+    }
+
+    private fun assertInvalid(tokens: List<Token>) {
+        val parser = parserWith(tokens)
+        val result = parser.parse()
+        assertTrue(result is Error && result.message.contains("Error in statement: "))
+    }
+
+    private inline fun <reified T> assertParsed(tokens: List<Token>, expected: T) {
+        val parser = parserWith(tokens)
+        val result = parser.parse()
+        assertTrue(result is Success<*> && result.value == expected)
+    }
+
+    // tests ================================
 
     @Test
     fun `parse empty token list returns empty program`() {
-        val iterator = MockPSIterator(LinkedList())
-
-        assertEquals(Error("No tokens to parse"), parser.parse(TokenBuffer(iterator)))
+        val parser = parserWith(emptyList())
+        assertEquals(Error("No tokens to parse"), parser.parse())
     }
 
     @Test
     fun `parse variable declaration without assignment`() {
-        val tokens = LinkedList(listOf(
-            tokenFactory.createKeyword( "let"),
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createPunctuation(":"),
-            tokenFactory.createSymbol("number"),
-            tokenFactory.createSemicolon()
-        ))
-
-        val iterator = MockPSIterator(tokens)
-
-        val result = parser.parse(TokenBuffer(iterator))
-
-        val expectedSymbol = astFactory.createSymbol("x")
-        val expected = astFactory.createVariableDeclarator(expectedSymbol, Type.NUMBER)
-
-        assertSuccess<ASTNode>(result, expected)
+        val expected = astFactory.createVariableDeclarator(
+            astFactory.createSymbol("x"),
+            Type.NUMBER
+        )
+        assertParsed(
+            tokens(keyword("let"), symbol("x"), punct(":"), symbol("number"), semi()),
+            expected
+        )
     }
 
     @Test
     fun `parse variable declaration with assignment`() {
-        val tokens = listOf(
-            tokenFactory.createKeyword("let"),
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createPunctuation(":"),
-            tokenFactory.createSymbol("number"),
-            tokenFactory.createEquals(),
-            tokenFactory.createNumber("5"),
-            tokenFactory.createOperator("+"),
-            tokenFactory.createNumber("3.04"),
-            tokenFactory.createSemicolon()
-        )
-
-        val iterator = MockPSIterator(LinkedList(tokens))
-
-        val result = parser.parse(TokenBuffer(iterator))
-
-        val expectedSymbol = astFactory.createSymbol("x")
         val expression = astFactory.createBinaryExpression(
             astFactory.createNumber("5"),
             Operator.ADD,
-            astFactory.createNumber("3.04")
+            astFactory.createNumber("3")
         )
-        val expected = astFactory
-            .createVariableDeclarator(
-                expectedSymbol,
-                Type.NUMBER,
-                OptionalExpression.HasExpression(expression)
-            )
-
-        assertSuccess<ASTNode>(result, expected)
+        val expected = astFactory.createVariableDeclarator(
+            astFactory.createSymbol("x"),
+            Type.NUMBER,
+            OptionalExpression.HasExpression(expression)
+        )
+        assertParsed(
+            tokens(
+                keyword("let"), symbol("x"), punct(":"), symbol("number"),
+                equals(), number("5"), op("+"), number("3"), semi()
+            ),
+            expected
+        )
     }
 
     @Test
     fun `parse variable declaration with string value`() {
-        val tokens = listOf(
-            tokenFactory.createKeyword("let"),
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createPunctuation(":"),
-            tokenFactory.createSymbol("String"),
-            tokenFactory.createEquals(),
-            tokenFactory.createString("John"),
-            tokenFactory.createSemicolon()
-        )
-
-        val iterator = MockPSIterator(LinkedList(tokens))
-
-        val result = parser.parse(TokenBuffer(iterator))
-
         val expected = astFactory.createVariableDeclarator(
             astFactory.createSymbol("x"),
             Type.STRING,
             OptionalExpression.HasExpression(astFactory.createString("John"))
         )
-
-        assertSuccess<ASTNode>(result, expected)
+        assertParsed(
+            tokens(
+                keyword("let"),
+                symbol("x"),
+                punct(":"),
+                symbol("String"),
+                equals(),
+                string("John"),
+                semi()
+            ),
+            expected
+        )
     }
 
     @Test
     fun `parse simple variable assignment`() {
-        val tokens = listOf(
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createEquals(),
-            tokenFactory.createNumber("10"),
-            tokenFactory.createSemicolon()
-        )
-
-        val iterator = MockPSIterator(LinkedList(tokens))
-
-        val result = parser.parse(TokenBuffer(iterator))
-
         val expected = astFactory.createVariableAssigment(
             astFactory.createSymbol("x"),
             OptionalExpression.HasExpression(astFactory.createNumber("10"))
         )
-
-        assertSuccess<ASTNode>(result, expected)
+        assertParsed(
+            tokens(symbol("x"), equals(), number("10"), semi()),
+            expected
+        )
     }
 
     @Test
     fun `parse variable assignment with another variable`() {
-        val tokens = listOf(
-            tokenFactory.createSymbol("y"),
-            tokenFactory.createEquals(),
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createSemicolon()
+        val expected = getVariableAssignment()
+        assertParsed(
+            tokens(symbol("y"), equals(), symbol("x"), semi()),
+            expected
         )
-
-        val iterator = MockPSIterator(LinkedList(tokens))
-
-        val result = parser.parse(TokenBuffer(iterator))
-
-        val expected = astFactory.createVariableAssigment(
-            astFactory.createSymbol("y"),
-            OptionalExpression.HasExpression(astFactory.createSymbol("x"))
-        )
-
-        assertSuccess<ASTNode>(result, expected)
     }
 
     @Test
     fun `parse function call without parameters`() {
-        val tokens = listOf(
-            tokenFactory.createSymbol("println"),
-            tokenFactory.createPunctuation("["),
-            tokenFactory.createPunctuation("]"),
-            tokenFactory.createSemicolon()
+        val parser = parserWith(
+            tokens(symbol("println"), punct("["), punct("]"), semi())
         )
-
-        val iterator = MockPSIterator(LinkedList(tokens))
-
-        assertTrue(parser.parse(TokenBuffer(iterator)) is Error)
+        val result = parser.parse()
+        assertTrue(result is Error)
     }
 
     @Test
     fun `parse function call with one parameter`() {
-        val tokens = listOf(
-            tokenFactory.createSymbol("println"),
-            tokenFactory.createPunctuation("("),
-            tokenFactory.createString("Hello"),
-            tokenFactory.createPunctuation(")"),
-            tokenFactory.createSemicolon()
-        )
-
-        val iterator = MockPSIterator(LinkedList(tokens))
-
-        val result = parser.parse(TokenBuffer(iterator))
-
         val expected = astFactory.createPrintFunction(
             OptionalExpression.HasExpression(astFactory.createString("Hello"))
         )
-
-        assertSuccess<ASTNode>(result, expected)
+        assertParsed(
+            tokens(symbol("println"), punct("("), string("Hello"), punct(")"), semi()),
+            expected
+        )
     }
-
 
     @Test
     fun `throws SyntaxException for invalid syntax`() {
-        val tokens = listOf(
-            tokenFactory.createKeyword("let"),
-            tokenFactory.createEquals(),
-            tokenFactory.createNumber("5"),
-            tokenFactory.createSemicolon()
-        )
-
-        assertInvalidStructure(tokens)
+        assertInvalid(tokens(keyword("let"), equals(), number("5"), semi()))
     }
 
     @Test
     fun `throws SyntaxException for unrecognized statement pattern`() {
-        val tokens = listOf(
-            tokenFactory.createPunctuation("{"),
-            tokenFactory.createPunctuation("}"),
-            tokenFactory.createSemicolon()
-        )
-
-        assertInvalidStructure(tokens)
+        assertInvalid(tokens(punct("{"), punct("}"), semi()))
     }
 
     @Test
     fun `throws SyntaxException for incomplete variable declaration`() {
-        val tokens = listOf(
-            tokenFactory.createKeyword("let"),
-            tokenFactory.createSymbol("x"),
-            tokenFactory.createPunctuation(":"),
-            tokenFactory.createSemicolon()
-        )
-
-        assertInvalidStructure(tokens)
+        assertInvalid(tokens(keyword("let"), symbol("x"), punct(":"), semi()))
     }
 
     @Test
     fun `handles single semicolon`() {
-        val tokens = listOf(tokenFactory.createSemicolon())
-
-        assertInvalidStructure(tokens)
+        assertInvalid(tokens(semi()))
     }
 
-    private fun assertInvalidStructure(tokens: List<Token>) {
-        val iterator = MockPSIterator(LinkedList(tokens))
-
-        val result = parser.parse(TokenBuffer(iterator))
-        assertTrue(
-            result is Error &&
-                    result.message.contains("Error in statement: ")
+    @Test
+    fun `parse multiple statements in sequence`() {
+        val nodes = parseAll(
+            parserWith(
+                tokens(
+                    // let x:number = 5;
+                    keyword("let"), symbol("x"), punct(":"), symbol("number"),
+                    equals(), number("5"), semi(),
+                    // y = x;
+                    symbol("y"), equals(), symbol("x"), semi(),
+                    // println("done");
+                    symbol("println"), punct("("), string("done"), punct(")"), semi()
+                )
+            )
         )
+
+        assertEquals(3, nodes.size)
+
+        assertEquals(getVariableDeclarator(), nodes[0])
+
+        assertEquals(getVariableAssignment(), nodes[1])
+
+        assertEquals(getPrintFunction(), nodes[2])
     }
 
-    private inline fun <reified T> assertSuccess(result: Any, expected: T) {
-        assertTrue(
-                result is Success<*>
-                && result.value is T
-                && result.value == expected
-        )
-    }
+    private fun getPrintFunction() = astFactory.createPrintFunction(
+        OptionalExpression.HasExpression(astFactory.createString("done"))
+    )
+
+    private fun getVariableAssignment() = astFactory.createVariableAssigment(
+        astFactory.createSymbol("y"),
+        OptionalExpression.HasExpression(astFactory.createSymbol("x"))
+    )
+
+    private fun getVariableDeclarator() = astFactory.createVariableDeclarator(
+        astFactory.createSymbol("x"),
+        Type.NUMBER,
+        OptionalExpression.HasExpression(astFactory.createNumber("5"))
+    )
 }

@@ -4,7 +4,7 @@ import Rule
 import org.example.ast.ASTNode
 import org.example.ast.statements.VariableAssigner
 
-class VariableAssignerFormat: ASTFormat {
+class VariableAssignerFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,
@@ -14,7 +14,7 @@ class VariableAssignerFormat: ASTFormat {
     ) {
         val assigner = node as VariableAssigner
 
-        //Indentación según nesting level
+        // Indentación según nesting level
         val indentQty = rules["indentation"]?.quantity ?: 0
         repeat(nestingLevel * indentQty) { result.append(" ") }
 

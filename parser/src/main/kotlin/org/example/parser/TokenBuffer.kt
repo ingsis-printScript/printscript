@@ -1,9 +1,8 @@
 package org.example.parser
 
 import org.example.common.PrintScriptIterator
-import org.example.token.Token
-import org.example.common.enums.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
+import org.example.token.Token
 
 class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptIterator<Token> {
     private val buffer = mutableListOf<Token>()
@@ -38,13 +37,11 @@ class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptI
         return buffer[index + n - 1]
     }
 
-    fun consume(expectedType: TokenType): Token {
-        val token = peek()
-        if (token.type != expectedType) {
-            throw RuntimeException("Expected $expectedType but found ${token.type}")
+    fun commit(consumed: Int) {
+        if (consumed > 0) {
+            buffer.subList(0, consumed).clear()
+            index = 0
         }
-        index++
-        return token
     }
 
     fun isAtEnd(): Boolean {

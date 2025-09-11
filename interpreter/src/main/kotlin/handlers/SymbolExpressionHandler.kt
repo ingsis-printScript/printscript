@@ -2,14 +2,12 @@ package org.example.interpreter.handlers
 
 import org.example.ast.expressions.SymbolExpression
 import org.example.common.enums.Type
-import org.example.common.results.Success
 import org.example.common.results.Error
-
+import org.example.common.results.Success
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 
-
-class SymbolExpressionHandler: ASTNodeHandler<SymbolExpression> {
+class SymbolExpressionHandler : ASTNodeHandler<SymbolExpression> {
     override fun handleExecution(node: SymbolExpression, executor: Executor) {
         val value = executor.lookupVariable(node.value)
 

@@ -5,7 +5,7 @@ import org.example.lexer.Lexer
 import org.example.parser.Parser
 
 class ValidationOperation(lexer: Lexer, parser: Parser) : Operation {
-    override fun execute() : Result {
+    override fun execute(): Result {
         // lexer
         // buffer
         // parser

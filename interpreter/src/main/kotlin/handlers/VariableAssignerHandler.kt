@@ -2,8 +2,8 @@ package org.example.interpreter.handlers
 
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableAssigner
-import org.example.common.results.Success
 import org.example.common.results.Error
+import org.example.common.results.Success
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 
@@ -28,7 +28,7 @@ class VariableAssignerHandler : ASTNodeHandler<VariableAssigner> {
         }
     }
 
-    override fun handleValidators(node: VariableAssigner, validator: Validator) {
+    override fun handleValidation(node: VariableAssigner, validator: Validator) {
         when (val opt = node.value) {
             is OptionalExpression.NoExpression -> {
                 validator.returnResult(Error("Missing expression"))
@@ -54,4 +54,3 @@ class VariableAssignerHandler : ASTNodeHandler<VariableAssigner> {
         }
     }
 }
-

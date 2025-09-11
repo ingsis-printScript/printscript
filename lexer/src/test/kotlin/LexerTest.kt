@@ -1,15 +1,17 @@
-import org.example.token.Token
+
 import org.example.common.enums.TokenType
-import org.example.lexer.constructors.NumberTokenConstructor
+import org.example.common.enums.keywords.DeclaratorKeyword
+import org.example.common.exceptions.NoMoreTokensAvailableException
+import org.example.common.exceptions.UnsupportedCharacterException
+import org.example.lexer.Lexer
 import org.example.lexer.constructors.KeywordTokenConstructor
+import org.example.lexer.constructors.NumberTokenConstructor
 import org.example.lexer.constructors.OperatorTokenConstructor
 import org.example.lexer.constructors.PunctuationTokenConstructor
 import org.example.lexer.constructors.StringTokenConstructor
 import org.example.lexer.constructors.SymbolTokenConstructor
 import org.example.lexer.constructors.TokenConstructor
-import org.example.lexer.Lexer
-import org.example.common.exceptions.NoMoreTokensAvailableException
-import org.example.common.exceptions.UnsupportedCharacterException
+import org.example.token.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -22,7 +24,7 @@ class LexerTest {
     // Config
     private data class LexerConfig(
         val constructors: List<TokenConstructor> = emptyList(),
-        val keywords: KeywordTokenConstructor = KeywordTokenConstructor(),
+        val keywords: KeywordTokenConstructor = KeywordTokenConstructor(setOf(DeclaratorKeyword.LET)),
         val whiteSpaces: List<Char> = listOf(' ', '\t', '\n')
     )
 

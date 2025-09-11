@@ -12,7 +12,7 @@ import org.example.common.enums.SymbolFormat
 import org.example.linter.LinterConfiguration
 import org.example.linter.data.LinterViolation
 
-class SymbolFormatRule(private val config: LinterConfiguration): Rule {
+class SymbolFormatRule(private val config: LinterConfiguration) : Rule {
 
     private val violations = mutableListOf<LinterViolation>()
 
@@ -29,7 +29,7 @@ class SymbolFormatRule(private val config: LinterConfiguration): Rule {
     }
 
     override fun visit(node: ASTNode): List<LinterViolation> {
-        //recibiria un mapa tambien. Cosa de intentar hacerlo mas extensible.
+        // recibiria un mapa tambien. Cosa de intentar hacerlo mas extensible.
         when (node) {
             is VariableDeclarator -> {
                 visit(node.symbol)

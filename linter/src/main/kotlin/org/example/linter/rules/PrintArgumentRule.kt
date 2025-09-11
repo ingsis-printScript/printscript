@@ -8,7 +8,7 @@ import org.example.ast.statements.functions.PrintFunction
 import org.example.linter.LinterConfiguration
 import org.example.linter.data.LinterViolation
 
-class PrintArgumentRule(private val config: LinterConfiguration): Rule {
+class PrintArgumentRule(private val config: LinterConfiguration) : Rule {
 
     private val violations = mutableListOf<LinterViolation>()
 
@@ -16,7 +16,7 @@ class PrintArgumentRule(private val config: LinterConfiguration): Rule {
         if (!isEnabled()) return emptyList()
 
         violations.clear()
-        this.visit(node)
+        node.accept(this)
         return violations.toList()
     }
 
@@ -25,7 +25,7 @@ class PrintArgumentRule(private val config: LinterConfiguration): Rule {
     }
 
     override fun visit(node: ASTNode): List<LinterViolation> {
-        //recibiria un mapa?
+        // recibiria un mapa?
         when (node) {
             is PrintFunction -> checkPrintlnArguments(node)
         }
@@ -35,7 +35,7 @@ class PrintArgumentRule(private val config: LinterConfiguration): Rule {
     private fun checkPrintlnArguments(printFunction: PrintFunction) {
         val value: OptionalExpression = printFunction.value
         when (value) {
-            is OptionalExpression.NoExpression -> {return}
+            is OptionalExpression.NoExpression -> { return }
             is OptionalExpression.HasExpression -> {
                 val expression: Expression = value.expression
                 if (expression is BinaryExpression) violations

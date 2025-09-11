@@ -1,5 +1,3 @@
-package org.example.parser
-
 import org.example.ast.expressions.Expression
 import org.example.ast.expressions.NumberExpression
 import org.example.ast.expressions.OptionalExpression
@@ -14,8 +12,8 @@ import org.example.common.enums.Operator
 
 class AstFactory {
 
-    val basicRange = Range(Position(1,1), Position(1,1))
-    val basicPosition = Position(1,1)
+    private val basicRange = Range(Position(1, 1), Position(1, 1))
+    private val basicPosition = Position(1, 1)
 
     fun createNumber(value: String, position: Position = basicPosition): NumberExpression {
         return NumberExpression(value, position)
@@ -27,15 +25,19 @@ class AstFactory {
 
     fun createSymbol(name: String, position: Position = basicPosition) = SymbolExpression(name, position)
 
-    fun createBinaryExpression(left: Expression, operator: Operator, right: Expression, range: Range  = basicRange)
-    = org.example.ast.expressions.BinaryExpression(left, operator, right, range)
+    fun createBinaryExpression(left: Expression, operator: Operator, right: Expression, range: Range = basicRange) =
+        org.example.ast.expressions.BinaryExpression(left, operator, right, range)
 
-    fun createVariableAssigment(symbol: SymbolExpression, value: OptionalExpression, range: Range = basicRange)
-    = VariableAssigner(symbol, value, range)
+    fun createVariableAssigment(symbol: SymbolExpression, value: OptionalExpression, range: Range = basicRange) =
+        VariableAssigner(symbol, value, range)
 
-    fun createVariableDeclarator(symbol: SymbolExpression, type: org.example.common.enums.Type, value: OptionalExpression = OptionalExpression.NoExpression, range: Range = basicRange
+    fun createVariableDeclarator(
+        symbol: SymbolExpression,
+        type: org.example.common.enums.Type,
+        value: OptionalExpression = OptionalExpression.NoExpression,
+        range: Range = basicRange
     ) = VariableDeclarator(symbol, type, range, value)
 
-    fun createPrintFunction(value: OptionalExpression, range: Range = basicRange)
-    = PrintFunction(value, range)
+    fun createPrintFunction(value: OptionalExpression, range: Range = basicRange) =
+        PrintFunction(value, range)
 }

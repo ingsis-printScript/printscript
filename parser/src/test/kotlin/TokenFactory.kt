@@ -1,14 +1,10 @@
-package org.example.parser
-
 import org.example.common.Position
-import org.example.common.Range
 import org.example.common.enums.TokenType
 import org.example.token.Token
 
-
 class TokenFactory {
 
-    val basicPosition = Position(1, 1)
+    private val basicPosition = Position(1, 1)
 
     fun createKeyword(value: String): Token = Token(TokenType.KEYWORD, value, basicPosition)
 
@@ -25,5 +21,4 @@ class TokenFactory {
     fun createEquals(): Token = Token(TokenType.PUNCTUATION, "=", basicPosition)
 
     fun createSemicolon(): Token = Token(TokenType.PUNCTUATION, ";", basicPosition)
-
 }

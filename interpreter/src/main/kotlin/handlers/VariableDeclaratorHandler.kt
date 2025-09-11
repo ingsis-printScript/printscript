@@ -3,7 +3,6 @@ package org.example.interpreter.handlers
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.common.results.Error
-
 import org.example.common.results.Success
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
@@ -19,7 +18,7 @@ class VariableDeclaratorHandler : ASTNodeHandler<VariableDeclarator> {
         executor.returnResult(Success(value))
     }
 
-    override fun handleValidators(node: VariableDeclarator, validator: Validator) {
+    override fun handleValidation(node: VariableDeclarator, validator: Validator) {
         validator.declareVariable(node.symbol.value, node.type)
         when (val opt = node.value) {
             is OptionalExpression.NoExpression -> return validator.returnResult(Success(node.type))
@@ -32,4 +31,3 @@ class VariableDeclaratorHandler : ASTNodeHandler<VariableDeclarator> {
         }
     }
 }
-

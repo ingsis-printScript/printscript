@@ -6,14 +6,13 @@ import org.example.common.results.Success
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 
-class NumberExpressionHandler: ASTNodeHandler<NumberExpression> {
+class NumberExpressionHandler : ASTNodeHandler<NumberExpression> {
     override fun handleExecution(node: NumberExpression, executor: Executor) {
         executor.pushLiteral(node.value)
         executor.returnResult(Success(node.value))
     }
 
-
-    override fun handleValidators(
+    override fun handleValidation(
         node: NumberExpression,
         validator: Validator
     ) {

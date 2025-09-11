@@ -12,5 +12,4 @@ enum class LoopKeyword(override val value: String) : Keyword {
             return DeclaratorKeyword.entries.any { it.value.equals(value, ignoreCase = true) }
         }
     }
-
 }

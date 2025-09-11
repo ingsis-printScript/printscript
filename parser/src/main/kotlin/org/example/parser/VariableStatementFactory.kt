@@ -7,4 +7,3 @@ import org.example.common.Range
 import org.example.common.enums.Type
 
 typealias VariableStatementFactory = (SymbolExpression, Type, Range, OptionalExpression) -> Statement
-

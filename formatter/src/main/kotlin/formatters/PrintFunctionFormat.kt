@@ -4,7 +4,7 @@ import Rule
 import org.example.ast.ASTNode
 import org.example.ast.statements.functions.PrintFunction
 
-class PrintFunctionFormat: ASTFormat {
+class PrintFunctionFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,

@@ -1,7 +1,3 @@
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.io.TempDir
 import org.example.ast.expressions.OptionalExpression
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
@@ -12,6 +8,13 @@ import org.example.linter.configurationreaders.mappers.YamlMapper
 import org.example.linter.rules.rulefactory.PrintArgumentRuleFactory
 import org.example.linter.rules.rulefactory.RuleFactory
 import org.example.linter.rules.rulefactory.SymbolFormatRuleFactory
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
 class LinterTest {
@@ -36,14 +39,15 @@ class LinterTest {
         linter = Linter(ruleFactories, configReader)
     }
 
-
     @Test
     fun `should read JSON configuration correctly`() {
         // Config: { "identifier_format": "camel_case", "println_only_literals_and_identifiers": true }
-        val configFile = createJsonConfig(mapOf(
-            "identifier_format" to "camel_case",
-            "println_only_literals_and_identifiers" to true
-        ))
+        val configFile = createJsonConfig(
+            mapOf(
+                "identifier_format" to "camel_case",
+                "println_only_literals_and_identifiers" to true
+            )
+        )
 
         // AST: Simple symbol "userName" (valid camelCase)
         val ast = astFactory.createSymbol("userName")
@@ -55,10 +59,12 @@ class LinterTest {
     @Test
     fun `should read YAML configuration correctly`() {
         // Config: identifier_format: snake_case, println_only_literals_and_identifiers: false
-        val configFile = createYamlConfig(mapOf(
-            "identifier_format" to "snake_case",
-            "println_only_literals_and_identifiers" to false
-        ))
+        val configFile = createYamlConfig(
+            mapOf(
+                "identifier_format" to "snake_case",
+                "println_only_literals_and_identifiers" to false
+            )
+        )
 
         // AST: Simple symbol "user_name" (valid snake_case)
         val ast = astFactory.createSymbol("user_name")
@@ -240,10 +246,12 @@ class LinterTest {
 
     @Test
     fun `should apply multiple rules simultaneously`() {
-        val configFile = createJsonConfig(mapOf(
-            "identifier_format" to "camel_case",
-            "println_only_literals_and_identifiers" to true
-        ))
+        val configFile = createJsonConfig(
+            mapOf(
+                "identifier_format" to "camel_case",
+                "println_only_literals_and_identifiers" to true
+            )
+        )
 
         // AST: println(user_name + other_var);
         val leftSymbol = astFactory.createSymbol("user_name")
@@ -257,10 +265,12 @@ class LinterTest {
 
     @Test
     fun `should handle complex AST with nested violations`() {
-        val configFile = createJsonConfig(mapOf(
-            "identifier_format" to "snake_case",
-            "println_only_literals_and_identifiers" to true
-        ))
+        val configFile = createJsonConfig(
+            mapOf(
+                "identifier_format" to "snake_case",
+                "println_only_literals_and_identifiers" to true
+            )
+        )
 
         // let userName: string = "test";
         // userName = userName + someVar;

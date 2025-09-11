@@ -55,7 +55,7 @@ jacocoTestCoverageVerification {
 
 detekt {
     config = files("$rootDir/detekt.yml")
-    buildUponDefaultConfig = true
+    buildUponDefaultConfig = false
 }
 
 check {

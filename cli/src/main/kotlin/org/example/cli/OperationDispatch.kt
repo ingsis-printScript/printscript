@@ -2,13 +2,13 @@ package org.example.cli
 
 import org.example.cli.factory.PrintScript10Setup
 import org.example.cli.factory.PrintScript11Setup
-import org.example.cli.factory.ToolFactory
 import org.example.cli.factory.SetupData
-import org.example.cli.operations.Operation
-import org.example.cli.operations.ValidationOperation
+import org.example.cli.factory.ToolFactory
+import org.example.cli.operations.AnalyzingOperation
 import org.example.cli.operations.ExecutionOperation
 import org.example.cli.operations.FormattingOperation
-import org.example.cli.operations.AnalyzingOperation
+import org.example.cli.operations.Operation
+import org.example.cli.operations.ValidationOperation
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Optional
@@ -16,16 +16,15 @@ import java.util.Optional
 class OperationDispatch {
     companion object {
         fun getOperation(args: Request): Optional<Operation> {
-
             val from = ToolFactory(getSetup(args.version))
 
-            when (args.operation) {
-                "validation" -> return validation(from, args.inputSource)
-                "execution" -> return Optional.of(ExecutionOperation())
-                "formatting" -> return Optional.of(FormattingOperation())
-                "analyzing" -> return Optional.of(AnalyzingOperation())
+            return when (args.operation) {
+                "validation" -> validation(from, args.inputSource)
+                "execution" -> Optional.of(ExecutionOperation())
+                "formatting" -> Optional.of(FormattingOperation())
+                "analyzing" -> Optional.of(AnalyzingOperation())
+                else -> Optional.empty()
             }
-            return Optional.empty()
         }
 
         private fun getSetup(version: String): SetupData {
