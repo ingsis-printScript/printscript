@@ -12,7 +12,7 @@ class NumberExpressionHandler : ASTNodeHandler<NumberExpression> {
         executor.returnResult(Success(node.value))
     }
 
-    override fun handleValidators(
+    override fun handleValidation(
         node: NumberExpression,
         validator: Validator
     ) {

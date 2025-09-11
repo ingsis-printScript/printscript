@@ -16,7 +16,7 @@ class StringExpressionHandler : ASTNodeHandler<StringExpression> {
         executor.returnResult(Success(node.value))
     }
 
-    override fun handleValidators(
+    override fun handleValidation(
         node: StringExpression,
         validator: Validator
     ) {

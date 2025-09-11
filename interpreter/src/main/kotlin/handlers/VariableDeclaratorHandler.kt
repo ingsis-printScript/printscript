@@ -18,7 +18,7 @@ class VariableDeclaratorHandler : ASTNodeHandler<VariableDeclarator> {
         executor.returnResult(Success(value))
     }
 
-    override fun handleValidators(node: VariableDeclarator, validator: Validator) {
+    override fun handleValidation(node: VariableDeclarator, validator: Validator) {
         validator.declareVariable(node.symbol.value, node.type)
         when (val opt = node.value) {
             is OptionalExpression.NoExpression -> return validator.returnResult(Success(node.type))

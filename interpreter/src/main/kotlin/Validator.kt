@@ -18,7 +18,7 @@ class Validator(
 
     override fun visit(node: ASTNode): Result {
         val handler = handlers[node::class.java] as ASTNodeHandler<ASTNode>
-        handler.handleValidators(node, this)
+        handler.handleValidation(node, this)
         return Success(Unit)
     }
 

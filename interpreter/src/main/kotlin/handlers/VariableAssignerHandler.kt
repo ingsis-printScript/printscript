@@ -28,7 +28,7 @@ class VariableAssignerHandler : ASTNodeHandler<VariableAssigner> {
         }
     }
 
-    override fun handleValidators(node: VariableAssigner, validator: Validator) {
+    override fun handleValidation(node: VariableAssigner, validator: Validator) {
         when (val opt = node.value) {
             is OptionalExpression.NoExpression -> {
                 validator.returnResult(Error("Missing expression"))

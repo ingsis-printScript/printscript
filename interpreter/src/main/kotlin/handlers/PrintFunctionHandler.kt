@@ -18,7 +18,7 @@ class PrintFunctionHandler : ASTNodeHandler<PrintFunction> {
         executor.returnResult(Success(value))
     }
 
-    override fun handleValidators(node: PrintFunction, validator: Validator) {
+    override fun handleValidation(node: PrintFunction, validator: Validator) {
         val valueType = when (val opt = node.value) {
             is OptionalExpression.NoExpression -> null
             is OptionalExpression.HasExpression -> validator.evaluate(opt.expression)

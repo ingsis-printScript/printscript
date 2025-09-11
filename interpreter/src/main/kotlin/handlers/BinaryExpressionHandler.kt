@@ -22,7 +22,7 @@ class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
         executor.returnResult(Success(result))
     }
 
-    override fun handleValidators(node: BinaryExpression, validator: Validator) {
+    override fun handleValidation(node: BinaryExpression, validator: Validator) {
         val leftType = validator.evaluate(node.left)
         val rightType = validator.evaluate(node.right)
 
