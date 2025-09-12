@@ -4,7 +4,7 @@ import org.example.ast.ASTNode
 import org.example.ast.visitors.ASTVisitor
 import org.example.linter.data.LinterViolation
 
-interface Rule : ASTVisitor<List<LinterViolation>> {
+interface Rule {
     fun check(node: ASTNode): List<LinterViolation>
     fun isEnabled(): Boolean
 }

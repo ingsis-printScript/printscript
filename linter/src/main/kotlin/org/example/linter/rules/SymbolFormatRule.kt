@@ -8,11 +8,14 @@ import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.Range
-import org.example.common.enums.SymbolFormat
+import org.example.common.enums.keywords.SymbolFormat
 import org.example.linter.LinterConfiguration
 import org.example.linter.data.LinterViolation
+import org.example.linter.rules.symbolformat.SymbolFormatChecker
+import kotlin.reflect.KClass
 
-class SymbolFormatRule(private val config: LinterConfiguration) : Rule {
+class SymbolFormatRule(private val config: LinterConfiguration, private val handlers: Map<KClass<out ASTNode>, (ASTNode) -> Unit>,
+                       val formatCheckers: Map<SymbolFormat, SymbolFormatChecker>) : Rule {
 
     private val violations = mutableListOf<LinterViolation>()
 
@@ -20,7 +23,7 @@ class SymbolFormatRule(private val config: LinterConfiguration) : Rule {
         if (!isEnabled()) return emptyList()
 
         violations.clear()
-        node.accept(this)
+        handlers[node::class]?.invoke(node)
         return violations.toList()
     }
 
@@ -28,84 +31,18 @@ class SymbolFormatRule(private val config: LinterConfiguration) : Rule {
         return config.getString("identifier_format") != null
     }
 
-    override fun visit(node: ASTNode): List<LinterViolation> {
-        // recibiria un mapa tambien. Cosa de intentar hacerlo mas extensible.
-        when (node) {
-            is VariableDeclarator -> {
-                visit(node.symbol)
-                if (node.value is OptionalExpression.HasExpression) visit((node.value as OptionalExpression.HasExpression).expression)
-            }
-            is VariableAssigner -> {
-                visit(node.symbol)
-                if (node.value is OptionalExpression.HasExpression) visit((node.value as OptionalExpression.HasExpression).expression)
-            }
-            is BinaryExpression -> {
-                visit(node.left)
-                visit(node.right)
-            }
-            is PrintFunction -> if (node.value is OptionalExpression.HasExpression) visit((node.value as OptionalExpression.HasExpression).expression)
-            is SymbolExpression -> checkSymbolFormat(node)
-        }
-        return violations
-    }
-
     private fun checkSymbolFormat(symbol: SymbolExpression) {
         val formatString = config.getString("identifier_format") ?: return
-        val expectedFormat = parseSymbolFormat(formatString) ?: return
-//recibir un mapa de cada regla y lo que chequea
-        when (expectedFormat) {
-             SymbolFormat.CAMEL_CASE -> {
-                if (!isCamelCase(symbol.value)) {
-                    val range = Range(symbol.position, symbol.position)
-                    violations.add(
-                        LinterViolation(
-                            "Identifier '$symbol.value' at $range should be in camelCase format", range
-                        )
-                    )
-                }
-            }
-            SymbolFormat.SNAKE_CASE -> {
-                if (!isSnakeCase(symbol.value)) {
-                    val range = Range(symbol.position, symbol.position)
-                    violations.add(
-                        LinterViolation(
-                            message = "Identifier '$symbol.value' at $range should be in snake_case format", range
-                        )
-                    )
-                }
-            }
+        val expectedFormat = SymbolFormat.fromString(formatString)
+        val checker = formatCheckers[expectedFormat] ?: return
+        if (!checker.isValid(symbol.value)) {
+            val range = Range(symbol.position, symbol.position)
+            violations.add(
+                LinterViolation(
+                    checker.message(symbol.value, range),
+                    range
+                )
+            )
         }
-    }
-
-    private fun parseSymbolFormat(value: String): SymbolFormat? {
-        return when (value.lowercase()) {
-            "camel_case", "camelcase" -> SymbolFormat.CAMEL_CASE
-            "snake_case", "snakecase" -> SymbolFormat.SNAKE_CASE
-            else -> null
-        }
-    }
-
-    private fun isCamelCase(identifier: String): Boolean {
-        if (identifier.isEmpty()) return false
-
-        if (!identifier[0].isLowerCase()) return false
-
-        if (identifier.contains('_')) return false
-
-        return identifier.all { it.isLetterOrDigit() }
-    }
-
-    private fun isSnakeCase(identifier: String): Boolean {
-        if (identifier.isEmpty()) return false
-
-        if (identifier != identifier.lowercase()) return false
-
-        if (!identifier.all { it.isLetterOrDigit() || it == '_' }) return false
-
-        if (identifier.endsWith('_')) return false
-
-        if (identifier.contains("__")) return false
-
-        return true
     }
 }
