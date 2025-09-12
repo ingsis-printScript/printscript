@@ -19,7 +19,7 @@ class SymbolExpressionHandler : ASTNodeHandler<SymbolExpression> {
         }
     }
 
-    override fun handleValidators(node: SymbolExpression, validator: Validator) {
+    override fun handleValidation(node: SymbolExpression, validator: Validator) {
         val type = validator.lookupSymbol(node.value)
 
         if (type == null) {

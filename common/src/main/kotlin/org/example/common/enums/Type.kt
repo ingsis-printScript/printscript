@@ -13,7 +13,7 @@ enum class Type {
     }
 }
 
-//sealed class Type(val name: String) {
+// sealed class Type(val name: String) {
 //    object NUMBER : Type("number")
 //    object STRING : Type("string")
 //    object BOOLEAN : Type("boolean")

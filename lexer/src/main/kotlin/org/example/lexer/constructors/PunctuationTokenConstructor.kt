@@ -11,13 +11,14 @@ class PunctuationTokenConstructor(private val punctuations: Set<Punctuation>) : 
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
 
-        val firstChar = input[0].toString()
-        val punc = punctuations.find { it.value == input }
+        val punc = longestMatch(input)
         if (punc != null) {
-            val tokenPosition = Position(offset, offset + 1)
-            return Optional.of(Token(TokenType.PUNCTUATION, firstChar, tokenPosition))
+            val tokenPosition = Position(position.line, offset + punc.value.length)
+            return Optional.of(Token(TokenType.PUNCTUATION, punc.value, tokenPosition))
         }
 
         return Optional.empty()
     }
+
+    private fun longestMatch(input: String) = punctuations.find { input.startsWith(it.value) }
 }

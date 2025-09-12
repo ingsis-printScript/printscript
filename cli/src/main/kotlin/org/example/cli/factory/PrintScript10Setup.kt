@@ -17,15 +17,15 @@ class PrintScript10Setup : SetupData {
     override fun constructors(): List<TokenConstructor> {
         return listOf(
             NumberTokenConstructor(),
-            OperatorTokenConstructor(),
-            PunctuationTokenConstructor(),
+            OperatorTokenConstructor(setOf()),
+            PunctuationTokenConstructor(setOf()),
             StringTokenConstructor(),
             SymbolTokenConstructor()
         )
     }
 
     override fun keywordConstructor(): KeywordTokenConstructor {
-        return KeywordTokenConstructor()
+        return KeywordTokenConstructor(setOf())
     }
 
     override fun whitespaces(): List<Char> {
@@ -35,7 +35,7 @@ class PrintScript10Setup : SetupData {
     override fun statementParsers(): List<StatementParser> {
         return listOf(
             VariableAssignationParser(),
-            VariableDeclarationParser(),
+            VariableDeclarationParser(mapOf()),
             PrintParser()
         )
     }

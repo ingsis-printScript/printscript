@@ -14,7 +14,7 @@ class SymbolTokenConstructor : TokenConstructor {
         if (!firstChar.isLetter() && firstChar != '_') return Optional.empty()
 
         val identifier = input.takeWhile { it.isLetterOrDigit() || it == '_' }
-        val tokenPosition = Position(offset, offset + identifier.length)
+        val tokenPosition = Position(position.line, offset + identifier.length)
 
         return Optional.of(Token(TokenType.SYMBOL, identifier, tokenPosition))
     }

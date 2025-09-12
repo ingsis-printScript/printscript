@@ -8,7 +8,6 @@ import org.example.cli.operations.AnalyzingOperation
 import org.example.cli.operations.ExecutionOperation
 import org.example.cli.operations.FormattingOperation
 import org.example.cli.operations.Operation
-import org.example.cli.operations.ValidationOperation
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.Optional
@@ -38,7 +37,8 @@ class OperationDispatch {
         private fun validation(from: ToolFactory, source: String): Optional<Operation> {
             val reader = createReader(source)
             if (reader.isEmpty) return Optional.empty()
-            return Optional.of(ValidationOperation(from.lexer(reader.get()), from.parser()))
+            // return Optional.of(ValidationOperation(from.lexer(reader.get()), from.parser()))
+            return Optional.empty() // TODO
         }
 
         // I hate the "if" condition -> sever method from File... eventually

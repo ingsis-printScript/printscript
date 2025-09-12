@@ -296,7 +296,7 @@ class LinterTest {
 
         assertTrue(report1.hasViolations())
         assertTrue(report2.hasViolations())
-        assertTrue(report3.hasViolations()) //cambiar a size check
+        assertTrue(report3.hasViolations()) // cambiar a size check
     }
 
     // ========== HELPER METHODS ==========

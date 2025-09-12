@@ -11,7 +11,7 @@ class NumberTokenConstructor : TokenConstructor {
 
         val numberStr = input.takeWhile { it.isDigit() }
 
-        val tokenPosition = Position(offset, offset + numberStr.length)
+        val tokenPosition = Position(position.line, offset + numberStr.length)
         return Optional.of(Token(TokenType.NUMBER, numberStr, tokenPosition))
     }
 }

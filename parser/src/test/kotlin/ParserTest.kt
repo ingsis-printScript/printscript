@@ -1,16 +1,12 @@
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
-import org.example.ast.statements.VariableDeclarator
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.common.results.Error
 import org.example.common.results.Success
 import org.example.parser.Parser
 import org.example.parser.TokenBuffer
-import org.example.parser.VariableStatementFactory
-import org.example.parser.parsers.VariableAssignationParser
-import org.example.parser.parsers.VariableDeclarationParser
-import org.example.parser.parsers.function.PrintParser
+import org.example.parser.provider.Provider10
 import org.example.token.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -21,19 +17,10 @@ class ParserTest {
 
     private val tokenFactory = TokenFactory()
     private val astFactory = AstFactory()
+    private val provider = Provider10()
 
     private fun parserWith(tokens: List<Token>): Parser {
-        val factoryMap: Map<String, VariableStatementFactory> = mapOf(
-            "let" to { symbol, type, range, optionalExpr ->
-                VariableDeclarator(symbol, type, range, optionalExpr)
-            }
-        )
-        val statementParsers = listOf(
-            VariableDeclarationParser(factoryMap),
-            VariableAssignationParser(),
-            PrintParser()
-        )
-        return Parser(statementParsers, TokenBuffer(MockPSIterator(LinkedList(tokens))))
+        return provider.provide(TokenBuffer(MockPSIterator(LinkedList(tokens))))
     }
 
     // helpers ================================

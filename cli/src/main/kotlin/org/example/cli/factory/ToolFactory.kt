@@ -1,11 +1,7 @@
 package org.example.cli.factory
 
-import org.example.interpreter.Interpreter
-import org.example.lexer.Lexer
-import org.example.parser.Parser
-
 class ToolFactory(private val setupData: SetupData) {
-    fun lexer(reader: Iterator<String>): Lexer {
+    /*fun lexer(reader: Iterator<String>): Lexer {
         return Lexer(
             reader,
             setupData.constructors(),
@@ -20,5 +16,5 @@ class ToolFactory(private val setupData: SetupData) {
 
     fun interpreter(): Interpreter {
         return Interpreter()
-    }
+    }*/
 }
