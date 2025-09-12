@@ -9,7 +9,7 @@ class PunctuationValidator(private val expected: String) : TokenValidator {
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
         val token: Token = statementBuffer.lookahead(position)
         return if (token.type == TokenType.PUNCTUATION) {
-            if (token.value.equals(expected)) {
+            if (token.value == expected) {
                 ValidationResult.Success(listOf(token))
             } else {
                 ValidationResult.Error("Expected '$expected', found '${token.value}'", position)

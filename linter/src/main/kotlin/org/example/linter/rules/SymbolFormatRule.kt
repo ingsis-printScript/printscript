@@ -8,7 +8,7 @@ import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.Range
-import org.example.common.enums.keywords.SymbolFormat
+import org.example.common.enums.SymbolFormat
 import org.example.linter.LinterConfiguration
 import org.example.linter.data.LinterViolation
 import org.example.linter.rules.symbolformat.SymbolFormatChecker

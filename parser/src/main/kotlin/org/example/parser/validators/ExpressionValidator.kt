@@ -6,6 +6,7 @@ import org.example.parser.ValidationResult
 import org.example.token.Token
 
 class ExpressionValidator(
+    private val tokenValidators: List<TokenValidator>,
     private val isElement: (Token) -> Boolean = { t ->
         t.type == TokenType.NUMBER || t.type == TokenType.STRING || t.type == TokenType.SYMBOL
     },

@@ -16,6 +16,7 @@ class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
             Operator.SUB -> (left as Int) - (right as Int)
             Operator.MUL -> (left as Int) * (right as Int)
             Operator.DIV -> (left as Int) / (right as Int)
+            Operator.MOD -> (left as Int) % (right as Int)
             else -> throw IllegalArgumentException("Unsupported operator: ${node.operator}")
         }
         executor.pushLiteral(result)

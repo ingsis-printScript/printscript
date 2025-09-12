@@ -1,8 +1,5 @@
 package org.example.lexer.provider
 
-import org.example.common.tokens.Keyword
-import org.example.common.tokens.Operator
-import org.example.common.tokens.Punctuation
 import org.example.lexer.Lexer
 import org.example.lexer.constructors.KeywordTokenConstructor
 import org.example.lexer.constructors.NumberTokenConstructor
@@ -20,40 +17,16 @@ class Provider10 : Provider {
 
         val constructors = mutableListOf(
             NumberTokenConstructor(),
-            OperatorTokenConstructor(stringToOperator(operators)),
-            PunctuationTokenConstructor(stringToPunctuation(punctuations)),
+            OperatorTokenConstructor(operators),
+            PunctuationTokenConstructor(punctuations),
             StringTokenConstructor(),
             SymbolTokenConstructor()
         )
-        val keywordConstructor = KeywordTokenConstructor(stringToKeyword(keywords))
+        val keywordConstructor = KeywordTokenConstructor(keywords)
         val whiteSpaces = listOf(' ', '\t', '\n')
 
         val lexer = Lexer(reader, constructors, keywordConstructor, whiteSpaces)
 
         return lexer
-    }
-
-    private fun stringToPunctuation(punctuations: Set<String>): Set<Punctuation> {
-        return punctuations.map {
-            object : Punctuation {
-                override val value: String = it
-            }
-        }.toSet()
-    }
-
-    private fun stringToOperator(operators: Set<String>): Set<Operator> {
-        return operators.map {
-            object : Operator {
-                override val value: String = it
-            }
-        }.toSet()
-    }
-
-    private fun stringToKeyword(keywords: Set<String>): Set<Keyword> {
-        return keywords.map {
-            object : Keyword {
-                override val value: String = it
-            }
-        }.toSet()
     }
 }

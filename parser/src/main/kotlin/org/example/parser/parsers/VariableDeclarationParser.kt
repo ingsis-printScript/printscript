@@ -12,6 +12,7 @@ import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.KeywordValidator
 import org.example.parser.validators.PunctuationValidator
 import org.example.parser.validators.SymbolValidator
+import org.example.parser.validators.TokenValidator
 import org.example.parser.validators.TypeValidator
 import org.example.token.Token
 
@@ -19,27 +20,30 @@ private const val ID_POS: Int = 1
 private const val EQUALS_POS = 4
 
 class VariableDeclarationParser(
-    private val keywordFactoryMap: Map<String, VariableStatementFactory>
+    private val keywordFactoryMap: Map<String, VariableStatementFactory>,
+    expectedKeywords: Set<String>,
+    expectedTypes: Set<String>,
+    expressionValidators: List<TokenValidator>
 ) : StatementParser {
 
     private val patterns = listOf(
         StatementPattern(
             listOf(
-                KeywordValidator(),
+                KeywordValidator(expectedKeywords),
                 SymbolValidator(),
                 PunctuationValidator(":"),
-                TypeValidator(),
+                TypeValidator(expectedTypes),
                 PunctuationValidator("="),
-                ExpressionValidator(),
+                ExpressionValidator(expressionValidators),
                 PunctuationValidator(";")
             )
         ),
         StatementPattern(
             listOf(
-                KeywordValidator(),
+                KeywordValidator(expectedKeywords),
                 SymbolValidator(),
                 PunctuationValidator(":"),
-                TypeValidator(),
+                TypeValidator(expectedTypes),
                 PunctuationValidator(";")
             )
         )

@@ -9,23 +9,26 @@ import org.example.parser.parsers.expressionbuilder.ExpressionBuilder
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.PunctuationValidator
 import org.example.parser.validators.SymbolValidator
+import org.example.parser.validators.TokenValidator
 import org.example.token.Token
 
-class VariableAssignationParser : StatementParser {
+class VariableAssignationParser(
+    expressionValidators: List<TokenValidator>
+) : StatementParser {
+
+    private val idPos = 0
+    private val equalsPos = 1
 
     private val patterns = listOf(
         StatementPattern(
             listOf(
                 SymbolValidator(),
                 PunctuationValidator("="),
-                ExpressionValidator(),
+                ExpressionValidator(expressionValidators),
                 PunctuationValidator(";")
             )
         )
     )
-
-    private val idPos = 0
-    private val equalsPos = 1
 
     override fun buildAST(statements: List<Token>): ASTNode {
         val symbol = SymbolExpression(
