@@ -38,11 +38,16 @@ class PrintArgumentRule(private val config: LinterConfiguration) : Rule {
             is OptionalExpression.NoExpression -> { return }
             is OptionalExpression.HasExpression -> {
                 val expression: Expression = value.expression
-                if (expression is BinaryExpression) violations
-                    .add(LinterViolation(
-                        "println() at $expression.range should only be called with identifiers or literals, not expressions",
-                    expression.range))
-            } //tambien puedo crear un mapa (osea recibirlo) y entonces hacerlo MAS extensible y marcar en el mapa los nodos que quiero que me rompan esto
-        }//checkBynaryExpression y asi. HACER "checkOnPrintFunctionArguments"
+                if (expression is BinaryExpression) {
+                    violations
+                        .add(
+                            LinterViolation(
+                                "println() at $expression.range should only be called with identifiers or literals, not expressions",
+                                expression.range
+                            )
+                        )
+                }
+            } // tambien puedo crear un mapa (osea recibirlo) y entonces hacerlo MAS extensible y marcar en el mapa los nodos que quiero que me rompan esto
+        } // checkBynaryExpression y asi. HACER "checkOnPrintFunctionArguments"
     }
 }

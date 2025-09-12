@@ -16,7 +16,7 @@ class StringTokenConstructor : TokenConstructor {
         if (closingIndex == -1) return Optional.empty()
 
         val strValue = input.substring(0, closingIndex + 1)
-        val tokenPosition = Position(offset, offset + strValue.length)
+        val tokenPosition = Position(position.line, offset + strValue.length)
         return Optional.of(Token(TokenType.STRING, strValue, tokenPosition))
     }
 }

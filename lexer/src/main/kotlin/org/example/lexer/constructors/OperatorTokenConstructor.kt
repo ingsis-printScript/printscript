@@ -11,12 +11,14 @@ class OperatorTokenConstructor(private val operators: Set<Operator>) : TokenCons
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
 
-        val op = operators.find { it.value.equals(input, ignoreCase = true) }
+        val op = longestMatch(input)
         if (op != null) {
-            val tokenPosition = Position(offset, offset + op.value.length)
+            val tokenPosition = Position(position.line, offset + op.value.length)
             return Optional.of(Token(TokenType.OPERATOR, op.value, tokenPosition))
         }
 
         return Optional.empty()
     }
+
+    private fun longestMatch(input: String) = operators.find { input.startsWith(it.value) }
 }

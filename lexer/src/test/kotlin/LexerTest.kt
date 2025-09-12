@@ -1,16 +1,9 @@
 
 import org.example.common.enums.TokenType
-import org.example.common.enums.keywords.DeclaratorKeyword
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.common.exceptions.UnsupportedCharacterException
 import org.example.lexer.Lexer
-import org.example.lexer.constructors.KeywordTokenConstructor
-import org.example.lexer.constructors.NumberTokenConstructor
-import org.example.lexer.constructors.OperatorTokenConstructor
-import org.example.lexer.constructors.PunctuationTokenConstructor
-import org.example.lexer.constructors.StringTokenConstructor
-import org.example.lexer.constructors.SymbolTokenConstructor
-import org.example.lexer.constructors.TokenConstructor
+import org.example.lexer.provider.Provider10
 import org.example.token.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -18,35 +11,19 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-// TODO(test for errors and edge cases)
 class LexerTest {
 
-    // Config
-    private data class LexerConfig(
-        val constructors: List<TokenConstructor> = emptyList(),
-        val keywords: KeywordTokenConstructor = KeywordTokenConstructor(setOf(DeclaratorKeyword.LET)),
-        val whiteSpaces: List<Char> = listOf(' ', '\t', '\n')
-    )
+    private val lexerProvider = Provider10()
 
     // Factory
-    private fun createLexer(input: String, config: LexerConfig = LexerConfig()): Lexer {
+    private fun createLexer(input: String): Lexer {
         val lines = listOf(input).iterator()
-        return Lexer(
-            reader = lines,
-            constructors = config.constructors,
-            keywords = config.keywords,
-            whiteSpaces = config.whiteSpaces
-        )
+        return lexerProvider.provide(lines)
     }
 
     // Factory para inputs multi-línea
-    private fun createLexerFromLines(lines: List<String>, config: LexerConfig = LexerConfig()): Lexer {
-        return Lexer(
-            reader = lines.iterator(),
-            constructors = config.constructors,
-            keywords = config.keywords,
-            whiteSpaces = config.whiteSpaces
-        )
+    private fun createLexerFromLines(lines: List<String>): Lexer {
+        return lexerProvider.provide(lines.iterator())
     }
 
     // Assertion helpers
@@ -59,12 +36,6 @@ class LexerTest {
         assertEquals(expectedLine, actualToken.position.line, "Token line position mismatch")
         assertEquals(expectedColumn, actualToken.position.column, "Token column position mismatch")
     }
-
-    // Test data builders para casos comunes
-    private fun buildDefaultConfig() = LexerConfig()
-
-    private fun buildConfigWithConstructors(vararg constructors: TokenConstructor) =
-        LexerConfig(constructors = constructors.toList())
 
     @Test
     fun `test lexer recognizes let keyword`() {
@@ -122,7 +93,7 @@ class LexerTest {
         val lexer = createLexer("   let   ")
 
         if (lexer.hasNext()) {
-            val token = lexer.getNext()
+            lexer.getNext()
         }
 
         val hasMoreTokens = lexer.hasNext()
@@ -135,9 +106,9 @@ class LexerTest {
     }
 
     @Test
-    fun `test lexer with multiple lines`() {
+    fun `test lexer positioning`() {
         // Given
-        val lines = listOf("let", "const")
+        val lines = listOf("let", "a")
         val lexer = createLexerFromLines(lines)
 
         // When & Then
@@ -148,8 +119,8 @@ class LexerTest {
 
         assertTrue(lexer.hasNext())
         val secondToken = lexer.getNext()
-        assertTokenEquals(TokenType.KEYWORD, "const", secondToken)
-        assertTokenAtPosition(2, 0, secondToken)
+        assertTokenEquals(TokenType.SYMBOL, "a", secondToken)
+        assertTokenAtPosition(2, 1, secondToken)
 
         assertFalse(lexer.hasNext())
     }
@@ -157,7 +128,7 @@ class LexerTest {
     @Test
     fun `test lexer with empty lines`() {
         // Given
-        val lines = listOf("", "let", "", "const", "")
+        val lines = listOf("", "let", "", "3", "")
         val lexer = createLexerFromLines(lines)
 
         // When & Then
@@ -165,7 +136,7 @@ class LexerTest {
         assertTokenEquals(TokenType.KEYWORD, "let", lexer.getNext())
 
         assertTrue(lexer.hasNext())
-        assertTokenEquals(TokenType.KEYWORD, "const", lexer.getNext())
+        assertTokenEquals(TokenType.NUMBER, "3", lexer.getNext())
 
         assertFalse(lexer.hasNext())
     }
@@ -184,17 +155,16 @@ class LexerTest {
     }
 
     @Test
-    fun `test lexer with custom whitespace configuration`() {
+    fun `test lexer with jump whitespace configuration`() {
         // Given
-        val customConfig = LexerConfig(whiteSpaces = listOf(' ', '_'))
-        val lexer = createLexer("let_const", customConfig)
+        val lexer = createLexer("let\na")
 
         // When & Then
         assertTrue(lexer.hasNext())
         assertTokenEquals(TokenType.KEYWORD, "let", lexer.getNext())
 
         assertTrue(lexer.hasNext())
-        assertTokenEquals(TokenType.KEYWORD, "const", lexer.getNext())
+        assertTokenEquals(TokenType.SYMBOL, "a", lexer.getNext())
 
         assertFalse(lexer.hasNext())
     }
@@ -202,14 +172,7 @@ class LexerTest {
     @Test
     fun `test complex PrintScript statement with arithmetic expression`() {
         // Given - "a4 =(2+2)/2;"
-        val arithmeticConstructors = listOf(
-            NumberTokenConstructor(),
-            SymbolTokenConstructor(),
-            OperatorTokenConstructor(),
-            PunctuationTokenConstructor()
-        )
-        val config = buildConfigWithConstructors(*arithmeticConstructors.toTypedArray())
-        val lexer = createLexer("a4:number =(2+2) /2;", config)
+        val lexer = createLexer("a4:number =(2+2) /2;")
 
         // When & Then - Verify token sequence
         val expectedTokens = listOf(
@@ -240,18 +203,11 @@ class LexerTest {
     @Test
     fun `test PrintScript println statement with string concatenation`() {
         // Given - "println(\"hello, \" + 'world!')"
-        val printlnConstructors = listOf(
-            SymbolTokenConstructor(),
-            StringTokenConstructor(),
-            OperatorTokenConstructor(),
-            PunctuationTokenConstructor()
-        )
-        val config = buildConfigWithConstructors(*printlnConstructors.toTypedArray())
-        val lexer = createLexer("println(\"hello, \" + 'world!')", config)
+        val lexer = createLexer("println(\"hello, \" + 'world!')")
 
         // When & Then - Verify token sequence
         val expectedTokens = listOf(
-            TokenType.KEYWORD to "println",
+            TokenType.SYMBOL to "println",
             TokenType.PUNCTUATION to "(",
             TokenType.STRING to "\"hello, \"",
             TokenType.OPERATOR to "+",

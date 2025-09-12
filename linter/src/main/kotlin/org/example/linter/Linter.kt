@@ -16,7 +16,6 @@ class Linter(
         val configData = configurationReader.read(configPath)
         val configuration = LinterConfiguration(configData)
 
-
         val rules = mutableListOf<Rule>()
         for (factory in ruleFactories) {
             val rule = factory.create(configuration)

@@ -52,14 +52,15 @@ class SymbolFormatRule(private val config: LinterConfiguration) : Rule {
     private fun checkSymbolFormat(symbol: SymbolExpression) {
         val formatString = config.getString("identifier_format") ?: return
         val expectedFormat = parseSymbolFormat(formatString) ?: return
-//recibir un mapa de cada regla y lo que chequea
+// recibir un mapa de cada regla y lo que chequea
         when (expectedFormat) {
-             SymbolFormat.CAMEL_CASE -> {
+            SymbolFormat.CAMEL_CASE -> {
                 if (!isCamelCase(symbol.value)) {
                     val range = Range(symbol.position, symbol.position)
                     violations.add(
                         LinterViolation(
-                            "Identifier '$symbol.value' at $range should be in camelCase format", range
+                            "Identifier '$symbol.value' at $range should be in camelCase format",
+                            range
                         )
                     )
                 }
@@ -69,7 +70,8 @@ class SymbolFormatRule(private val config: LinterConfiguration) : Rule {
                     val range = Range(symbol.position, symbol.position)
                     violations.add(
                         LinterViolation(
-                            message = "Identifier '$symbol.value' at $range should be in snake_case format", range
+                            message = "Identifier '$symbol.value' at $range should be in snake_case format",
+                            range
                         )
                     )
                 }
