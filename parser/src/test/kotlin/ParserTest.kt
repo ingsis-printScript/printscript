@@ -73,7 +73,7 @@ class ParserTest {
             Type.NUMBER
         )
         assertParsed(
-            tokens(keyword("let"), symbol("x"), punct(":"), symbol("number"), semi()),
+            tokens(keyword("let"), symbol("x"), punct(":"), symbol("Number"), semi()),
             expected
         )
     }
@@ -92,7 +92,7 @@ class ParserTest {
         )
         assertParsed(
             tokens(
-                keyword("let"), symbol("x"), punct(":"), symbol("number"),
+                keyword("let"), symbol("x"), punct(":"), symbol("Number"),
                 equals(), number("5"), op("+"), number("3"), semi()
             ),
             expected
@@ -187,7 +187,7 @@ class ParserTest {
             parserWith(
                 tokens(
                     // let x:number = 5;
-                    keyword("let"), symbol("x"), punct(":"), symbol("number"),
+                    keyword("let"), symbol("x"), punct(":"), symbol("Number"),
                     equals(), number("5"), semi(),
                     // y = x;
                     symbol("y"), equals(), symbol("x"), semi(),

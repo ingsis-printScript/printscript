@@ -8,8 +8,11 @@ import org.example.linter.LinterConfiguration
 import org.example.linter.data.LinterViolation
 import kotlin.reflect.KClass
 
-class PrintArgumentRule(private val config: LinterConfiguration, private val handlers: Map<KClass<out ASTNode>, (ASTNode) -> Unit>,
-    private val prohibitedNodes: Set<ASTNode>) : Rule {
+class PrintArgumentRule(
+    private val config: LinterConfiguration,
+    private val handlers: Map<KClass<out ASTNode>, (ASTNode) -> Unit>,
+    private val prohibitedNodes: Set<ASTNode>
+) : Rule {
 
     private val violations = mutableListOf<LinterViolation>()
 

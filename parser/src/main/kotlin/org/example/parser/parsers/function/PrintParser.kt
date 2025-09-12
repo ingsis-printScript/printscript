@@ -10,15 +10,18 @@ import org.example.parser.parsers.expressionbuilder.ExpressionBuilder
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.PunctuationValidator
 import org.example.parser.validators.SymbolValidator
+import org.example.parser.validators.TokenValidator
 import org.example.token.Token
 
-class PrintParser : StatementParser {
+class PrintParser(
+    expressionValidators: List<TokenValidator>
+) : StatementParser {
     private val patterns = listOf(
         StatementPattern(
             listOf(
                 SymbolValidator(),
                 PunctuationValidator("("),
-                ExpressionValidator(),
+                ExpressionValidator(expressionValidators),
                 PunctuationValidator(")"),
                 PunctuationValidator(";")
             )

@@ -2,7 +2,7 @@ package org.example.linter.rules.symbolformat
 
 import org.example.common.Range
 
-class CamelCaseChecker: SymbolFormatChecker {
+class CamelCaseChecker : SymbolFormatChecker {
     override fun isValid(symbol: String): Boolean =
         symbol.isNotEmpty()
                 && symbol[0].isLowerCase()

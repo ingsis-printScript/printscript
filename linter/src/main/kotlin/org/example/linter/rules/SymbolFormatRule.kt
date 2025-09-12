@@ -14,8 +14,11 @@ import org.example.linter.data.LinterViolation
 import org.example.linter.rules.symbolformat.SymbolFormatChecker
 import kotlin.reflect.KClass
 
-class SymbolFormatRule(private val config: LinterConfiguration, private val handlers: Map<KClass<out ASTNode>, (ASTNode) -> Unit>,
-                       val formatCheckers: Map<SymbolFormat, SymbolFormatChecker>) : Rule {
+class SymbolFormatRule(
+    private val config: LinterConfiguration,
+    private val handlers: Map<KClass<out ASTNode>, (ASTNode) -> Unit>,
+    private val formatCheckers: Map<SymbolFormat, SymbolFormatChecker>
+) : Rule {
 
     private val violations = mutableListOf<LinterViolation>()
 
