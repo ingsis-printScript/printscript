@@ -1,5 +1,6 @@
+import kotlinx.serialization.Serializable
 
-// @Serialization
+@Serializable
 data class Rule(
     val rule: Boolean,
     val quantity: Int? = null

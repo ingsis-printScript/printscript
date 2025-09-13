@@ -6,6 +6,9 @@ import org.example.ast.expressions.BinaryExpression
 
 class BinaryExpressionFormat : ASTFormat {
 
+    override fun canHandle(node: ASTNode) = node is BinaryExpression
+
+
     override fun formatNode(
         node: ASTNode,
         result: StringBuilder,

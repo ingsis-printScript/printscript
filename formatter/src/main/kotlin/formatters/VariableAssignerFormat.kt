@@ -2,9 +2,13 @@ package formatters
 
 import Rule
 import org.example.ast.ASTNode
+import org.example.ast.expressions.BinaryExpression
 import org.example.ast.statements.VariableAssigner
 
 class VariableAssignerFormat : ASTFormat {
+
+    override fun canHandle(node: ASTNode) = node is VariableAssigner
+
 
     override fun formatNode(
         node: ASTNode,

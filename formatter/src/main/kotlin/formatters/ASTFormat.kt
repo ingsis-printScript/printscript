@@ -5,6 +5,8 @@ import org.example.ast.ASTNode
 
 interface ASTFormat {
 
+    fun canHandle(node: ASTNode): Boolean
+
     fun formatNode(
         node: ASTNode,
         result: StringBuilder,
