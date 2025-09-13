@@ -5,10 +5,9 @@ import org.example.linter.configurationreaders.ConfigurationReader
 import org.example.linter.data.LinterReport
 import org.example.linter.data.LinterViolation
 import org.example.linter.rules.Rule
-import org.example.linter.rules.rulefactory.RuleFactory
 
 class Linter(
-    private val ruleFactories: List<(RuleFactory)>,
+    private val rules: List<(Rule)>,
     private val configurationReader: ConfigurationReader
 ) {
 
@@ -16,16 +15,9 @@ class Linter(
         val configData = configurationReader.read(configPath)
         val configuration = LinterConfiguration(configData)
 
-        val rules = mutableListOf<Rule>()
-        for (factory in ruleFactories) {
-            val rule = factory.create(configuration)
-            rules.add(rule)
-        }
-
-        val enabledRules = rules.filter { it.isEnabled() }
         val violations = mutableListOf<LinterViolation>()
-        for (rule in enabledRules) {
-            violations.addAll(rule.check(ast))
+        for (rule in rules) {
+            violations.addAll(rule.check(ast, configuration))
         }
 
         return LinterReport(violations)

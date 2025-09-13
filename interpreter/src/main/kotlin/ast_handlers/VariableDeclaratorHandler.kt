@@ -2,10 +2,10 @@ package org.example.interpreter.handlers
 
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
-import org.example.common.results.Error
-import org.example.common.results.Success
+import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
+import org.example.interpreter.handlers.ASTNodeHandler
 
 class VariableDeclaratorHandler : ASTNodeHandler<VariableDeclarator> {
 
@@ -14,19 +14,26 @@ class VariableDeclaratorHandler : ASTNodeHandler<VariableDeclarator> {
             is OptionalExpression.NoExpression -> null
             is OptionalExpression.HasExpression -> executor.evaluate(opt.expression)
         }
-        executor.declareVariable(node.symbol.value, node.type, value)
-        executor.returnResult(Success(value))
+
+        executor.declareVariable(node.symbol.value, value)
     }
 
     override fun handleValidation(node: VariableDeclarator, validator: Validator) {
         validator.declareVariable(node.symbol.value, node.type)
+
         when (val opt = node.value) {
-            is OptionalExpression.NoExpression -> return validator.returnResult(Success(node.type))
+            is OptionalExpression.NoExpression -> {
+                validator.pushLiteral(node.type)
+            }
             is OptionalExpression.HasExpression -> {
-                val type = validator.evaluate(opt.expression)
-                if (type == null) return validator.returnResult(Error("Cannot determine type for '${node.symbol.value}'"))
-                if (type != node.type) return validator.returnResult(Error("Type mismatch for '${node.symbol.value}': expected ${node.type}, got $type"))
-                return validator.returnResult(Success(node.type))
+                val valueType = validator.evaluate(opt.expression)
+                if (valueType == null) {
+                    validator.reportError("Cannot determine type for '${node.symbol.value}'")
+                } else if (valueType != node.type) {
+                    validator.reportError("Type mismatch for '${node.symbol.value}': expected ${node.type}, got $valueType")
+                } else {
+                    validator.pushLiteral(node.type)
+                }
             }
         }
     }
