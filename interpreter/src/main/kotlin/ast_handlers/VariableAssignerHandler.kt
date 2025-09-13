@@ -11,19 +11,19 @@ class VariableAssignerHandler : ASTNodeHandler<VariableAssigner> {
     override fun handleExecution(node: VariableAssigner, executor: Executor) {
         when (val opt = node.value) {
             is OptionalExpression.NoExpression -> {
-                executor.returnResult(Error("Missing expression"))
+                executor.reportError("Missing expression")
             }
             is OptionalExpression.HasExpression -> {
                 val exprNode = opt.expression
                 val value = executor.evaluate(exprNode)
 
                 if (!executor.isVariableDeclared(node.symbol.value)) {
-                    executor.returnResult(Error("Variable ${node.symbol.value} not declared"))
+                    executor.reportError("Variable ${node.symbol.value} not declared")
                     return
                 }
 
                 executor.assignVariable(node.symbol.value, value)
-                executor.returnResult(Success(value))
+                executor.pushLiteral(value)
             }
         }
     }
@@ -31,25 +31,21 @@ class VariableAssignerHandler : ASTNodeHandler<VariableAssigner> {
     override fun handleValidation(node: VariableAssigner, validator: Validator) {
         when (val opt = node.value) {
             is OptionalExpression.NoExpression -> {
-                validator.returnResult(Error("Missing expression"))
+                throw RuntimeException("Missing expression for variable ${node.symbol.value}")
             }
             is OptionalExpression.HasExpression -> {
                 val exprNode = opt.expression
-                val valueType = validator.evaluate(exprNode)
-
-                if (valueType == null) {
-                    validator.returnResult(Error("Cannot determine type for ${node.symbol.value}"))
-                    return
-                }
+                val valueType = validator.evaluate(exprNode) ?: throw RuntimeException(
+                    "Cannot determine type for ${node.symbol.value}"
+                )
 
                 val declaredType = validator.lookupVariable(node.symbol.value)
                 if (declaredType != valueType) {
-                    validator.returnResult(
-                        Error("Type mismatch: expected $declaredType, got $valueType")
+                    throw RuntimeException(
+                        "Type mismatch: expected $declaredType, got $valueType"
                     )
-                } else {
-                    validator.returnResult(Success(valueType))
                 }
+                validator.pushLiteral(valueType)
             }
         }
     }

@@ -7,9 +7,11 @@ import org.example.common.results.NoResult
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler
+import org.example.interpreter.output.ErrorHandler
 
 class Validator(
-    private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>
+    private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>,
+    val errorHandler: ErrorHandler
 ) : ASTVisitor<Result> {
 
     private val stack = mutableListOf<Type?>()
@@ -47,5 +49,9 @@ class Validator(
 
     fun lookupSymbol(name: String): Type? {
         return environment[name]
+    }
+
+    fun reportError(message: String) {
+        errorHandler.handleError(message)
     }
 }
