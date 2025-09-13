@@ -9,15 +9,18 @@ interface StatementParser {
     fun buildAST(statements: List<Token>): ASTNode
     fun getPatterns(): List<StatementPattern>
 
-    fun analyze(buffer: TokenBuffer): ValidationResult {
+    fun analyze(buffer: TokenBuffer, start: Int): ValidationResult {
         val errors = mutableListOf<ValidationResult.Error>()
+        val successes = mutableListOf<ValidationResult.Success>()
 
         for (pattern in this.getPatterns()) {
-            when (val result = pattern.analyzeStatement(buffer)) {
-                is ValidationResult.Success -> return result
+            when (val result = pattern.analyzeStatement(buffer, start)) {
+                is ValidationResult.Success -> successes.add(result)
                 is ValidationResult.Error -> errors.add(result)
             }
         }
+
+        if (successes.isNotEmpty()) { return successes.maxBy { it.consumed.size } }
 
         val bestError = errors.maxByOrNull { it.message.length }
         return ValidationResult.Error(

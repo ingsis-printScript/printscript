@@ -3,6 +3,8 @@ package org.example.parser
 import org.example.ast.ASTNode
 import org.example.ast.statements.Statement
 import org.example.common.PrintScriptIterator
+import org.example.common.exceptions.NoMoreTokensAvailableException
+import org.example.common.exceptions.UnsupportedCharacterException
 import org.example.common.results.Error
 import org.example.common.results.Result
 import org.example.common.results.Success
@@ -43,53 +45,65 @@ class Parser(
     }
 
     private fun parseStatement(statementBuffer: TokenBuffer, parsers: List<StatementParser>): ASTNode {
-        val successfulAnalysisOutcome = analyzeStatement(statementBuffer, parsers)
+        val outcome = analyzeStatement(statementBuffer, parsers)
+        commitTokens(statementBuffer, outcome)
+        val successfulAnalysisOutcome = successOrThrowBest(outcome)
         return buildAST(successfulAnalysisOutcome)
     }
 
-    private fun analyzeStatement(buffer: TokenBuffer, parsers: List<StatementParser>): AnalysisOutcome {
-        val outcomes: List<AnalysisOutcome> =
-            parsers.map { parser ->
-                val result = parser.analyze(buffer)
-                AnalysisOutcome(parser, result)
-            }
+    fun analyzeStatement(buffer: TokenBuffer, parsers: List<StatementParser>, startingToken: Int = 1): AnalysisOutcome {
+        val errors: MutableList<AnalysisOutcome.Error> = mutableListOf()
 
-        return successOrThrowBestError(outcomes, buffer)
+        for (parser in parsers) {
+            when (val result = parser.analyze(buffer, startingToken)) {
+                is ValidationResult.Success -> return AnalysisOutcome.Success(result, parser)
+                is ValidationResult.Error -> errors.add(AnalysisOutcome.Error(result))
+            }
+        }
+
+        return bestError(errors)
     }
 
-    private fun buildAST(outcome: AnalysisOutcome): ASTNode {
-        val analysisResult = outcome.validation as ValidationResult.Success
-        val statementTokens = analysisResult.consumed
+    private fun buildAST(outcome: AnalysisOutcome.Success): ASTNode {
+        val statementTokens = outcome.result.consumed
         return outcome.parser.buildAST(statementTokens)
     }
 
     // --- Express most accurate error if analysis fails ---
 
-    private fun successOrThrowBestError(outcomes: List<AnalysisOutcome>, buffer: TokenBuffer): AnalysisOutcome {
-        var bestError: ValidationResult.Error? = null
+    private fun bestError(errors: List<AnalysisOutcome.Error>): AnalysisOutcome.Error {
+        var bestError: AnalysisOutcome.Error = errors.first()
         var maxTokensConsumed = -1
-        for (outcome in outcomes) {
-            when (val result = outcome.validation) {
-                is ValidationResult.Success -> {
-                    buffer.commit(result.consumed.size)
-                    return outcome
-                }
-                is ValidationResult.Error -> {
-                    bestError = updateBestError(result, bestError, maxTokensConsumed)
-                        .also { maxTokensConsumed = maxOf(maxTokensConsumed, result.position) }
-                }
-            }
+        for (error in errors) {
+            bestError = update(error, bestError, maxTokensConsumed)
+                .also { maxTokensConsumed = maxOf(maxTokensConsumed, error.result.position) }
         }
-        buffer.commit(maxTokensConsumed)
-        throw createParsingException(bestError, maxTokensConsumed)
+        return bestError
     }
 
-    private fun updateBestError(
-        currentError: ValidationResult.Error,
-        bestError: ValidationResult.Error?,
+    private fun update(
+        currentError: AnalysisOutcome.Error,
+        bestError: AnalysisOutcome.Error,
         maxTokensConsumed: Int
-    ): ValidationResult.Error? {
-        return if (currentError.position > maxTokensConsumed) currentError else bestError
+    ): AnalysisOutcome.Error {
+        return if (gotFurther(currentError, maxTokensConsumed)) currentError else bestError
+    }
+
+    private fun gotFurther(currentError: AnalysisOutcome.Error, maxTokensConsumed: Int) =
+        currentError.result.position > maxTokensConsumed
+
+    private fun commitTokens(buffer: TokenBuffer, outcome: AnalysisOutcome) {
+        when (outcome) {
+            is AnalysisOutcome.Success -> buffer.commit(outcome.result.consumed.size)
+            is AnalysisOutcome.Error -> buffer.commit(outcome.result.position)
+        }
+    }
+
+    private fun successOrThrowBest(outcome: AnalysisOutcome): AnalysisOutcome.Success {
+        return when (outcome) {
+            is AnalysisOutcome.Success -> outcome
+            is AnalysisOutcome.Error -> throw createParsingException(outcome.result, outcome.result.position)
+        }
     }
 
     private fun createParsingException(
@@ -102,4 +116,7 @@ class Parser(
             SyntaxException.errorAt(bestError.message, bestError.position)
         }
     }
+
+    fun getTokenBuffer(): TokenBuffer = tokenBuffer
+    fun getParsers(): List<StatementParser> = parsers
 }

@@ -25,12 +25,6 @@ class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptI
         return buffer[index++]
     }
 
-    fun peek(): Token {
-        fillBuffer()
-        if (index >= buffer.size) throw NoMoreTokensAvailableException()
-        return buffer[index]
-    }
-
     fun lookahead(n: Int): Token {
         fillBuffer(n)
         if (index + n - 1 >= buffer.size) throw NoMoreTokensAvailableException()
@@ -44,8 +38,8 @@ class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptI
         }
     }
 
-    fun isAtEnd(): Boolean {
+    fun isAtEnd(from: Int = index): Boolean {
         fillBuffer()
-        return index >= buffer.size && !tokens.hasNext()
+        return from >= buffer.size && !tokens.hasNext()
     }
 }

@@ -1,6 +1,7 @@
 package org.example.parser.validators
 
 import org.example.common.enums.TokenType
+import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.token.Token
@@ -10,7 +11,12 @@ class NumberValidator : TokenValidator {
     private val numberPattern = Regex("^[0-9]+(\\.[0-9]+)?$")
 
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
-        val token: Token = statementBuffer.lookahead(position)
+        val token: Token
+        try {
+            token = statementBuffer.lookahead(position)
+        } catch(e: NoMoreTokensAvailableException) {
+            return ValidationResult.Error("number expected, but reached end of statement", position)
+        }
         return when {
             token.type == TokenType.NUMBER && isValNumberFormat(token.value) -> {
                 ValidationResult.Success(listOf(token))

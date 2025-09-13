@@ -16,6 +16,8 @@ class TokenFactory {
 
     fun createString(value: String): Token = Token(TokenType.STRING, value, basicPosition)
 
+    fun createBoolean(value: String): Token = Token(TokenType.BOOLEAN, value, basicPosition)
+
     fun createSymbol(value: String): Token = Token(TokenType.SYMBOL, value, basicPosition)
 
     fun createEquals(): Token = Token(TokenType.PUNCTUATION, "=", basicPosition)

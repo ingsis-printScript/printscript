@@ -7,8 +7,8 @@ import org.example.token.Token
 
 data class StatementPattern(val validators: List<TokenValidator>) {
 
-    fun analyzeStatement(buffer: TokenBuffer): ValidationResult {
-        var position = 1
+    fun analyzeStatement(buffer: TokenBuffer, start: Int): ValidationResult {
+        var position = start
         val consumed = mutableListOf<Token>()
 
         for (validator in this.validators) {
