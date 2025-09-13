@@ -8,6 +8,8 @@ import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.NumberExpression
 import java.text.Format
 
+//context: CompositeASTFormat no sabe nada de tipos concretos (solo delega).
+//Cada ASTFormat implementa canHandle y sabe cuándo aplicarse.
 class CompositeASTFormat (
     private val formats: List<ASTFormat>
 ): ASTFormat {

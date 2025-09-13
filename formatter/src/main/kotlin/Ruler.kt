@@ -2,6 +2,9 @@ import java.io.File
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
+//context: esto lee las reglas desde un JSON, y las guarda en un Map<String, Rule>.
+//ese Map<String, Rule> es lo que necesita el formatter para formatear el código.
+
 class Ruler(private val rules: Map<String, Rule>) {
 
     //Metodo de fábrica: fromJsonFile("rules-v10.json")

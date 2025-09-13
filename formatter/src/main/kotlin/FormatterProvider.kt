@@ -9,6 +9,8 @@ import formatters.VariableDeclaratorFormat
 import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
 
+//context: FormatterProvider es el único lugar donde decidís qué formatos existen en cada versión.
+
 class FormatterProvider(private val ruler: Ruler) {
 
     fun provideVersion1_0(nodes: PrintScriptIterator<ASTNode>): Formatter {
