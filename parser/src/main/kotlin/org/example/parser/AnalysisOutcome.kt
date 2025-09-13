@@ -2,7 +2,13 @@ package org.example.parser
 
 import org.example.parser.parsers.StatementParser
 
-data class AnalysisOutcome(
-    val parser: StatementParser,
-    val validation: ValidationResult
-)
+sealed class AnalysisOutcome {
+    data class Success(
+        val result: ValidationResult.Success,
+        val parser: StatementParser
+    ) : AnalysisOutcome()
+
+    data class Error(
+        val result: ValidationResult.Error
+    ) : AnalysisOutcome()
+}

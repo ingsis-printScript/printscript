@@ -1,12 +1,13 @@
 package org.example.parser.validators
 
 import org.example.common.enums.TokenType
+import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.token.Token
 
 class ExpressionValidator(
-    private val tokenValidators: List<TokenValidator>,
+    private val tokenValidators: List<TokenValidator>, //TODO
     private val isElement: (Token) -> Boolean = { t ->
         t.type == TokenType.NUMBER || t.type == TokenType.STRING || t.type == TokenType.SYMBOL
     },
@@ -26,7 +27,12 @@ class ExpressionValidator(
         var depth = 0
 
         while (statementBuffer.hasNext()) {
-            val t = statementBuffer.lookahead(pos)
+            val t: Token
+            try {
+                t = statementBuffer.lookahead(pos)
+            } catch(e: NoMoreTokensAvailableException) {
+                return ValidationResult.Error("token expected, but reached end of statement", position)
+            }
             if (softEnd(t, needElem, depth)) break
             if (needElem) {
                 when (val r = consumeElementOrGroup(statementBuffer, pos, consumed, depth)) {

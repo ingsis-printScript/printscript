@@ -1,6 +1,7 @@
 package org.example.parser.validators
 
 import org.example.common.enums.TokenType
+import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.token.Token
@@ -10,7 +11,12 @@ class StringValidator : TokenValidator {
     private val stringPattern = Regex("^\".*\"$")
 
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
-        val token: Token = statementBuffer.lookahead(position)
+        val token: Token
+        try {
+            token = statementBuffer.lookahead(position)
+        } catch(e: NoMoreTokensAvailableException) {
+            return ValidationResult.Error("string expected, but reached end of statement", position)
+        }
         return when {
             token.type == TokenType.STRING && isValidStringFormat(token.value) -> {
                 ValidationResult.Success(listOf(token))

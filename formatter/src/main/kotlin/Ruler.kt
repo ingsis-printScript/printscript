@@ -1,5 +1,4 @@
 import java.io.File
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 //context: esto lee las reglas desde un JSON, y las guarda en un Map<String, Rule>.

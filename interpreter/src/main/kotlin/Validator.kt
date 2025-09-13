@@ -38,14 +38,8 @@ class Validator(
         return environment[name] ?: throw RuntimeException("Variable $name no declarada")
     }
 
-    fun pushLiteral(value: Type?) {
-        stack.add(value)
-    }
-
-    fun popLiteral(): Type? {
-        if (stack.isEmpty()) return null
-        return stack.removeAt(stack.size - 1)
-    }
+    fun pushLiteral(value: Type?) = stack.add(value)
+    fun popLiteral(): Type? = if (stack.isEmpty()) null else stack.removeAt(stack.size - 1)
 
     fun returnResult(result: Result) {
         lastResult = result

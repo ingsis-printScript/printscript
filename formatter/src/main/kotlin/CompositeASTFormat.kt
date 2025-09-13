@@ -19,7 +19,7 @@ class CompositeASTFormat (
     }
 
     override fun formatNode(
-        node: org.example.ast.ASTNode,
+        node: ASTNode,
         result: StringBuilder,
         rules: Map<String, Rule>,
         nestingLevel: Int
