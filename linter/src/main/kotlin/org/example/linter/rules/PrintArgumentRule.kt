@@ -34,10 +34,15 @@ class PrintArgumentRule(
             is OptionalExpression.NoExpression -> { return }
             is OptionalExpression.HasExpression -> {
                 val expression: Expression = value.expression
-                if (expression in prohibitedNodes) violations
-                    .add(LinterViolation(
-                        "println() can not contain $expression",
-                    printFunction.range))
+                if (expression in prohibitedNodes) {
+                    violations
+                        .add(
+                            LinterViolation(
+                                "println() can not contain $expression",
+                                printFunction.range
+                            )
+                        )
+                }
             }
         }
     }

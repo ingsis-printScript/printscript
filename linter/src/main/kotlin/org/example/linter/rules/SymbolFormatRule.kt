@@ -1,12 +1,7 @@
 package org.example.linter.rules
 
 import org.example.ast.ASTNode
-import org.example.ast.expressions.BinaryExpression
-import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.ast.statements.VariableAssigner
-import org.example.ast.statements.VariableDeclarator
-import org.example.ast.statements.functions.PrintFunction
 import org.example.common.Range
 import org.example.common.enums.SymbolFormat
 import org.example.linter.LinterConfiguration

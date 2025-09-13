@@ -12,7 +12,7 @@ class OperatorTokenConstructor(private val operators: Set<String>) : TokenConstr
 
         val op = longestMatch(input)
         if (op != null) {
-            val tokenPosition = Position(position.line, offset + op.length)
+            val tokenPosition = Position(position.line, offset)
             return Optional.of(Token(TokenType.OPERATOR, op, tokenPosition))
         }
 

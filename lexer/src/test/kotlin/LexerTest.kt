@@ -108,7 +108,7 @@ class LexerTest {
     @Test
     fun `test lexer positioning`() {
         // Given
-        val lines = listOf("let", "a")
+        val lines = listOf("let", "a string")
         val lexer = createLexerFromLines(lines)
 
         // When & Then
@@ -120,7 +120,12 @@ class LexerTest {
         assertTrue(lexer.hasNext())
         val secondToken = lexer.getNext()
         assertTokenEquals(TokenType.SYMBOL, "a", secondToken)
-        assertTokenAtPosition(2, 1, secondToken)
+        assertTokenAtPosition(2, 0, secondToken)
+
+        assertTrue(lexer.hasNext())
+        val thirdToken = lexer.getNext()
+        assertTokenEquals(TokenType.SYMBOL, "string", thirdToken)
+        assertTokenAtPosition(2, 2, thirdToken)
 
         assertFalse(lexer.hasNext())
     }
@@ -172,7 +177,7 @@ class LexerTest {
     @Test
     fun `test complex PrintScript statement with arithmetic expression`() {
         // Given - "a4 =(2+2)/2;"
-        val lexer = createLexer("a4:number =(2+2) /2;")
+        val lexer = createLexer("a4:number =(2+2.0) /2;")
 
         // When & Then - Verify token sequence
         val expectedTokens = listOf(
@@ -183,7 +188,7 @@ class LexerTest {
             TokenType.PUNCTUATION to "(",
             TokenType.NUMBER to "2",
             TokenType.OPERATOR to "+",
-            TokenType.NUMBER to "2",
+            TokenType.NUMBER to "2.0",
             TokenType.PUNCTUATION to ")",
             TokenType.OPERATOR to "/",
             TokenType.NUMBER to "2",

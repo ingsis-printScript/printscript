@@ -8,11 +8,11 @@ import java.util.Optional
 class BooleanTokenConstructor : TokenConstructor {
     override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
         if (input.startsWith("true")) {
-            val tokenPosition = Position(position.line, offset + 4)
+            val tokenPosition = Position(position.line, offset)
             return Optional.of(Token(TokenType.BOOLEAN, "true", tokenPosition))
         }
         if (input.startsWith("false")) {
-            val tokenPosition = Position(position.line, offset + 5)
+            val tokenPosition = Position(position.line, offset)
             return Optional.of(Token(TokenType.BOOLEAN, "false", tokenPosition))
         }
         return Optional.empty()

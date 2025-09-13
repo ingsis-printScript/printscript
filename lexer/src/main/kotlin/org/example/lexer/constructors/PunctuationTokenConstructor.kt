@@ -12,7 +12,7 @@ class PunctuationTokenConstructor(private val punctuations: Set<String>) : Token
 
         val punc = longestMatch(input)
         if (punc != null) {
-            val tokenPosition = Position(position.line, offset + punc.length)
+            val tokenPosition = Position(position.line, offset)
             return Optional.of(Token(TokenType.PUNCTUATION, punc, tokenPosition))
         }
 

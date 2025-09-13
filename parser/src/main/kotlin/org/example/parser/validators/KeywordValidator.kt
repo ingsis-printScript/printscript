@@ -7,7 +7,6 @@ import org.example.token.Token
 
 class KeywordValidator(private val expectedKeywords: Set<String>) : TokenValidator {
 
-
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
         val token: Token = statementBuffer.lookahead(position)
 
