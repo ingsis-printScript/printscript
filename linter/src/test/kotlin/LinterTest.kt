@@ -5,9 +5,7 @@ import org.example.linter.Linter
 import org.example.linter.configurationreaders.ConfigurationReader
 import org.example.linter.configurationreaders.mappers.JsonMapper
 import org.example.linter.configurationreaders.mappers.YamlMapper
-import org.example.linter.rules.rulefactory.PrintArgumentRuleFactory
-import org.example.linter.rules.rulefactory.RuleFactory
-import org.example.linter.rules.rulefactory.SymbolFormatRuleFactory
+import org.example.linter.provider.Provider10
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -21,22 +19,12 @@ class LinterTest {
 
     @TempDir
     lateinit var tempDir: Path
-
     private lateinit var linter: Linter
     private val astFactory = AstFactory()
-    private lateinit var configReader: ConfigurationReader
 
     @BeforeEach
     fun setUp() {
-        val strategies = listOf(JsonMapper(), YamlMapper())
-        configReader = ConfigurationReader(strategies)
-
-        val ruleFactories = listOf<RuleFactory>(
-            PrintArgumentRuleFactory(),
-            SymbolFormatRuleFactory()
-        )
-
-        linter = Linter(ruleFactories, configReader)
+        this.linter = Provider10().provide()
     }
 
     @Test
@@ -214,7 +202,7 @@ class LinterTest {
 
         val report = linter.analyze(ast, configFile)
         assertTrue(report.hasViolations())
-        assertTrue(report.violations[0].message.contains("should only be called with identifiers or literals"))
+        assertTrue(report.violations[0].message.contains("println() can not contain"))
     }
 
     @Test
