@@ -1,29 +1,32 @@
 package org.example.linter.provider
 
+import org.example.ast.expressions.BinaryExpression
 import org.example.common.enums.SymbolFormat
 import org.example.linter.Linter
 import org.example.linter.configurationreaders.ConfigurationReader
 import org.example.linter.configurationreaders.mappers.JsonMapper
 import org.example.linter.configurationreaders.mappers.YamlMapper
-import org.example.linter.rules.rulefactory.PrintArgumentRuleFactory
-import org.example.linter.rules.rulefactory.SymbolFormatRuleFactory
+import org.example.linter.rules.PrintArgumentRule
+import org.example.linter.rules.SymbolFormatRule
 import org.example.linter.rules.symbolformat.CamelCaseChecker
 import org.example.linter.rules.symbolformat.SnakeCaseChecker
 
+
 class Provider10 : Provider {
     override fun provide(): Linter {
-        val symbolFormatCheckers = mapOf(
+
+        val prohibitedNodes = setOf(BinaryExpression::class)
+        val symbolFormats = mapOf(
             SymbolFormat.CAMEL_CASE to CamelCaseChecker(),
-            SymbolFormat.SNAKE_CASE to SnakeCaseChecker()
+            SymbolFormat.SNAKE_CASE to SnakeCaseChecker(),
         )
 
-        val ruleFactories = listOf(
-            PrintArgumentRuleFactory(),
-            SymbolFormatRuleFactory(symbolFormatCheckers)
-        )
+        val rules = listOf(
+            PrintArgumentRule(prohibitedNodes),
+            SymbolFormatRule(symbolFormats))
         val configurationReader = ConfigurationReader(listOf(JsonMapper(), YamlMapper()))
 
-        val linter = Linter(ruleFactories, configurationReader)
+        val linter = Linter(rules, configurationReader)
         return linter
     }
 }

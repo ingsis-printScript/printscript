@@ -9,23 +9,23 @@ import org.example.linter.data.LinterViolation
 import kotlin.reflect.KClass
 
 class PrintArgumentRule(
-    private val config: LinterConfiguration,
-    private val handlers: Map<KClass<out ASTNode>, (ASTNode) -> Unit>,
-    private val prohibitedNodes: Set<ASTNode>
+    private val prohibitedNodes: Set<KClass<out ASTNode>>
 ) : Rule {
 
     private val violations = mutableListOf<LinterViolation>()
+    private lateinit var currentConfig: LinterConfiguration
 
-    override fun check(node: ASTNode): List<LinterViolation> {
-        if (!isEnabled()) return emptyList()
+    override fun check(node: ASTNode, configuration: LinterConfiguration): List<LinterViolation> {
+        if (!isEnabled(configuration)) return emptyList()
 
         violations.clear()
-        handlers[node::class]?.invoke(node)
+        currentConfig = configuration
+        handlers[node::class]?.invoke(node, this) //lo mismo, switch case mas lindo (posta) que tenga un else (type safety). aca es solo printFunction
         return violations.toList()
     }
 
-    override fun isEnabled(): Boolean {
-        return config.getBoolean("println_only_literals_and_identifiers")
+    override fun isEnabled(configuration: LinterConfiguration): Boolean {
+        return configuration.getBoolean("println_only_literals_and_identifiers")
     }
 
     private fun checkPrintlnArguments(printFunction: PrintFunction) {
@@ -34,7 +34,7 @@ class PrintArgumentRule(
             is OptionalExpression.NoExpression -> { return }
             is OptionalExpression.HasExpression -> {
                 val expression: Expression = value.expression
-                if (expression in prohibitedNodes) {
+                if (expression::class in prohibitedNodes) {
                     violations
                         .add(
                             LinterViolation(

@@ -7,30 +7,29 @@ import org.example.common.enums.SymbolFormat
 import org.example.linter.LinterConfiguration
 import org.example.linter.data.LinterViolation
 import org.example.linter.rules.symbolformat.SymbolFormatChecker
-import kotlin.reflect.KClass
 
 class SymbolFormatRule(
-    private val config: LinterConfiguration,
-    private val handlers: Map<KClass<out ASTNode>, (ASTNode) -> Unit>,
     private val formatCheckers: Map<SymbolFormat, SymbolFormatChecker>
 ) : Rule {
 
     private val violations = mutableListOf<LinterViolation>()
+    private lateinit var currentConfig: LinterConfiguration
 
-    override fun check(node: ASTNode): List<LinterViolation> {
-        if (!isEnabled()) return emptyList()
+    override fun check(node: ASTNode, configuration: LinterConfiguration): List<LinterViolation> {
+        if (!isEnabled(configuration)) return emptyList()
 
         violations.clear()
-        handlers[node::class]?.invoke(node)
+        currentConfig = configuration
+        handlers[node::class]?.invoke(node, this) //hacer switch case mas lindo (posta) que tenga un else (type safety)
         return violations.toList()
     }
 
-    override fun isEnabled(): Boolean {
-        return config.getString("identifier_format") != null
+    override fun isEnabled(configuration: LinterConfiguration): Boolean {
+        return configuration.getString("identifier_format") != null
     }
 
     private fun checkSymbolFormat(symbol: SymbolExpression) {
-        val formatString = config.getString("identifier_format") ?: return
+        val formatString = currentConfig.getString("identifier_format") ?: return
         val expectedFormat = SymbolFormat.fromString(formatString)
         val checker = formatCheckers[expectedFormat] ?: return
         if (!checker.isValid(symbol.value)) {
