@@ -53,4 +53,12 @@ class Executor(
         return popLiteral()
     }
 
+
+
+    fun isVariableDeclared(name: String): Boolean {
+        return environment.containsKey(name)
+    }
+
+
+
 }
