@@ -9,31 +9,33 @@ import org.example.interpreter.Validator
 
 class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
     override fun handleExecution(node: BinaryExpression, executor: Executor) {
-        val left = executor.evaluate(node.left)
-        val right = executor.evaluate(node.right)
+        val left = executor.evaluate(node.left) as Number
+        val right = executor.evaluate(node.right) as Number
+
         val result = when (node.operator) {
-            Operator.ADD -> (left as Int) + (right as Int)
-            Operator.SUB -> (left as Int) - (right as Int)
-            Operator.MUL -> (left as Int) * (right as Int)
-            Operator.DIV -> (left as Int) / (right as Int)
-            Operator.MOD -> (left as Int) % (right as Int)
+            Operator.ADD -> left.toInt() + right.toInt()
+            Operator.SUB -> left.toInt() - right.toInt()
+            Operator.MUL -> left.toInt() * right.toInt()
+            Operator.DIV -> left.toInt() / right.toInt()
+            Operator.MOD -> left.toInt() % right.toInt()
             else -> throw IllegalArgumentException("Unsupported operator: ${node.operator}")
         }
+
         executor.pushLiteral(result)
-        executor.returnResult(Success(result))
     }
 
     override fun handleValidation(node: BinaryExpression, validator: Validator) {
         val leftType = validator.evaluate(node.left)
         val rightType = validator.evaluate(node.right)
 
-        if (leftType != Type.NUMBER || rightType != Type.NUMBER) {
+        if (!isNumericType(leftType) || !isNumericType(rightType)) {
             throw IllegalStateException(
-                "Binary operation ${node.operator} requires INT operands, got $leftType and $rightType at ${node.range}"
+                "Binary operation ${node.operator} requires numeric operands, got $leftType and $rightType at ${node.range}"
             )
         }
 
         validator.pushLiteral(Type.NUMBER)
-        validator.returnResult(Success(Type.NUMBER))
     }
+
+    private fun isNumericType(type: Type?) = type == Type.NUMBER
 }
