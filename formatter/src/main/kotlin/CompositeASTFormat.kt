@@ -12,7 +12,8 @@ class CompositeASTFormat (
     private val formats: List<ASTFormat>
 ): ASTFormat {
     override fun canHandle(node: ASTNode): Boolean {
-        TODO("Not yet implemented")
+        // el composite "soporta" cualquier nodo que alguno de sus hijos soporte
+        return formats.any { it.canHandle(node) }
     }
 
     override fun formatNode(
@@ -21,17 +22,10 @@ class CompositeASTFormat (
         rules: Map<String, Rule>,
         nestingLevel: Int
     ) {
-        when (node) {
-            is BinaryExpression -> formats.filterIsInstance<BinaryExpressionFormat>()
-                .firstOrNull()?.formatNode(node, result, rules, nestingLevel)
+        val formatter = formats.firstOrNull { it.canHandle(node) }
+            ?: throw IllegalArgumentException("No formatter found for node type: ${node::class.simpleName}")
 
-            is BooleanExpression -> formats.filterIsInstance<BooleanExpressionFormat>().firstOrNull()?.formatNode(node, result, rules, nestingLevel)
+        formatter.formatNode(node, result, rules, nestingLevel)
 
-            is NumberExpression -> formats.filterIsInstance<NumberExpressionFormat>().firstOrNull()?.formatNode(node, result, rules, nestingLevel)
-
-
-
-            else -> throw IllegalArgumentException("No formatter found for node type: ${node::class.simpleName}")
-        }
     }
 }
