@@ -1,4 +1,4 @@
-package org.example.parser.parsers.expressionbuilder
+package org.example.parser.parsers.builders.expression
 
 import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.Expression

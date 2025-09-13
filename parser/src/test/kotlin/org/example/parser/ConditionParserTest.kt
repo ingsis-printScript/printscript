@@ -1,6 +1,5 @@
-import org.example.parser.AnalysisOutcome
-import org.example.parser.Parser
-import org.example.parser.TokenBuffer
+package org.example.parser
+
 import org.example.parser.parsers.StatementParser
 import org.example.parser.provider.Provider11
 import org.example.token.Token
@@ -12,10 +11,7 @@ class ConditionParserValidationTest {
 
     private val tokenFactory = TokenFactory()
 
-    // ---------------------------
-    // Helpers
-    // ---------------------------
-
+    // helpers ================================
     private fun tokens(vararg t: Token): List<Token> = listOf(*t)
 
     private fun keyword(value: String) = tokenFactory.createKeyword(value)
@@ -47,9 +43,7 @@ class ConditionParserValidationTest {
         assertTrue(outcome is AnalysisOutcome.Error, "Se esperaba Error, obtuvo: $outcome")
     }
 
-    // ---------------------------
-    // Tests de VALIDACIÓN
-    // ---------------------------
+    // tests ================================
 
     @Test
     fun `validate if with empty block`() {
@@ -121,7 +115,7 @@ class ConditionParserValidationTest {
     }
 
     @Test
-    fun `valid - else without block`() {
+    fun `validate if-else with empty block`() {
         // if (false) { } else { println("x");}
         assertValidByAnalyze(
             tokens(
@@ -133,10 +127,6 @@ class ConditionParserValidationTest {
             )
         )
     }
-
-    // ---------------------------
-    // Casos inválidos (solo patterns)
-    // ---------------------------
 
     @Test
     fun `invalid - missing opening parenthesis`() {

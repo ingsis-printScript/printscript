@@ -1,3 +1,5 @@
+package org.example.parser
+
 import org.example.ast.expressions.Expression
 import org.example.ast.expressions.NumberExpression
 import org.example.ast.expressions.OptionalExpression

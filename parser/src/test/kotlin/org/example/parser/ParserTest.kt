@@ -1,11 +1,11 @@
+package org.example.parser
+
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.common.results.Error
 import org.example.common.results.Success
-import org.example.parser.Parser
-import org.example.parser.TokenBuffer
 import org.example.parser.provider.Provider10
 import org.example.token.Token
 import org.junit.jupiter.api.Assertions.assertEquals

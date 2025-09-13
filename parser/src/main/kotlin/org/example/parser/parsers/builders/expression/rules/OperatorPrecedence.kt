@@ -1,4 +1,4 @@
-package org.example.parser.parsers.expressionbuilder.rules
+package org.example.parser.parsers.builders.expression.rules
 
 import org.example.common.enums.Operator
 

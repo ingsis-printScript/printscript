@@ -1,3 +1,5 @@
+package org.example.parser
+
 import org.example.common.Position
 import org.example.common.enums.TokenType
 import org.example.token.Token

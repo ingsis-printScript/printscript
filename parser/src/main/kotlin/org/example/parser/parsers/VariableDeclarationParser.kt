@@ -7,7 +7,7 @@ import org.example.common.Range
 import org.example.common.enums.Type
 import org.example.parser.VariableStatementFactory
 import org.example.parser.exceptions.SyntaxException
-import org.example.parser.parsers.expressionbuilder.ExpressionBuilder
+import org.example.parser.parsers.builders.expression.ExpressionBuilder
 import org.example.parser.validators.ExpressionValidator
 import org.example.parser.validators.KeywordValidator
 import org.example.parser.validators.PunctuationValidator
