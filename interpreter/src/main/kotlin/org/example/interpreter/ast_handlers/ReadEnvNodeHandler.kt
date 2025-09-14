@@ -1,9 +1,9 @@
-package org.example.interpreter.org.example.interpreter.ast_handlers
+package org.example.interpreter.ast_handlers
 
 import org.example.ast.expressions.ReadEnvNode
 import org.example.common.enums.Type
-import org.example.interpreter.org.example.interpreter.Executor
-import org.example.interpreter.org.example.interpreter.Validator
+import org.example.interpreter.Executor
+import org.example.interpreter.Validator
 import org.example.interpreter.handlers.ASTNodeHandler
 
 class ReadEnvNodeHandler : ASTNodeHandler<ReadEnvNode> {

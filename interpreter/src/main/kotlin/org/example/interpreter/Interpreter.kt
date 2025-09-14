@@ -1,4 +1,4 @@
-package org.example.interpreter.org.example.interpreter
+package org.example.interpreter
 
 import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
@@ -18,10 +18,10 @@ class Interpreter(
         val node = iterator.getNext()
 
         // Primero validamos el nodo
-        validator.visit(node)
+        validator.processNode(node)
 
         // Luego ejecutamos el nodo
-        return executor.visit(node)
+        return executor.processNode(node)
     }
 
     fun run(): List<Result> {

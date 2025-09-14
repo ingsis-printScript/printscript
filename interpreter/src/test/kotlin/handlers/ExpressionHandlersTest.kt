@@ -4,11 +4,11 @@ import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.StringExpression
 import org.example.common.Position
 import org.example.common.enums.Type
-import org.example.interpreter.org.example.interpreter.Validator
-import org.example.interpreter.handlers.BooleanExpressionHandler
-import org.example.interpreter.handlers.StringExpressionHandler
+import org.example.interpreter.Validator
+import org.example.interpreter.ast_handlers.BooleanExpressionHandler
+import org.example.interpreter.ast_handlers.StringExpressionHandler
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.org.example.interpreter.output.ErrorHandler
+import org.example.interpreter.output.ErrorHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

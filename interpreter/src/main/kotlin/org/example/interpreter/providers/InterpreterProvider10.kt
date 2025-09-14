@@ -1,7 +1,7 @@
-package org.example.interpreter.org.example.interpreter.provider
+package org.example.interpreter.providers
 
 
-import org.example.interpreter.org.example.interpreter.Interpreter
+import org.example.interpreter.Interpreter
 
 class InterpreterProvider10() : InterpreterProvider {
 

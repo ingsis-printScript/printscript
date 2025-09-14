@@ -6,11 +6,11 @@ import org.example.ast.statements.VariableDeclarator
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Type
-import org.example.interpreter.org.example.interpreter.Validator
+import org.example.interpreter.Validator
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.handlers.VariableDeclaratorHandler
-import org.example.interpreter.org.example.interpreter.output.ErrorHandler
-import org.example.interpreter.org.example.interpreter.Executor
+import org.example.interpreter.ast_handlers.VariableDeclaratorHandler
+import org.example.interpreter.output.ErrorHandler
+import org.example.interpreter.Executor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

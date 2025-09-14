@@ -3,8 +3,8 @@ package org.example.interpreter.handlers
 import org.example.ast.expressions.BinaryExpression
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
-import org.example.interpreter.org.example.interpreter.Executor
-import org.example.interpreter.org.example.interpreter.Validator
+import org.example.interpreter.Executor
+import org.example.interpreter.Validator
 
 class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
     override fun handleExecution(node: BinaryExpression, executor: Executor) {

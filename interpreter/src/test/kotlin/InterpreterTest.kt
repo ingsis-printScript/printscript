@@ -8,12 +8,16 @@ import org.example.common.Position
 import org.example.common.PrintScriptIterator
 import org.example.common.Range
 import org.example.interpreter.handlers.*
-import org.example.interpreter.org.example.interpreter.input.InputProvider
-import org.example.interpreter.org.example.interpreter.Executor
-import org.example.interpreter.org.example.interpreter.Interpreter
-import org.example.interpreter.org.example.interpreter.Validator
-import org.example.interpreter.org.example.interpreter.output.ErrorHandler
-import org.example.interpreter.org.example.interpreter.output.OutputPrinter
+import org.example.interpreter.input.InputProvider
+import org.example.interpreter.Executor
+import org.example.interpreter.Interpreter
+import org.example.interpreter.ast_handlers.NumberExpressionHandler
+import org.example.interpreter.ast_handlers.PrintFunctionHandler
+import org.example.interpreter.ast_handlers.SymbolExpressionHandler
+import org.example.interpreter.Validator
+import org.example.interpreter.ast_handlers.VariableDeclaratorHandler
+import org.example.interpreter.output.ErrorHandler
+import org.example.interpreter.output.OutputPrinter
 
 class InterpreterTest {
 

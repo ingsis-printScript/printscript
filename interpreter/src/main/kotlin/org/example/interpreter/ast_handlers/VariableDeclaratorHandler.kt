@@ -1,9 +1,10 @@
-package org.example.interpreter.handlers
+package org.example.interpreter.ast_handlers
 
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
-import org.example.interpreter.org.example.interpreter.Executor
-import org.example.interpreter.org.example.interpreter.Validator
+import org.example.interpreter.Executor
+import org.example.interpreter.Validator
+import org.example.interpreter.handlers.ASTNodeHandler
 
 class VariableDeclaratorHandler : ASTNodeHandler<VariableDeclarator> {
 

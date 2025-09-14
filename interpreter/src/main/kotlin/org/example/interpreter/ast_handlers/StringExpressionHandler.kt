@@ -1,9 +1,10 @@
-package org.example.interpreter.handlers
+package org.example.interpreter.ast_handlers
 
 import org.example.ast.expressions.StringExpression
 import org.example.common.enums.Type
-import org.example.interpreter.org.example.interpreter.Executor
-import org.example.interpreter.org.example.interpreter.Validator
+import org.example.interpreter.Executor
+import org.example.interpreter.handlers.ASTNodeHandler
+import org.example.interpreter.Validator
 
 class StringExpressionHandler : ASTNodeHandler<StringExpression> {
 

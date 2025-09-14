@@ -1,4 +1,4 @@
-import org.example.interpreter.org.example.interpreter.input.ConsoleInputProvider
+import org.example.interpreter.input.ConsoleInputProvider
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.ByteArrayInputStream

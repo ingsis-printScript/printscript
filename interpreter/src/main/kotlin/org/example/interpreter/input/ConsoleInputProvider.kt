@@ -1,4 +1,4 @@
-package org.example.interpreter.org.example.interpreter.input
+package org.example.interpreter.input
 
 import java.util.Scanner
 
