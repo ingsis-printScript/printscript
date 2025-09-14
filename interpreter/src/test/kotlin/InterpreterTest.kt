@@ -1,23 +1,19 @@
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
-import org.example.interpreter.*
 import org.example.ast.ASTNode
-import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.NumberExpression
 import org.example.ast.expressions.OptionalExpression
-import org.example.ast.expressions.ReadInputNode
-import org.example.ast.expressions.StringExpression
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.Position
 import org.example.common.PrintScriptIterator
 import org.example.common.Range
-import org.example.common.enums.Operator
-import org.example.common.enums.Type
-import org.example.interpreter.ast_handlers.ReadInputNodeHandler
 import org.example.interpreter.handlers.*
-import org.example.interpreter.input.InputProvider
-import org.example.interpreter.output.ErrorHandler
-import org.example.interpreter.output.OutputPrinter
+import org.example.interpreter.org.example.interpreter.input.InputProvider
+import org.example.interpreter.org.example.interpreter.Executor
+import org.example.interpreter.org.example.interpreter.Interpreter
+import org.example.interpreter.org.example.interpreter.Validator
+import org.example.interpreter.org.example.interpreter.output.ErrorHandler
+import org.example.interpreter.org.example.interpreter.output.OutputPrinter
 
 class InterpreterTest {
 

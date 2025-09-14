@@ -6,10 +6,11 @@ import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Type
-import org.example.interpreter.Validator
+import org.example.interpreter.org.example.interpreter.Validator
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.handlers.VariableImmutableDeclaratorHandler
-import org.example.interpreter.output.ErrorHandler
+import org.example.interpreter.org.example.interpreter.Executor
+import org.example.interpreter.org.example.interpreter.output.ErrorHandler
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -27,7 +28,7 @@ class VariableImmutableDeclaratorHandlerValidatorTest {
     private val handlers: Map<Class<out org.example.ast.ASTNode>, ASTNodeHandler<*>> = mapOf(
         VariableImmutableDeclarator::class.java to VariableImmutableDeclaratorHandler(),
         SymbolExpression::class.java to object : ASTNodeHandler<SymbolExpression> {
-            override fun handleExecution(node: SymbolExpression, executor: org.example.interpreter.Executor) {}
+            override fun handleExecution(node: SymbolExpression, executor: Executor) {}
             override fun handleValidation(node: SymbolExpression, validator: Validator) {
                 val type = when (node.value) {
                     "true", "false" -> Type.BOOLEAN

@@ -17,7 +17,7 @@ import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.parser.Parser
 import org.example.parser.TokenBuffer
-import org.example.parser.provider.Provider10
+import org.example.parser.provider.ParserProvider10
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -34,7 +34,7 @@ class ValidationTest {
 
     private lateinit var utils: PrintScriptTestUtils
     private lateinit var astFactory: AstFactory
-    private val provider = Provider10()
+    private val provider = ParserProvider10()
 
     @BeforeEach
     fun setup() {

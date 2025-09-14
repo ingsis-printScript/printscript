@@ -1,7 +1,7 @@
 package org.example.parser
 
 import org.example.parser.parsers.StatementParser
-import org.example.parser.provider.Provider11
+import org.example.parser.provider.ParserProvider11
 import org.example.token.Token
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -24,7 +24,7 @@ class ConditionParserValidationTest {
     private fun newParser(tokens: List<Token>): Triple<Parser, TokenBuffer, List<StatementParser>> {
         val buf = TokenBuffer(MockPSIterator(LinkedList(tokens)))
 
-        val provider = Provider11()
+        val provider = ParserProvider11()
         val parser = provider.provide(buf)
         return Triple(parser, buf, parser.getParsers())
     }

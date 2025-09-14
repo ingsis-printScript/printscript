@@ -6,7 +6,7 @@ import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.common.results.Error
 import org.example.common.results.Success
-import org.example.parser.provider.Provider10
+import org.example.parser.provider.ParserProvider10
 import org.example.token.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -17,7 +17,7 @@ class ParserTest {
 
     private val tokenFactory = TokenFactory()
     private val astFactory = AstFactory()
-    private val provider = Provider10()
+    private val provider = ParserProvider10()
 
     private fun parserWith(tokens: List<Token>): Parser {
         return provider.provide(TokenBuffer(MockPSIterator(LinkedList(tokens))))

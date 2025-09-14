@@ -3,7 +3,7 @@ import org.example.common.enums.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.common.exceptions.UnsupportedCharacterException
 import org.example.lexer.Lexer
-import org.example.lexer.provider.Provider10
+import org.example.lexer.provider.LexerProvider10
 import org.example.token.Token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 class LexerTest {
 
-    private val lexerProvider = Provider10()
+    private val lexerProvider = LexerProvider10()
 
     // Factory
     private fun createLexer(input: String): Lexer {

@@ -5,8 +5,8 @@ import org.example.common.PrintScriptIterator
 import org.example.parser.TokenBuffer
 import org.example.token.Token
 import java.io.InputStream
-import org.example.lexer.provider.Provider10 as LexerProvider10
-import org.example.parser.provider.Provider10 as ParserProvider10
+import org.example.lexer.provider.LexerProvider10 as LexerProvider10
+import org.example.parser.provider.ParserProvider10 as ParserProvider10
 
 /**
  * Utilidad completa para testing que integra el pipeline Lexer-Parser

@@ -4,7 +4,7 @@ import org.example.ast.ASTNode
 import org.example.ast.statements.Condition
 import org.example.common.results.Error
 import org.example.common.results.Success
-import org.example.parser.provider.Provider11
+import org.example.parser.provider.ParserProvider11
 import org.example.token.Token
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -14,7 +14,7 @@ class ConditionStatementTest {
 
     private val tokenFactory = TokenFactory()
     private val astFactory = AstFactory()
-    private val provider = Provider11()
+    private val provider = ParserProvider11()
 
     // ===== helpers =====
     private fun parserWith(tokens: List<Token>): Parser {

@@ -7,19 +7,19 @@ import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Type
-import org.example.interpreter.Executor
-import org.example.interpreter.Validator
+import org.example.interpreter.org.example.interpreter.Executor
+import org.example.interpreter.org.example.interpreter.Validator
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.handlers.VariableAssignerHandler
 import org.example.interpreter.handlers.VariableImmutableDeclaratorHandler
-import org.example.interpreter.output.ErrorHandler
+import org.example.interpreter.org.example.interpreter.output.ErrorHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class VariableAssignerHandlerTest {
 
-    private val fakeErrorHandler = object : org.example.interpreter.output.ErrorHandler {
+    private val fakeErrorHandler = object : ErrorHandler {
         val errors = mutableListOf<String>()
         override fun handleError(message: String) {
             errors.add(message)
@@ -29,7 +29,7 @@ class VariableAssignerHandlerTest {
     private val handlers: Map<Class<out org.example.ast.ASTNode>, ASTNodeHandler<*>> = mapOf(
         VariableAssigner::class.java to VariableAssignerHandler(),
         SymbolExpression::class.java to object : ASTNodeHandler<SymbolExpression> {
-            override fun handleExecution(node: SymbolExpression, executor: org.example.interpreter.Executor) {}
+            override fun handleExecution(node: SymbolExpression, executor: Executor) {}
             override fun handleValidation(node: SymbolExpression, validator: Validator) {
                 val type = when (node.value) {
                     "5", "10" -> Type.NUMBER
