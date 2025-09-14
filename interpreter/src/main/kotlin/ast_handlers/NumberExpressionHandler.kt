@@ -8,7 +8,8 @@ import org.example.interpreter.Validator
 class NumberExpressionHandler : ASTNodeHandler<NumberExpression> {
 
     override fun handleExecution(node: NumberExpression, executor: Executor) {
-        executor.pushLiteral(node.value)
+        val value = node.value.toDouble()
+        executor.pushLiteral(value)
     }
 
     override fun handleValidation(node: NumberExpression, validator: Validator) {

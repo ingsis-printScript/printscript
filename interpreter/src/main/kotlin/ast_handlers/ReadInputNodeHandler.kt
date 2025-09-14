@@ -2,8 +2,6 @@ package org.example.interpreter.ast_handlers
 
 import org.example.ast.expressions.ReadInputNode
 import org.example.common.enums.Type
-import org.example.common.results.Error
-import org.example.common.results.Success
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 import org.example.interpreter.handlers.ASTNodeHandler
@@ -13,20 +11,27 @@ class ReadInputNodeHandler : ASTNodeHandler<ReadInputNode> {
     override fun handleExecution(node: ReadInputNode, executor: Executor) {
         val input = executor.inputProvider.readInput(node.prompt)
 
-        val value = when (node.expectedType) {
-            Type.NUMBER -> input.toIntOrNull() ?: run {
-                executor.reportError("Expected NUMBER but got '$input'")
-                return
+        val value = when {
+            input == null -> {
+                executor.reportError("No input provided")
+                null
             }
-            Type.BOOLEAN -> when (input.lowercase()) {
+            node.expectedType == Type.NUMBER -> input.toIntOrNull().also {
+                if (it == null) executor.reportError("Expected NUMBER but got '$input'")
+            }
+            node.expectedType == Type.BOOLEAN -> when (input.lowercase()) {
                 "true" -> true
                 "false" -> false
                 else -> {
                     executor.reportError("Expected BOOLEAN but got '$input'")
-                    return
+                    null
                 }
             }
-            Type.STRING -> input
+            node.expectedType == Type.STRING -> input
+            else -> {
+                executor.reportError("Unsupported type")
+                null
+            }
         }
 
         executor.pushLiteral(value)

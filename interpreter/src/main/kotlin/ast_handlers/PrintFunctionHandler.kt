@@ -14,7 +14,9 @@ class PrintFunctionHandler : ASTNodeHandler<PrintFunction> {
             is OptionalExpression.HasExpression -> executor.evaluate(opt.expression)
         }
 
-        executor.printValue(value)
+        if (value != null) {
+            executor.printValue(value)
+        }
     }
 
     override fun handleValidation(node: PrintFunction, validator: Validator) {

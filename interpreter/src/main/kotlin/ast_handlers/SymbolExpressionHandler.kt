@@ -13,17 +13,17 @@ class SymbolExpressionHandler : ASTNodeHandler<SymbolExpression> {
 
         if (value == null) {
             executor.reportError("Undefined symbol: ${node.value}")
+            executor.pushLiteral(null)
         } else {
             executor.pushLiteral(value)
         }
     }
 
+
     override fun handleValidation(node: SymbolExpression, validator: Validator) {
         val type = validator.lookupSymbol(node.value)
 
-        if (type == null) {
-            validator.reportError("Undefined symbol: ${node.value}")
-        } else {
+        if (type != null) {
             validator.pushLiteral(type)
         }
     }
