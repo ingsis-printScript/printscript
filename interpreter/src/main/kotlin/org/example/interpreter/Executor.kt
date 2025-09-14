@@ -2,11 +2,11 @@ package org.example.interpreter.org.example.interpreter
 
 import org.example.ast.ASTNode
 import org.example.ast.visitors.ASTVisitor
+import org.example.common.ErrorHandler
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.org.example.interpreter.input.InputProvider
-import org.example.interpreter.org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.org.example.interpreter.output.OutputPrinter
 
 class Executor(

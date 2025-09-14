@@ -2,6 +2,7 @@ package org.example.parser
 
 import org.example.ast.ASTNode
 import org.example.ast.statements.Statement
+import org.example.common.ErrorHandler
 import org.example.common.PrintScriptIterator
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.common.exceptions.UnsupportedCharacterException
@@ -13,7 +14,8 @@ import org.example.parser.parsers.StatementParser
 
 class Parser(
     private val parsers: List<StatementParser>,
-    private val tokenBuffer: TokenBuffer
+    private val tokenBuffer: TokenBuffer,
+    private val errorHandler: ErrorHandler,
 ) : PrintScriptIterator<ASTNode> {
 
     override fun hasNext(): Boolean {
@@ -111,8 +113,10 @@ class Parser(
         maxTokensConsumed: Int
     ): SyntaxException {
         return if (bestError == null || maxTokensConsumed == 0) {
+            errorHandler.handleError("Invalid structure for statement")
             SyntaxException("Invalid structure for statement")
         } else {
+            errorHandler.handleError("Error in statement: ${bestError.message} at index ${bestError.position}")
             SyntaxException.errorAt(bestError.message, bestError.position)
         }
     }

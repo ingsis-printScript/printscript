@@ -1,4 +1,4 @@
-package org.example.formatter.provider
+package org.example.formatter.providers
 
 import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator

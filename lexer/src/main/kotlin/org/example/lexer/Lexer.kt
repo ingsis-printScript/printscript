@@ -1,5 +1,6 @@
 package org.example.lexer
 
+import org.example.common.ErrorHandler
 import org.example.common.Position
 import org.example.common.PrintScriptIterator
 import org.example.common.exceptions.NoMoreTokensAvailableException
@@ -13,7 +14,8 @@ class Lexer(
     private val reader: Iterator<String>,
     private val constructors: Collection<TokenConstructor>,
     private val keywords: KeywordTokenConstructor,
-    private val whiteSpaces: List<Char>
+    private val whiteSpaces: List<Char>,
+    private val errorHandler: ErrorHandler
 ) : PrintScriptIterator<Token> {
 
     private var currentLine: String = ""
@@ -46,10 +48,16 @@ class Lexer(
     private fun endedCurrentLine() = currentLine.isEmpty() || ontoNextLine()
 
     override fun getNext(): Token {
-        if (!hasNext()) throw NoMoreTokensAvailableException()
+        if (!hasNext()) {
+            errorHandler.handleError("No more tokens available at line $line, column $tokenOffset")
+            throw NoMoreTokensAvailableException()
+        }
 
         tokenOffset = skipWhiteSpace(tokenOffset)
-        if (ontoNextLine()) throw NoMoreTokensAvailableException()
+        if (ontoNextLine()) {
+            errorHandler.handleError("No more tokens available at line $line, column $tokenOffset")
+            throw NoMoreTokensAvailableException()
+        }
 
         val currentCharacter = currentLine[tokenOffset]
         val optionalToken = getOptionalToken()
@@ -60,6 +68,7 @@ class Lexer(
             return token
         }
 
+        errorHandler.handleError("Unsupported character '$currentCharacter' at line $line, column $tokenOffset")
         throw UnsupportedCharacterException(
             "Unsupported character '$currentCharacter' at line $line, column $tokenOffset"
         )
