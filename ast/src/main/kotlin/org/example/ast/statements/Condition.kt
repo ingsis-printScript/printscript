@@ -9,8 +9,8 @@ class Condition(
     val condition: BooleanExpression,
     val ifBlock: List<ASTNode>,
     val elseBlock: List<ASTNode>?,
-    override val range: Range,
-    ) : Statement {
+    override val range: Range
+) : Statement {
     override fun <T> accept(visitor: ASTVisitor<T>): T {
         return visitor.visit(this)
     }

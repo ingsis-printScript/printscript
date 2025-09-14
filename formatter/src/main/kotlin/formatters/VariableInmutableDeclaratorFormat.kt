@@ -2,12 +2,11 @@ package formatters
 
 import Rule
 import org.example.ast.ASTNode
-import org.example.ast.expressions.BinaryExpression
-import org.example.ast.statements.VariableDeclarator
+import org.example.ast.statements.VariableImmutableDeclarator
 
-class VariableInmutableDeclarator : ASTFormat {
+class VariableInmutableDeclaratorFormat : ASTFormat {
 
-    override fun canHandle(node: ASTNode) = node is VariableInmutableDeclarator
+    override fun canHandle(node: ASTNode) = node is VariableImmutableDeclarator
 
     override fun formatNode(
         node: ASTNode,
