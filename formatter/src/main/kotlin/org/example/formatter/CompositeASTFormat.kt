@@ -1,14 +1,9 @@
-import formatters.ASTFormat
-import formatters.BinaryExpressionFormat
-import formatters.BooleanExpressionFormat
-import formatters.NumberExpressionFormat
-import org.example.ast.ASTNode
-import org.example.ast.expressions.BinaryExpression
-import org.example.ast.expressions.BooleanExpression
-import org.example.ast.expressions.NumberExpression
-import java.text.Format
+package org.example.formatter
 
-//context: CompositeASTFormat no sabe nada de tipos concretos (solo delega).
+import org.example.formatter.formatters.ASTFormat
+import org.example.ast.ASTNode
+
+//context: org.example.formatter.CompositeASTFormat no sabe nada de tipos concretos (solo delega).
 //Cada ASTFormat implementa canHandle y sabe cuándo aplicarse.
 class CompositeASTFormat (
     private val formats: List<ASTFormat>

@@ -1,3 +1,5 @@
+package org.example.formatter
+
 import kotlinx.serialization.Serializable
 
 @Serializable

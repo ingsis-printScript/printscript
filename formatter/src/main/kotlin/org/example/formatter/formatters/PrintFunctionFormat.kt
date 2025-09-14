@@ -1,8 +1,7 @@
-package formatters
+package org.example.formatter.formatters
 
-import Rule
+import org.example.formatter.Rule
 import org.example.ast.ASTNode
-import org.example.ast.expressions.BinaryExpression
 import org.example.ast.statements.functions.PrintFunction
 
 class PrintFunctionFormat : ASTFormat {

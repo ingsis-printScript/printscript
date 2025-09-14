@@ -1,4 +1,6 @@
-import formatters.ASTFormat
+package org.example.formatter
+
+import org.example.formatter.formatters.ASTFormat
 import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
 

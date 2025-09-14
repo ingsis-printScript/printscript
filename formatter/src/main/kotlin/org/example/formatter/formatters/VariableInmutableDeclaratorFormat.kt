@@ -1,6 +1,6 @@
-package formatters
+package org.example.formatter.formatters
 
-import Rule
+import org.example.formatter.Rule
 import org.example.ast.ASTNode
 import org.example.ast.statements.VariableImmutableDeclarator
 
