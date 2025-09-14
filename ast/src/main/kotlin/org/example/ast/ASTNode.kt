@@ -1,7 +1,3 @@
 package org.example.ast
 
-import org.example.ast.visitors.ASTVisitor
-
-interface ASTNode {
-    fun <T> accept(visitor: ASTVisitor<T>): T
-}
+interface ASTNode {}

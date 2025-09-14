@@ -1,7 +1,6 @@
 package org.example.interpreter.org.example.interpreter
 
 import org.example.ast.ASTNode
-import org.example.ast.visitors.ASTVisitor
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler
@@ -14,7 +13,7 @@ class Executor(
     val inputProvider: InputProvider,
     val outputPrinter: OutputPrinter,
     val errorHandler: ErrorHandler
-) : ASTVisitor<Result> {
+) {
 
     private val environment = mutableMapOf<String, Any?>()
     private val stack = mutableListOf<Any?>()
@@ -42,17 +41,16 @@ class Executor(
         errorHandler.handleError(message)
     }
 
-    override fun visit(node: ASTNode): Result {
+    fun processNode(node: ASTNode): Result {
         val handler = handlers[node::class.java] as ASTNodeHandler<ASTNode>
         handler.handleExecution(node, this)
         return Success(Unit)
     }
 
     fun evaluate(node: ASTNode): Any? {
-        node.accept(this)  // esto llama a visit(node)
+        processNode(node)
         return popLiteral()
     }
-
 
 
     fun isVariableDeclared(name: String): Boolean {
