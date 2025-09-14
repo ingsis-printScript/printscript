@@ -1,7 +1,6 @@
 package org.example.interpreter.org.example.interpreter
 
 import org.example.ast.ASTNode
-import org.example.ast.visitors.ASTVisitor
 import org.example.common.enums.Type
 import org.example.common.results.NoResult
 import org.example.common.results.Result
@@ -12,20 +11,20 @@ import org.example.common.ErrorHandler
 class Validator(
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>,
     val errorHandler: ErrorHandler
-) : ASTVisitor<Result> {
+) {
 
     private val stack = mutableListOf<Type?>()
     private val environment = mutableMapOf<String, Type>() // ahora guarda Type
     private var lastResult: Result = NoResult()
 
-    override fun visit(node: ASTNode): Result {
+     fun processNode(node: ASTNode): Result {
         val handler = handlers[node::class.java] as ASTNodeHandler<ASTNode>
         handler.handleValidation(node, this)
         return Success(Unit)
     }
 
     fun evaluate(node: ASTNode): Type? {
-        node.accept(this)
+        processNode(node)
         return popLiteral()
     }
 

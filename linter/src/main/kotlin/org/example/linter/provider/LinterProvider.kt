@@ -2,6 +2,6 @@ package org.example.linter.provider
 
 import org.example.linter.Linter
 
-interface Provider {
+interface LinterProvider {
     fun provide(): Linter
 }

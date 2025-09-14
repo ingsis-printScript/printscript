@@ -2,10 +2,7 @@ import org.example.ast.expressions.OptionalExpression
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.linter.Linter
-import org.example.linter.configurationreaders.ConfigurationReader
-import org.example.linter.configurationreaders.mappers.JsonMapper
-import org.example.linter.configurationreaders.mappers.YamlMapper
-import org.example.linter.provider.Provider10
+import org.example.linter.provider.LinterProvider10
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -24,7 +21,7 @@ class LinterTest {
 
     @BeforeEach
     fun setUp() {
-        this.linter = Provider10().provide()
+        this.linter = LinterProvider10().provide()
     }
 
     @Test

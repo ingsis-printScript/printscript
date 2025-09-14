@@ -12,7 +12,7 @@ import org.example.linter.rules.symbolformat.CamelCaseChecker
 import org.example.linter.rules.symbolformat.SnakeCaseChecker
 
 
-class Provider10 : Provider {
+class LinterProvider10 : LinterProvider {
     override fun provide(): Linter {
 
         val prohibitedNodes = setOf(BinaryExpression::class)
