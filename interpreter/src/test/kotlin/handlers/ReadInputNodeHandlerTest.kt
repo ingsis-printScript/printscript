@@ -1,11 +1,11 @@
 import org.example.ast.ASTNode
 import org.example.ast.expressions.ReadInputNode
+import org.example.common.ErrorHandler
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
-import org.example.interpreter.ast_handlers.ReadInputNodeHandler
+import org.example.interpreter.asthandlers.ReadInputNodeHandler
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
-import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -46,7 +46,6 @@ class ReadInputNodeHandlerTest {
         assertTrue(fakeErrorHandler.errors.isEmpty())
     }
 
-
     @Test
     fun `should report error if boolean input is invalid`() {
         fakeInputProvider.nextInput = "notABoolean"
@@ -63,7 +62,6 @@ class ReadInputNodeHandlerTest {
         assertTrue(fakeErrorHandler.errors[0].contains("Expected BOOLEAN"))
     }
 
-
     @Test
     fun `should report error if number input is invalid`() {
         fakeInputProvider.nextInput = "notANumber"
@@ -79,8 +77,6 @@ class ReadInputNodeHandlerTest {
         assertTrue(fakeErrorHandler.errors[0].contains("Expected NUMBER"))
     }
 
-
-
     @Test
     fun `should read string input correctly`() {
         fakeInputProvider.nextInput = "hello"
@@ -94,6 +90,4 @@ class ReadInputNodeHandlerTest {
         assertEquals("hello", result)
         assertTrue(fakeErrorHandler.errors.isEmpty())
     }
-
-
 }

@@ -38,7 +38,7 @@ class PrintArgumentRule(
 
     fun checkNodes(node: ASTNode) {
         when (node) {
-            is PrintFunction -> {checkPrintlnArguments(node)}
+            is PrintFunction -> { checkPrintlnArguments(node) }
             is BooleanExpression -> {}
             is NumberExpression -> {}
             is StringExpression -> {}

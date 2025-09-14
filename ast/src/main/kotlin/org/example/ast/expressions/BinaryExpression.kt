@@ -8,5 +8,4 @@ data class BinaryExpression(
     val operator: Operator,
     val right: Expression,
     val range: Range
-) : Expression {
-}
+) : Expression

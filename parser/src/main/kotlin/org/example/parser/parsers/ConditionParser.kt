@@ -3,19 +3,21 @@ package org.example.parser.parsers
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BooleanExpression
 import org.example.ast.statements.Condition
-import org.example.ast.statements.Statement
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.TokenType
 import org.example.parser.parsers.builders.block.BlockBuilder
-import org.example.parser.validators.*
+import org.example.parser.validators.BlockValidator
+import org.example.parser.validators.BooleanValidator
+import org.example.parser.validators.KeywordValidator
+import org.example.parser.validators.PunctuationValidator
 import org.example.token.Token
 
 class ConditionParser(
     private val statementParsers: List<StatementParser>
 ) : StatementParser {
     private val blockBuilder = BlockBuilder(statementParsers)
-    
+
     private val patterns = listOf(
         StatementPattern(
             listOf(
@@ -50,10 +52,10 @@ class ConditionParser(
             Position(statements[0].position.line, statements[0].position.column),
             Position(statements[statements.size - 1].position.line, statements[statements.size - 1].position.column)
         )
-        
+
         val condition = statements[2]
         val boolean = BooleanExpression(condition.value, condition.position)
-        
+
         val divider = endOfBlock(statements)
         val ifBlock = blockBuilder.build(statements.subList(5, divider))
 
@@ -69,7 +71,7 @@ class ConditionParser(
         divider + 1 >= statements.size - 1
 
     private fun endOfBlock(statements: List<Token>) =
-        statements.indexOfFirst{ it.type == TokenType.PUNCTUATION && it.value == "}" }
+        statements.indexOfFirst { it.type == TokenType.PUNCTUATION && it.value == "}" }
 
     override fun getPatterns(): List<StatementPattern> = patterns
 }

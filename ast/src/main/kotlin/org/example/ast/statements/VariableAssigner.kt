@@ -8,5 +8,4 @@ data class VariableAssigner(
     val symbol: SymbolExpression,
     val value: OptionalExpression,
     override val range: Range
-) : Statement {
-}
+) : Statement

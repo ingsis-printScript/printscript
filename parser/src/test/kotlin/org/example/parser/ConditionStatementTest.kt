@@ -6,7 +6,8 @@ import org.example.common.results.Error
 import org.example.common.results.Success
 import org.example.parser.provider.ParserProvider11
 import org.example.token.Token
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.LinkedList
 
@@ -52,8 +53,10 @@ class ConditionStatementTest {
     private fun assertInvalid(tokens: List<Token>) {
         val parser = parserWith(tokens)
         val result = parser.parse()
-        assertTrue(result is Error && result.message.contains("Error in statement: "),
-            "Se esperaba SyntaxError, obtuvo: $result")
+        assertTrue(
+            result is Error && result.message.contains("Error in statement: "),
+            "Se esperaba SyntaxError, obtuvo: $result"
+        )
     }
 
     // ===== tests: casos validos =====
@@ -62,8 +65,12 @@ class ConditionStatementTest {
     fun `build - if con bloque vacio`() {
         val node = parseOne(
             tokens(
-                keyword("if"), punct("("), boolean("true"), punct(")"),
-                punct("{"), punct("}")
+                keyword("if"),
+                punct("("),
+                boolean("true"),
+                punct(")"),
+                punct("{"),
+                punct("}")
             )
         )
         assertTrue(node is Condition, "Se esperaba Condition, obtuvo: ${node::class.simpleName}")
@@ -146,8 +153,10 @@ class ConditionStatementTest {
         assertInvalid(
             tokens(
                 keyword("if"),
-                boolean("true"), punct(")"),
-                punct("{"), punct("}")
+                boolean("true"),
+                punct(")"),
+                punct("{"),
+                punct("}")
             )
         )
     }
@@ -157,8 +166,11 @@ class ConditionStatementTest {
         // if (true { }
         assertInvalid(
             tokens(
-                keyword("if"), punct("("), boolean("true"),
-                punct("{"), punct("}")
+                keyword("if"),
+                punct("("),
+                boolean("true"),
+                punct("{"),
+                punct("}")
             )
         )
     }
@@ -168,7 +180,10 @@ class ConditionStatementTest {
         // if (true) }
         assertInvalid(
             tokens(
-                keyword("if"), punct("("), boolean("true"), punct(")"),
+                keyword("if"),
+                punct("("),
+                boolean("true"),
+                punct(")"),
                 punct("}")
             )
         )
@@ -180,7 +195,8 @@ class ConditionStatementTest {
         assertInvalid(
             tokens(
                 keyword("if"),
-                punct("{"), punct("}")
+                punct("{"),
+                punct("}")
             )
         )
     }
@@ -190,8 +206,12 @@ class ConditionStatementTest {
         // if (5) { }
         assertInvalid(
             tokens(
-                keyword("if"), punct("("), number("5"), punct(")"),
-                punct("{"), punct("}")
+                keyword("if"),
+                punct("("),
+                number("5"),
+                punct(")"),
+                punct("{"),
+                punct("}")
             )
         )
     }

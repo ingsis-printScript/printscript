@@ -6,7 +6,7 @@ class ConsoleInputProvider : InputProvider {
 
     private val scanner = Scanner(System.`in`)
 
-    override fun readInput(prompt: String): String{
+    override fun readInput(prompt: String): String {
         print("$prompt:")
         return scanner.nextLine()
     }

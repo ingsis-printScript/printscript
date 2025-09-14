@@ -1,8 +1,8 @@
 package org.example.formatter
 
-import org.example.formatter.formatters.ASTFormat
 import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
+import org.example.formatter.formatters.ASTFormat
 
 class Formatter(
     private val rules: Map<String, Rule>,

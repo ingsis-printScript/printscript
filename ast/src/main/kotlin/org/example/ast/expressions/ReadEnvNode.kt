@@ -5,5 +5,4 @@ import org.example.common.enums.Type
 class ReadEnvNode(
     val varName: String,
     val expectedType: Type
-) : Expression {
-}
+) : Expression

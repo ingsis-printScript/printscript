@@ -1,13 +1,13 @@
 package org.example.formatter
 
-import org.example.formatter.formatters.ASTFormat
 import org.example.ast.ASTNode
+import org.example.formatter.formatters.ASTFormat
 
-//context: org.example.formatter.CompositeASTFormat no sabe nada de tipos concretos (solo delega).
-//Cada ASTFormat implementa canHandle y sabe cuándo aplicarse.
-class CompositeASTFormat (
+// context: org.example.formatter.CompositeASTFormat no sabe nada de tipos concretos (solo delega).
+// Cada ASTFormat implementa canHandle y sabe cuándo aplicarse.
+class CompositeASTFormat(
     private val formats: List<ASTFormat>
-): ASTFormat {
+) : ASTFormat {
     override fun canHandle(node: ASTNode): Boolean {
         // el composite "soporta" cualquier nodo que alguno de sus hijos soporte
         return formats.any { it.canHandle(node) }
@@ -23,6 +23,5 @@ class CompositeASTFormat (
             ?: throw IllegalArgumentException("No formatter found for node type: ${node::class.simpleName}")
 
         formatter.formatNode(node, result, rules, nestingLevel)
-
     }
 }

@@ -1,11 +1,11 @@
 package org.example.interpreter
 
 import org.example.ast.ASTNode
+import org.example.common.ErrorHandler
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
-import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 
 class Executor(
@@ -32,7 +32,7 @@ class Executor(
     fun lookupVariable(name: String): Any? = environment[name]
 
     fun printValue(value: Any?) {
-        outputPrinter.print(value.toString())  // manda solo a Printer
+        outputPrinter.print(value.toString()) // manda solo a Printer
     }
 
     fun reportError(message: String) {

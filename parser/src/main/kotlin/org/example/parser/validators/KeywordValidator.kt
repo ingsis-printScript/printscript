@@ -12,7 +12,7 @@ class KeywordValidator(private val expectedKeywords: Set<String>) : TokenValidat
         val token: Token
         try {
             token = statementBuffer.lookahead(position)
-        } catch(e: NoMoreTokensAvailableException) {
+        } catch (e: NoMoreTokensAvailableException) {
             return ValidationResult.Error("keyword expected, but reached end of statement", position)
         }
 

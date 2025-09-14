@@ -1,12 +1,12 @@
 package org.example.interpreter
 
 import org.example.ast.ASTNode
+import org.example.common.ErrorHandler
 import org.example.common.enums.Type
 import org.example.common.results.NoResult
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.output.ErrorHandler
 
 class Validator(
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>,
@@ -17,7 +17,7 @@ class Validator(
     private val environment = mutableMapOf<String, Type>() // ahora guarda Type
     private var lastResult: Result = NoResult()
 
-     fun processNode(node: ASTNode): Result {
+    fun processNode(node: ASTNode): Result {
         val handler = handlers[node::class.java] as ASTNodeHandler<ASTNode>
         handler.handleValidation(node, this)
         return Success(Unit)

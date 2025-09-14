@@ -7,7 +7,7 @@ import org.example.parser.ValidationResult
 import org.example.token.Token
 
 class ExpressionValidator(
-    private val tokenValidators: List<TokenValidator>, //TODO
+    private val tokenValidators: List<TokenValidator>, // TODO
     private val isElement: (Token) -> Boolean = { t ->
         t.type == TokenType.NUMBER || t.type == TokenType.STRING || t.type == TokenType.SYMBOL
     },
@@ -30,7 +30,7 @@ class ExpressionValidator(
             val t: Token
             try {
                 t = statementBuffer.lookahead(pos)
-            } catch(e: NoMoreTokensAvailableException) {
+            } catch (e: NoMoreTokensAvailableException) {
                 return ValidationResult.Error("token expected, but reached end of statement", position)
             }
             if (softEnd(t, needElem, depth)) break

@@ -1,8 +1,8 @@
 package org.example.formatter.formatters
 
-import org.example.formatter.Rule
 import org.example.ast.ASTNode
 import org.example.ast.statements.VariableImmutableDeclarator
+import org.example.formatter.Rule
 
 class VariableInmutableDeclaratorFormat : ASTFormat {
 

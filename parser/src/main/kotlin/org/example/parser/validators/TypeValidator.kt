@@ -12,7 +12,7 @@ class TypeValidator(private val expectedTypes: Set<String>) : TokenValidator {
         val token: Token
         try {
             token = statementBuffer.lookahead(position)
-        } catch(e: NoMoreTokensAvailableException) {
+        } catch (e: NoMoreTokensAvailableException) {
             return ValidationResult.Error("type expected, but reached end of statement", position)
         }
         return if (token.type == TokenType.SYMBOL) {

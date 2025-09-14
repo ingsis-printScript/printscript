@@ -1,4 +1,4 @@
-package org.example.interpreter.ast_handlers
+package org.example.interpreter.asthandlers
 
 import org.example.ast.expressions.ReadEnvNode
 import org.example.common.enums.Type
@@ -39,4 +39,3 @@ class ReadEnvNodeHandler : ASTNodeHandler<ReadEnvNode> {
         validator.pushLiteral(node.expectedType)
     }
 }
-

@@ -10,5 +10,4 @@ data class VariableDeclarator(
     val type: Type,
     override val range: Range,
     val value: OptionalExpression
-) : Statement {
-}
+) : Statement

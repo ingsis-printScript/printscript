@@ -1,15 +1,15 @@
 package org.example.formatter
 
-import java.io.File
 import kotlinx.serialization.json.Json
+import java.io.File
 
-//context: esto lee las reglas desde un JSON, y las guarda en un Map<String, org.example.formatter.Rule>.
-//ese Map<String, org.example.formatter.Rule> es lo que necesita el formatter para formatear el código.
+// context: esto lee las reglas desde un JSON, y las guarda en un Map<String, org.example.formatter.Rule>.
+// ese Map<String, org.example.formatter.Rule> es lo que necesita el formatter para formatear el código.
 
 class Ruler(private val rules: Map<String, Rule>) {
 
-    //Metodo de fábrica: fromJsonFile("rules-v10.json")
-    //Lee un JSON, lo parsea con kotlinx.serialization, y devuelve un org.example.formatter.Ruler con ese Map<String, org.example.formatter.Rule>.
+    // Metodo de fábrica: fromJsonFile("rules-v10.json")
+    // Lee un JSON, lo parsea con kotlinx.serialization, y devuelve un org.example.formatter.Ruler con ese Map<String, org.example.formatter.Rule>.
     companion object {
         fun fromJsonFile(filePath: String): Ruler {
             val file = File(filePath)

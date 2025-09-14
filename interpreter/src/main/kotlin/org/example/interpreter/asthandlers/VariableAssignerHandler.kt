@@ -1,4 +1,4 @@
-package org.example.interpreter.ast_handlers
+package org.example.interpreter.asthandlers
 
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableAssigner

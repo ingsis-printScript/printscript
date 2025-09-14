@@ -1,7 +1,7 @@
 package org.example.formatter.formatters
 
-import org.example.formatter.Rule
 import org.example.ast.ASTNode
+import org.example.formatter.Rule
 
 interface ASTFormat {
 

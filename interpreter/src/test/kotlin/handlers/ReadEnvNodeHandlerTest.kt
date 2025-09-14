@@ -2,12 +2,12 @@ package handlers
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.ReadEnvNode
+import org.example.common.ErrorHandler
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
-import org.example.interpreter.ast_handlers.ReadEnvNodeHandler
+import org.example.interpreter.asthandlers.ReadEnvNodeHandler
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
-import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -28,7 +28,6 @@ class ReadEnvNodeHandlerTest {
     val fakeInputProvider = object : InputProvider {
         override fun readInput(prompt: String): String = ""
     }
-
 
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>> = mapOf(
         ReadEnvNode::class.java to ReadEnvNodeHandler()
@@ -52,7 +51,6 @@ class ReadEnvNodeHandlerTest {
         assertTrue(fakeErrorHandler.errors.isEmpty())
     }
 
-
     @Test
     fun `should report error if env variable not found`() {
         val node = ReadEnvNode("NON_EXISTENT_VAR", Type.STRING)
@@ -75,7 +73,4 @@ class ReadEnvNodeHandlerTest {
         val env = System.getenv() as MutableMap
         pairs.forEach { (k, v) -> env[k] = v }
     }
-
-
-
 }

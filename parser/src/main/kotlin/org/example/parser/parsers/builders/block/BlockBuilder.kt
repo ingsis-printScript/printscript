@@ -9,13 +9,13 @@ import org.example.token.Token
 class BlockBuilder(
     private val statementParsers: List<StatementParser>
 ) {
-    fun build(tokens: List<Token>) : List<ASTNode> {
+    fun build(tokens: List<Token>): List<ASTNode> {
         val buffer = TokenBuffer(ListIterator(tokens))
         val parser = Parser(statementParsers, buffer)
 
         val statements = mutableListOf<ASTNode>()
 
-        while(!buffer.isAtEnd()) {
+        while (!buffer.isAtEnd()) {
             statements.add(parser.getNext())
         }
 

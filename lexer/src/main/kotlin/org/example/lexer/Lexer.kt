@@ -46,10 +46,14 @@ class Lexer(
     private fun endedCurrentLine() = currentLine.isEmpty() || ontoNextLine()
 
     override fun getNext(): Token {
-        if (!hasNext()) throw NoMoreTokensAvailableException()
+        if (!hasNext()) {
+            throw NoMoreTokensAvailableException()
+        }
 
         tokenOffset = skipWhiteSpace(tokenOffset)
-        if (ontoNextLine()) throw NoMoreTokensAvailableException()
+        if (ontoNextLine()) {
+            throw NoMoreTokensAvailableException()
+        }
 
         val currentCharacter = currentLine[tokenOffset]
         val optionalToken = getOptionalToken()

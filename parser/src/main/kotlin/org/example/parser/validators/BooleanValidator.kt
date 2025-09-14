@@ -12,7 +12,7 @@ class BooleanValidator : TokenValidator {
         val token: Token
         try {
             token = statementBuffer.lookahead(position)
-        } catch(e: NoMoreTokensAvailableException) {
+        } catch (e: NoMoreTokensAvailableException) {
             return ValidationResult.Error("boolean expected, but reached end of statement", position)
         }
         return if (token.type == TokenType.BOOLEAN && (token.value == "true" || token.value == "false")) {

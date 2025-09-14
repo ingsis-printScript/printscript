@@ -366,6 +366,18 @@ class ValidationTest {
         val leftNum = bin.left as NumberExpression
         val rightNum = bin.right as NumberExpression
 
+        assertions(leftNum, col5, rightNum, col3, start, decl, end)
+    }
+
+    private fun assertions(
+        leftNum: NumberExpression,
+        col5: Int,
+        rightNum: NumberExpression,
+        col3: Int,
+        start: Int,
+        decl: VariableDeclarator,
+        end: Int
+    ) {
         assertEquals(1, leftNum.position.line)
         assertEquals(col5, leftNum.position.column)
 

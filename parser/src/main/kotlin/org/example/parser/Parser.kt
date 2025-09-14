@@ -2,9 +2,8 @@ package org.example.parser
 
 import org.example.ast.ASTNode
 import org.example.ast.statements.Statement
+import org.example.common.ErrorHandler
 import org.example.common.PrintScriptIterator
-import org.example.common.exceptions.NoMoreTokensAvailableException
-import org.example.common.exceptions.UnsupportedCharacterException
 import org.example.common.results.Error
 import org.example.common.results.Result
 import org.example.common.results.Success

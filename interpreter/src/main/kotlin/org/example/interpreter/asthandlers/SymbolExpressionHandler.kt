@@ -1,9 +1,9 @@
-package org.example.interpreter.ast_handlers
+package org.example.interpreter.asthandlers
 
 import org.example.ast.expressions.SymbolExpression
 import org.example.interpreter.Executor
-import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.Validator
+import org.example.interpreter.handlers.ASTNodeHandler
 
 class SymbolExpressionHandler : ASTNodeHandler<SymbolExpression> {
 
@@ -17,7 +17,6 @@ class SymbolExpressionHandler : ASTNodeHandler<SymbolExpression> {
             executor.pushLiteral(value)
         }
     }
-
 
     override fun handleValidation(node: SymbolExpression, validator: Validator) {
         val type = validator.lookupSymbol(node.value)

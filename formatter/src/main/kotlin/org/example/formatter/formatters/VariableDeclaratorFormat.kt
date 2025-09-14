@@ -1,14 +1,12 @@
 package org.example.formatter.formatters
 
-import org.example.formatter.Rule
 import org.example.ast.ASTNode
 import org.example.ast.statements.VariableDeclarator
+import org.example.formatter.Rule
 
 class VariableDeclaratorFormat : ASTFormat {
 
-
     override fun canHandle(node: ASTNode) = node is VariableDeclarator
-
 
     override fun formatNode(
         node: ASTNode,

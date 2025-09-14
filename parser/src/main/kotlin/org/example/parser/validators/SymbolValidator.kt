@@ -14,7 +14,7 @@ class SymbolValidator : TokenValidator {
         val token: Token
         try {
             token = statementBuffer.lookahead(position)
-        } catch(e: NoMoreTokensAvailableException) {
+        } catch (e: NoMoreTokensAvailableException) {
             return ValidationResult.Error("symbol expected, but reached end of statement", position)
         }
         return when {

@@ -10,10 +10,10 @@ import org.example.parser.parsers.StatementParser
 import org.example.parser.parsers.VariableAssignationParser
 import org.example.parser.parsers.VariableDeclarationParser
 import org.example.parser.parsers.function.PrintParser
+import org.example.parser.validators.BooleanValidator
 import org.example.parser.validators.NumberValidator
 import org.example.parser.validators.StringValidator
 import org.example.parser.validators.SymbolValidator
-import org.example.parser.validators.BooleanValidator
 
 class ParserProvider11 : ParserProvider {
 
@@ -26,7 +26,7 @@ class ParserProvider11 : ParserProvider {
             NumberValidator(),
             SymbolValidator(),
             StringValidator(),
-            BooleanValidator(),
+            BooleanValidator()
         )
 
         val commonParsers = listOf<StatementParser>(

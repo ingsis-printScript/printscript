@@ -1,4 +1,4 @@
-package org.example.interpreter.ast_handlers
+package org.example.interpreter.asthandlers
 
 import org.example.ast.expressions.ReadInputNode
 import org.example.common.enums.Type

@@ -1,6 +1,6 @@
 import org.example.interpreter.input.ConsoleInputProvider
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 

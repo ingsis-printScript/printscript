@@ -3,14 +3,14 @@ package handlers
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableDeclarator
+import org.example.common.ErrorHandler
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Type
-import org.example.interpreter.Validator
-import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.ast_handlers.VariableDeclaratorHandler
-import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.Executor
+import org.example.interpreter.Validator
+import org.example.interpreter.asthandlers.VariableDeclaratorHandler
+import org.example.interpreter.handlers.ASTNodeHandler
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -85,10 +85,10 @@ class VariableDeclaratorHandlerTest {
     @Test
     fun `should report type mismatch error for mutable variable`() {
         val node = VariableDeclarator(
-            SymbolExpression("x", Position(0,0)),
+            SymbolExpression("x", Position(0, 0)),
             Type.NUMBER,
-            Range(Position(0,0), Position(0,1)),
-            OptionalExpression.HasExpression(SymbolExpression("true", Position(0,0))) // boolean en vez de number
+            Range(Position(0, 0), Position(0, 1)),
+            OptionalExpression.HasExpression(SymbolExpression("true", Position(0, 0))) // boolean en vez de number
         )
 
         val handler = handlers[VariableDeclarator::class.java] as VariableDeclaratorHandler

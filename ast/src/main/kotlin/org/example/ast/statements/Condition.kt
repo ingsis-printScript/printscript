@@ -9,5 +9,4 @@ class Condition(
     val ifBlock: List<ASTNode>,
     val elseBlock: List<ASTNode>?,
     override val range: Range
-) : Statement {
-}
+) : Statement

@@ -2,14 +2,14 @@ package handlers
 
 import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.StringExpression
+import org.example.common.ErrorHandler
 import org.example.common.Position
 import org.example.common.enums.Type
 import org.example.interpreter.Validator
-import org.example.interpreter.ast_handlers.BooleanExpressionHandler
-import org.example.interpreter.ast_handlers.StringExpressionHandler
+import org.example.interpreter.asthandlers.BooleanExpressionHandler
+import org.example.interpreter.asthandlers.StringExpressionHandler
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.output.ErrorHandler
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -43,7 +43,7 @@ class ExpressionHandlersTest {
 
     @Test
     fun `StringExpressionHandler should push Type STRING on validation`() {
-        stringHandler.handleValidation(StringExpression("hello", Position(0,0)), validator)
+        stringHandler.handleValidation(StringExpression("hello", Position(0, 0)), validator)
         val type = validator.popLiteral()
         assertEquals(Type.STRING, type)
     }

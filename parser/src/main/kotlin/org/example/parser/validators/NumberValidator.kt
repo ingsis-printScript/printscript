@@ -14,7 +14,7 @@ class NumberValidator : TokenValidator {
         val token: Token
         try {
             token = statementBuffer.lookahead(position)
-        } catch(e: NoMoreTokensAvailableException) {
+        } catch (e: NoMoreTokensAvailableException) {
             return ValidationResult.Error("number expected, but reached end of statement", position)
         }
         return when {

@@ -3,11 +3,12 @@ package org.example.parser
 import org.example.parser.parsers.StatementParser
 import org.example.parser.provider.ParserProvider11
 import org.example.token.Token
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.LinkedList
 
-class ConditionParserValidationTest {
+class ConditionParserTest {
 
     private val tokenFactory = TokenFactory()
 
@@ -49,8 +50,12 @@ class ConditionParserValidationTest {
     fun `validate if with empty block`() {
         assertValidByAnalyze(
             tokens(
-                keyword("if"), punct("("), boolean("true"), punct(")"),
-                punct("{"), punct("}")
+                keyword("if"),
+                punct("("),
+                boolean("true"),
+                punct(")"),
+                punct("{"),
+                punct("}")
             )
         )
     }
@@ -134,8 +139,10 @@ class ConditionParserValidationTest {
         assertInvalidByAnalyze(
             tokens(
                 keyword("if"),
-                boolean("false"), punct(")"),
-                punct("{"), punct("}")
+                boolean("false"),
+                punct(")"),
+                punct("{"),
+                punct("}")
             )
         )
     }
@@ -145,8 +152,11 @@ class ConditionParserValidationTest {
         // if (true { }
         assertInvalidByAnalyze(
             tokens(
-                keyword("if"), punct("("), boolean("true"),
-                punct("{"), punct("}")
+                keyword("if"),
+                punct("("),
+                boolean("true"),
+                punct("{"),
+                punct("}")
             )
         )
     }
@@ -156,7 +166,10 @@ class ConditionParserValidationTest {
         // if (true) }
         assertInvalidByAnalyze(
             tokens(
-                keyword("if"), punct("("), boolean("true"), punct(")"),
+                keyword("if"),
+                punct("("),
+                boolean("true"),
+                punct(")"),
                 punct("}")
             )
         )
@@ -168,7 +181,8 @@ class ConditionParserValidationTest {
         assertInvalidByAnalyze(
             tokens(
                 keyword("if"),
-                punct("{"), punct("}")
+                punct("{"),
+                punct("}")
             )
         )
     }
