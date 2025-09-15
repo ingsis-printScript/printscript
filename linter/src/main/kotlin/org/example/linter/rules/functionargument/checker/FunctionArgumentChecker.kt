@@ -20,22 +20,27 @@ class FunctionArgumentChecker(
     ): List<LinterViolation> {
         val violations = mutableListOf<LinterViolation>()
 
-        if (node::class in supportedNodes && shouldCheckNode(node)) {
-            val value: OptionalExpression = extractValue(node)
-            when (value) {
-                is OptionalExpression.NoExpression -> { return emptyList() }
-                is OptionalExpression.HasExpression -> {
-                    val expression: Expression = value.expression
-                    if (expression::class in prohibitedNodes) {
-                        violations.add(
-                            LinterViolation(
-                                "${getFunctionName()} can not contain $expression",
-                                getRange(node) as Range
+        if (shouldCheckNode(node)) {
+            if (node::class in supportedNodes){
+                val value: OptionalExpression = extractValue(node)
+                when (value) {
+                    is OptionalExpression.NoExpression -> {
+                        return emptyList()
+                    }
+
+                    is OptionalExpression.HasExpression -> {
+                        val expression: Expression = value.expression
+                        if (expression::class in prohibitedNodes) {
+                            violations.add(
+                                LinterViolation(
+                                    "${getFunctionName()} can not contain $expression",
+                                    getRange(node) as Range
+                                )
                             )
-                        )
+                        }
                     }
                 }
-            }
+            } // todo: call al error handler and...? tbd
         }
         //devolver un error, no es un nodo soportado
         return violations

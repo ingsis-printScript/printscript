@@ -2,6 +2,8 @@ package org.example.integration
 
 import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
+import org.example.common.results.Result
+import org.example.common.results.Success
 import org.example.parser.TokenBuffer
 import org.example.token.Token
 import java.io.InputStream
@@ -57,7 +59,7 @@ class PrintScriptTestUtils {
     /**
      * Crea un Parser desde un Lexer
      */
-    private fun createParser(lexer: PrintScriptIterator<Token>, version: String = "1.0"): PrintScriptIterator<ASTNode> {
+    private fun createParser(lexer: PrintScriptIterator<Token>, version: String = "1.0"): PrintScriptIterator<Result> {
         val tokenBuffer = TokenBuffer(lexer)
         return when (version) {
             "1.0" -> {
@@ -81,7 +83,7 @@ class PrintScriptTestUtils {
         val statements = mutableListOf<ASTNode>()
 
         while (parser.hasNext()) {
-            statements.add(parser.getNext())
+            statements.add((parser.getNext() as Success<ASTNode>).value)
         }
 
         return statements

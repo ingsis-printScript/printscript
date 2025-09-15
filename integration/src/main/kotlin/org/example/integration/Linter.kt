@@ -1,13 +1,12 @@
 package org.example.integration
 
-import org.example.interpreter.output.ErrorHandler
+import org.example.common.ErrorHandler
 import org.example.lexer.provider.LexerVersionProvider
-import org.example.linter.provider.LinterVersionProvider
 import org.example.parser.TokenBuffer
 import org.example.parser.provider.ParserVersionProvider
 
 class Linter {
-    fun lint(
+    /*fun lint(
         src: Iterator<String>,
         version: String,
         config: Iterator<String>,
@@ -24,5 +23,5 @@ class Linter {
         while (linter.analyze()) {
             // TODO
         }
-    }
+    }*/
 }

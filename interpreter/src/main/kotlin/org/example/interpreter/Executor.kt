@@ -2,6 +2,7 @@ package org.example.interpreter
 
 import org.example.ast.ASTNode
 import org.example.common.ErrorHandler
+import org.example.common.enums.Type
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler
@@ -49,12 +50,18 @@ class Executor(
     fun popLiteral(): Any? = if (stack.isEmpty()) null else stack.removeAt(stack.size - 1)
 
     fun declareVariable(name: String, value: Any?) {
-        if (environment.containsKey(name)) throw RuntimeException("Variable $name already declared")
+        if (environment.containsKey(name)) {
+            errorHandler.handleError("Variable $name already declared")
+            return
+        }
         environment[name] = value
     }
 
     fun assignVariable(name: String, value: Any?) {
-        if (!environment.containsKey(name)) throw RuntimeException("Variable $name not declared")
+        if (!environment.containsKey(name)) {
+            errorHandler.handleError("Variable $name not declared")
+            return
+        }
         environment[name] = value
     }
 

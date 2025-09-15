@@ -30,13 +30,14 @@ class Validator(
 
     fun declareVariable(name: String, type: Type) {
         if (environment.containsKey(name)) {
-            throw RuntimeException("Variable $name ya declarada")
+            errorHandler.handleError("Variable $name already declared")
+            return
         }
         environment[name] = type
     }
 
-    fun lookupVariable(name: String): Type {
-        return environment[name] ?: throw RuntimeException("Variable $name no declarada")
+    fun lookupVariable(name: String): Type? {
+        return environment[name]
     }
 
     fun pushLiteral(value: Type?) = stack.add(value)

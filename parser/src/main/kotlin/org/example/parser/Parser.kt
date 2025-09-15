@@ -85,6 +85,8 @@ class Parser(
             is AnalysisOutcome.Success -> buffer.commit(outcome.result.consumed.size)
             is AnalysisOutcome.Error -> buffer.commit(outcome.result.position)
         }
+        println("Outcome is $outcome")
+        println("Committed tokens, new buffer index: ${buffer.index()}")
     }
 
     private fun successOrThrowBest(outcome: AnalysisOutcome): AnalysisOutcome.Success {

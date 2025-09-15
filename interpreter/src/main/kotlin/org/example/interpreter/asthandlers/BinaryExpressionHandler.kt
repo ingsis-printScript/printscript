@@ -18,9 +18,12 @@ class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
             Operator.MUL -> left.toDouble() * right.toDouble()
             Operator.DIV -> left.toDouble() / right.toDouble()
             Operator.MOD -> left.toDouble() % right.toDouble()
-            else -> throw IllegalArgumentException("Unsupported operator: ${node.operator}")
+            else -> null
         }
-
+        if (result == null) {
+            executor.reportError("Unsupported operator: ${node.operator}")
+            return
+        }
         executor.pushLiteral(collapseNumber(result))
     }
 
@@ -29,9 +32,10 @@ class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
         val rightType = validator.evaluate(node.right)
 
         if (!isNumericType(leftType) || !isNumericType(rightType)) {
-            throw IllegalStateException(
+             validator.reportError(
                 "Binary operation ${node.operator} requires numeric operands, got $leftType and $rightType at ${node.range}"
             )
+            return
         }
 
         validator.pushLiteral(Type.NUMBER)

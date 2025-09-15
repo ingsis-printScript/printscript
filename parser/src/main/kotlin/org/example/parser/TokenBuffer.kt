@@ -32,14 +32,19 @@ class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptI
     }
 
     fun commit(consumed: Int) {
+        println("Committing $consumed tokens from buffer of size ${buffer.size} at index $index")
         if (consumed > 0) {
             buffer.subList(0, consumed).clear()
             index = 0
+            println("Buffer after commit: $buffer")
         }
+        println("New buffer index: $index")
     }
 
     fun isAtEnd(from: Int = index): Boolean {
         fillBuffer()
         return from >= buffer.size && !tokens.hasNext()
     }
+
+    fun index(): Int = index
 }

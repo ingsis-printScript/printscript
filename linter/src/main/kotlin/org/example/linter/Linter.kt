@@ -55,7 +55,7 @@ class Linter(
             }
             return Error("Linter found ${violations.size} violations.")
         }
-        return Success(Unit) //asi esta en el interpreter
+        return Success(Unit)
     }
 
     private fun createTempConfigFile(configInputStream: InputStream): File {

@@ -30,19 +30,28 @@ class VariableAssignerHandler : ASTNodeHandler<VariableAssigner> {
     override fun handleValidation(node: VariableAssigner, validator: Validator) {
         when (val opt = node.value) {
             is OptionalExpression.NoExpression -> {
-                throw RuntimeException("Missing expression for variable ${node.symbol.value}")
+                validator.reportError("Missing expression for variable ${node.symbol.value}")
+                return
             }
             is OptionalExpression.HasExpression -> {
                 val exprNode = opt.expression
-                val valueType = validator.evaluate(exprNode) ?: throw RuntimeException(
-                    "Cannot determine type for ${node.symbol.value}"
-                )
+                val valueType = validator.evaluate(exprNode)
+
+                if (valueType == null) {
+                    validator.reportError("Cannot determine type for ${node.symbol.value}")
+                    return
+                }
 
                 val declaredType = validator.lookupVariable(node.symbol.value)
+                if (declaredType == null) {
+                    validator.reportError("Variable ${node.symbol.value} not declared")
+                    return
+                }
                 if (declaredType != valueType) {
-                    throw RuntimeException(
+                    validator.reportError(
                         "Type mismatch: expected $declaredType, got $valueType"
                     )
+                    return
                 }
                 validator.pushLiteral(valueType)
             }
