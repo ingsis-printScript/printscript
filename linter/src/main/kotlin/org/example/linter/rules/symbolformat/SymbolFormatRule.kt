@@ -1,4 +1,4 @@
-package org.example.linter.rules
+package org.example.linter.rules.symbolformat
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
@@ -15,7 +15,9 @@ import org.example.common.Range
 import org.example.common.enums.SymbolFormat
 import org.example.linter.LinterConfiguration
 import org.example.linter.data.LinterViolation
-import org.example.linter.rules.symbolformat.SymbolFormatChecker
+import org.example.linter.rules.Rule
+import org.example.linter.rules.symbolformat.checker.SymbolFormatChecker
+import kotlin.collections.get
 
 class SymbolFormatRule(
     private val formatCheckers: Map<SymbolFormat, SymbolFormatChecker>
@@ -74,7 +76,7 @@ class SymbolFormatRule(
 
     private fun checkSymbolFormat(symbol: SymbolExpression) {
         val formatString = currentConfig.getString("identifier_format") ?: return
-        val expectedFormat = SymbolFormat.fromString(formatString)
+        val expectedFormat = SymbolFormat.Companion.fromString(formatString)
         val checker = formatCheckers[expectedFormat] ?: return
         if (!checker.isValid(symbol.value)) {
             val range = Range(symbol.position, symbol.position)

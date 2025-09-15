@@ -1,7 +1,7 @@
 package handlers
 
 import org.example.ast.ASTNode
-import org.example.ast.expressions.ReadEnvNode
+import org.example.ast.expressions.ReadEnvExpression
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.asthandlers.ReadEnvNodeHandler
@@ -30,13 +30,13 @@ class ReadEnvNodeHandlerTest {
     }
 
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>> = mapOf(
-        ReadEnvNode::class.java to ReadEnvNodeHandler()
+        ReadEnvExpression::class.java to ReadEnvNodeHandler()
     )
 
     @Test
     fun `should read string env variable correctly`() {
         val varName = "PATH"
-        val node = ReadEnvNode(varName, Type.STRING)
+        val node = ReadEnvExpression(varName, Type.STRING)
         val executor = Executor(
             handlers,
             inputProvider = fakeInputProvider,
@@ -53,7 +53,7 @@ class ReadEnvNodeHandlerTest {
 
     @Test
     fun `should report error if env variable not found`() {
-        val node = ReadEnvNode("NON_EXISTENT_VAR", Type.STRING)
+        val node = ReadEnvExpression("NON_EXISTENT_VAR", Type.STRING)
         val fakeInputProvider = object : InputProvider {
             override fun readInput(prompt: String): String = ""
         }

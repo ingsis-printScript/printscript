@@ -1,5 +1,5 @@
 import org.example.ast.ASTNode
-import org.example.ast.expressions.ReadInputNode
+import org.example.ast.expressions.ReadInputExpression
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.asthandlers.ReadInputNodeHandler
@@ -30,14 +30,14 @@ class ReadInputNodeHandlerTest {
 
     // <-- handlers con el tipo correcto
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>> = mapOf(
-        ReadInputNode::class.java to ReadInputNodeHandler()
+        ReadInputExpression::class.java to ReadInputNodeHandler()
     )
 
     @Test
     fun `should read boolean input correctly`() {
         fakeInputProvider.nextInput = "true"
 
-        val node = ReadInputNode("Enter a boolean:", Type.BOOLEAN)
+        val node = ReadInputExpression("Enter a boolean:", Type.BOOLEAN)
         val executor = Executor(handlers, fakeInputProvider, fakePrinter, fakeErrorHandler)
 
         val result = executor.evaluate(node)
@@ -50,7 +50,7 @@ class ReadInputNodeHandlerTest {
     fun `should report error if boolean input is invalid`() {
         fakeInputProvider.nextInput = "notABoolean"
 
-        val node = ReadInputNode("Enter a boolean:", Type.BOOLEAN)
+        val node = ReadInputExpression("Enter a boolean:", Type.BOOLEAN)
         val executor = Executor(handlers, fakeInputProvider, fakePrinter, fakeErrorHandler)
 
         executor.evaluate(node)
@@ -66,7 +66,7 @@ class ReadInputNodeHandlerTest {
     fun `should report error if number input is invalid`() {
         fakeInputProvider.nextInput = "notANumber"
 
-        val node = ReadInputNode("Enter a number:", Type.NUMBER)
+        val node = ReadInputExpression("Enter a number:", Type.NUMBER)
         val executor = Executor(handlers, fakeInputProvider, fakePrinter, fakeErrorHandler)
 
         executor.evaluate(node)
@@ -81,7 +81,7 @@ class ReadInputNodeHandlerTest {
     fun `should read string input correctly`() {
         fakeInputProvider.nextInput = "hello"
 
-        val node = ReadInputNode("Enter a string:", Type.STRING)
+        val node = ReadInputExpression("Enter a string:", Type.STRING)
         val executor = Executor(handlers, fakeInputProvider, fakePrinter, fakeErrorHandler)
 
         val result = executor.evaluate(node)

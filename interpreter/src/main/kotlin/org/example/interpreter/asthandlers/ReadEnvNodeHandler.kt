@@ -1,14 +1,14 @@
 package org.example.interpreter.asthandlers
 
-import org.example.ast.expressions.ReadEnvNode
+import org.example.ast.expressions.ReadEnvExpression
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 import org.example.interpreter.handlers.ASTNodeHandler
 
-class ReadEnvNodeHandler : ASTNodeHandler<ReadEnvNode> {
+class ReadEnvNodeHandler : ASTNodeHandler<ReadEnvExpression> {
 
-    override fun handleExecution(node: ReadEnvNode, executor: Executor) {
+    override fun handleExecution(node: ReadEnvExpression, executor: Executor) {
         val rawValue = System.getenv(node.varName)
 
         if (rawValue == null) {
@@ -35,7 +35,7 @@ class ReadEnvNodeHandler : ASTNodeHandler<ReadEnvNode> {
         executor.pushLiteral(value)
     }
 
-    override fun handleValidation(node: ReadEnvNode, validator: Validator) {
+    override fun handleValidation(node: ReadEnvExpression, validator: Validator) {
         validator.pushLiteral(node.expectedType)
     }
 }

@@ -4,8 +4,8 @@ import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.NumberExpression
-import org.example.ast.expressions.ReadEnvNode
-import org.example.ast.expressions.ReadInputNode
+import org.example.ast.expressions.ReadEnvExpression
+import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.StringExpression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableAssigner
@@ -52,8 +52,8 @@ class InterpreterProvider11 : InterpreterProvider {
     private fun createHandlers(): Map<Class<out ASTNode>, ASTNodeHandler<*>> {
         val handlers = mapOf(
             BooleanExpression::class.java to BooleanExpressionHandler(),
-            ReadEnvNode::class.java to ReadEnvNodeHandler(),
-            ReadInputNode::class.java to ReadInputNodeHandler(),
+            ReadEnvExpression::class.java to ReadEnvNodeHandler(),
+            ReadInputExpression::class.java to ReadInputNodeHandler(),
             VariableImmutableDeclarator::class.java to VariableImmutableDeclaratorHandler(),
             BinaryExpression::class.java to BinaryExpressionHandler(),
             NumberExpression::class.java to NumberExpressionHandler(),

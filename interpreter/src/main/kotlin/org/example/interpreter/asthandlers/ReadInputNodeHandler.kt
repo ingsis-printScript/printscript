@@ -1,15 +1,15 @@
 package org.example.interpreter.asthandlers
 
-import org.example.ast.expressions.ReadInputNode
+import org.example.ast.expressions.ReadInputExpression
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 import org.example.interpreter.handlers.ASTNodeHandler
 
-class ReadInputNodeHandler : ASTNodeHandler<ReadInputNode> {
+class ReadInputNodeHandler : ASTNodeHandler<ReadInputExpression> {
 
-    override fun handleExecution(node: ReadInputNode, executor: Executor) {
-        val input = executor.inputProvider.readInput(node.prompt)
+    override fun handleExecution(node: ReadInputExpression, executor: Executor) {
+        val input = executor.inputProvider.readInput(node.value)
 
         val value = when {
             input == null -> {
@@ -37,7 +37,7 @@ class ReadInputNodeHandler : ASTNodeHandler<ReadInputNode> {
         executor.pushLiteral(value)
     }
 
-    override fun handleValidation(node: ReadInputNode, validator: Validator) {
+    override fun handleValidation(node: ReadInputExpression, validator: Validator) {
         validator.pushLiteral(node.expectedType)
     }
 }

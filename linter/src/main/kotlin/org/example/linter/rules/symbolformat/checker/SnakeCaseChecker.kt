@@ -1,4 +1,4 @@
-package org.example.linter.rules.symbolformat
+package org.example.linter.rules.symbolformat.checker
 
 import org.example.common.Range
 
