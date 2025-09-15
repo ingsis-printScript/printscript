@@ -12,7 +12,6 @@ import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.ast.statements.functions.PrintFunction
-import org.example.common.ErrorHandler
 import org.example.common.PrintScriptIterator
 import org.example.interpreter.Executor
 import org.example.interpreter.Interpreter
@@ -30,6 +29,7 @@ import org.example.interpreter.asthandlers.VariableImmutableDeclaratorHandler
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.handlers.BinaryExpressionHandler
 import org.example.interpreter.input.InputProvider
+import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 
 class InterpreterProvider11 : InterpreterProvider {
