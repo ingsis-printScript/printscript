@@ -1,9 +1,9 @@
 package org.example.integration
 
 import org.example.common.ErrorHandler
-import org.example.interpreter.org.example.interpreter.input.InputProvider
-import org.example.interpreter.org.example.interpreter.output.OutputPrinter
-import org.example.interpreter.org.example.interpreter.providers.InterpreterVersionProvider
+import org.example.interpreter.input.InputProvider
+import org.example.interpreter.output.OutputPrinter
+import org.example.interpreter.providers.InterpreterVersionProvider
 import org.example.lexer.provider.LexerVersionProvider
 import org.example.parser.TokenBuffer
 import org.example.parser.provider.ParserVersionProvider
