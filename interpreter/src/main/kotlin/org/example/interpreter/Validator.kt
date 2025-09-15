@@ -6,7 +6,7 @@ import org.example.common.results.NoResult
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.output.ErrorHandler
+import org.example.common.ErrorHandler
 
 class Validator(
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>,

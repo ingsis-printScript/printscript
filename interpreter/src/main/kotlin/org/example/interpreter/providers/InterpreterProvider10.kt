@@ -22,7 +22,7 @@ import org.example.interpreter.asthandlers.VariableAssignerHandler
 import org.example.interpreter.asthandlers.VariableDeclaratorHandler
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
-import org.example.interpreter.output.ErrorHandler
+import org.example.common.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 
 class InterpreterProvider10 : InterpreterProvider {

@@ -1,7 +1,10 @@
 package org.example.linter.provider
 
 import org.example.ast.expressions.BinaryExpression
+import org.example.common.ErrorHandler
+import org.example.common.PrintScriptIterator
 import org.example.common.enums.SymbolFormat
+import org.example.common.results.Result
 import org.example.linter.Linter
 import org.example.linter.configurationreaders.ConfigurationReader
 import org.example.linter.configurationreaders.mappers.JsonMapper
@@ -10,8 +13,9 @@ import org.example.linter.rules.PrintArgumentRule
 import org.example.linter.rules.SymbolFormatRule
 import org.example.linter.rules.symbolformat.CamelCaseChecker
 import org.example.linter.rules.symbolformat.SnakeCaseChecker
+import java.io.InputStream
 
-class LinterProvider10 : LinterProvider {
+class LinterProvider10(private val iterator: PrintScriptIterator<Result>, private val inputStream: InputStream, private val errorHandler: ErrorHandler) : LinterProvider {
     override fun provide(): Linter {
         val prohibitedNodes = setOf(BinaryExpression::class)
         val symbolFormats = mapOf(
@@ -25,7 +29,7 @@ class LinterProvider10 : LinterProvider {
         )
         val configurationReader = ConfigurationReader(listOf(JsonMapper(), YamlMapper()))
 
-        val linter = Linter(rules, configurationReader)
+        val linter = Linter(iterator, rules, configurationReader, inputStream, errorHandler)
         return linter
     }
 }
