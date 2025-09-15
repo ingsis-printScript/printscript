@@ -61,4 +61,7 @@ class Executor(
     fun isVariableDeclared(name: String): Boolean {
         return environment.containsKey(name)
     }
+
+    fun getEnvVar(name: String): Any? = environment[name]
+
 }

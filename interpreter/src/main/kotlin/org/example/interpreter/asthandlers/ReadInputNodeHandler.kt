@@ -1,12 +1,12 @@
 package org.example.interpreter.asthandlers
 
-import org.example.ast.expressions.ReadInputExpression
+import org.example.ast.expressions.ReadInputNode
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 import org.example.interpreter.handlers.ASTNodeHandler
 
-class ReadInputNodeHandler : ASTNodeHandler<ReadInputExpression> {
+class ReadInputNodeHandler : ASTNodeHandler<ReadInputNode> {
 
     override fun handleExecution(node: ReadInputExpression, executor: Executor) {
         val input = executor.inputProvider.readInput(node.value)
