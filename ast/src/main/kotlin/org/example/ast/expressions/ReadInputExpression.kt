@@ -5,6 +5,5 @@ import org.example.common.enums.Type
 
 class ReadInputExpression(
     val value: OptionalExpression,
-    val expectedType: Type,
     val range: Range
 ) : Expression
