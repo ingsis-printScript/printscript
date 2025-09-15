@@ -23,14 +23,15 @@ import org.example.linter.configurationreaders.ConfigurationReader
 import org.example.linter.configurationreaders.mappers.JsonMapper
 import org.example.linter.configurationreaders.mappers.YamlMapper
 import org.example.linter.rules.functionargument.PrintArgumentRule
+import org.example.linter.rules.functionargument.ReadInputArgumentRule
 import org.example.linter.rules.symbolformat.SymbolFormatRule
 import org.example.linter.rules.symbolformat.checker.CamelCaseChecker
 import org.example.linter.rules.symbolformat.checker.SnakeCaseChecker
 import java.io.InputStream
 import kotlin.reflect.KClass
 
-class LinterProvider11(private val iterator: PrintScriptIterator<Result>, private val inputStream: InputStream, private val errorHandler: ErrorHandler) : LinterProvider {
-    override fun provide(): Linter {
+class LinterProvider11() : LinterProvider {
+    override fun provide(iterator: PrintScriptIterator<Result>, inputStream: InputStream, errorHandler: ErrorHandler): Linter {
         val symbolFormats = mapOf(
             SymbolFormat.CAMEL_CASE to CamelCaseChecker(),
             SymbolFormat.SNAKE_CASE to SnakeCaseChecker()
@@ -42,7 +43,8 @@ class LinterProvider11(private val iterator: PrintScriptIterator<Result>, privat
 
         val rules = listOf(
             PrintArgumentRule(prohibitedNodes, supportedNodes),
-            SymbolFormatRule(symbolFormats, supportedNodes, symbolNodeHandler)
+            SymbolFormatRule(symbolFormats, supportedNodes, symbolNodeHandler),
+            ReadInputArgumentRule(prohibitedNodes, supportedNodes)
         )
         val configurationReader = ConfigurationReader(listOf(JsonMapper(), YamlMapper()))
 

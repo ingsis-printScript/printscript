@@ -4,7 +4,6 @@ import org.example.ast.ASTNode
 import org.example.common.ErrorHandler
 import org.example.common.PrintScriptIterator
 import org.example.linter.configurationreaders.ConfigurationReader
-import org.example.linter.data.LinterViolation
 import org.example.linter.rules.Rule
 import org.example.common.results.Result
 import org.example.common.results.Error
@@ -44,16 +43,8 @@ class Linter(
 
     fun analyze(ast: ASTNode): Result {
 
-        val violations = mutableListOf<LinterViolation>()
         for (rule in rules) {
-            violations.addAll(rule.check(ast, configuration))
-        }
-
-        if (violations.isNotEmpty()) {
-            for (violation in violations) {
-                errorHandler.handleError(violation.message)
-            }
-            return Error("Linter found ${violations.size} violations.")
+            rule.check(ast, configuration, errorHandler)
         }
         return Success(Unit)
     }
