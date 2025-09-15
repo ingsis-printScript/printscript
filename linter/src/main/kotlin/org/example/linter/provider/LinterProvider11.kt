@@ -23,6 +23,7 @@ import org.example.linter.configurationreaders.ConfigurationReader
 import org.example.linter.configurationreaders.mappers.JsonMapper
 import org.example.linter.configurationreaders.mappers.YamlMapper
 import org.example.linter.rules.functionargument.PrintArgumentRule
+import org.example.linter.rules.functionargument.ReadInputArgumentRule
 import org.example.linter.rules.symbolformat.SymbolFormatRule
 import org.example.linter.rules.symbolformat.checker.CamelCaseChecker
 import org.example.linter.rules.symbolformat.checker.SnakeCaseChecker
@@ -42,7 +43,8 @@ class LinterProvider11(private val iterator: PrintScriptIterator<Result>, privat
 
         val rules = listOf(
             PrintArgumentRule(prohibitedNodes, supportedNodes),
-            SymbolFormatRule(symbolFormats, supportedNodes, symbolNodeHandler)
+            SymbolFormatRule(symbolFormats, supportedNodes, symbolNodeHandler),
+            ReadInputArgumentRule(prohibitedNodes, supportedNodes)
         )
         val configurationReader = ConfigurationReader(listOf(JsonMapper(), YamlMapper()))
 

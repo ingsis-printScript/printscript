@@ -2,8 +2,10 @@ package org.example.linter.rules.functionargument
 
 import org.example.ast.ASTNode
 import org.example.ast.statements.functions.PrintFunction
+import org.example.common.ErrorHandler
+import org.example.common.results.Result
+import org.example.common.results.Success
 import org.example.linter.LinterConfiguration
-import org.example.linter.data.LinterViolation
 import org.example.linter.rules.Rule
 import org.example.linter.rules.functionargument.checker.FunctionArgumentChecker
 import kotlin.reflect.KClass
@@ -14,24 +16,20 @@ class PrintArgumentRule(
 
 ) : Rule {
 
-    private val violations = mutableListOf<LinterViolation>()
     private val checker = FunctionArgumentChecker(prohibitedNodes, supportedNodes)
 
-    override fun check(node: ASTNode, configuration: LinterConfiguration): List<LinterViolation> {
-        if (!isEnabled(configuration)) return emptyList()
+    override fun check(node: ASTNode, configuration: LinterConfiguration, errorHandler: ErrorHandler): Result {
+        if (!isEnabled(configuration)) return Success(Unit)
 
-        violations.clear()
-        violations.addAll(
-            checker.checkNodes(
-                node = node,
-                shouldCheckNode = { it is PrintFunction },
-                extractValue = { (it as PrintFunction).value },
-                getFunctionName = { "println()" },
-                getRange = { (it as PrintFunction).range }
-            )
+        val result = checker.checkNodes(
+            node = node,
+            shouldCheckNode = { it is PrintFunction },
+            extractValue = { (it as PrintFunction).value },
+            getFunctionName = { "println()" },
+            getRange = { (it as PrintFunction).range },
+            errorHandler
         )
-
-        return violations.toList()
+        return result
     }
 
     override fun isEnabled(configuration: LinterConfiguration): Boolean {

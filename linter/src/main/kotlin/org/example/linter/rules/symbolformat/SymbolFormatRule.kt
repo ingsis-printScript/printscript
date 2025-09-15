@@ -2,10 +2,12 @@ package org.example.linter.rules.symbolformat
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.SymbolExpression
+import org.example.common.ErrorHandler
 import org.example.common.Range
 import org.example.common.enums.SymbolFormat
+import org.example.common.results.Result
+import org.example.common.results.Success
 import org.example.linter.LinterConfiguration
-import org.example.linter.data.LinterViolation
 import org.example.linter.rules.Rule
 import org.example.linter.rules.symbolformat.checker.SymbolFormatChecker
 import kotlin.collections.get
@@ -17,16 +19,16 @@ class SymbolFormatRule(
     private val nodeHandler: (ASTNode, (SymbolExpression) -> Unit) -> Unit
 ) : Rule {
 
-    private val violations = mutableListOf<LinterViolation>()
     private lateinit var currentConfig: LinterConfiguration
+    private lateinit var errorHandler: ErrorHandler
 
-    override fun check(node: ASTNode, configuration: LinterConfiguration): List<LinterViolation> {
-        if (!isEnabled(configuration)) return emptyList()
+    override fun check(node: ASTNode, configuration: LinterConfiguration, errorHandler: ErrorHandler): Result {
+        if (!isEnabled(configuration)) return Success(Unit)
 
-        violations.clear()
-        currentConfig = configuration
+        this.currentConfig = configuration
+        this.errorHandler = errorHandler
         checkNodes(node)
-        return violations.toList()
+        return Success(Unit)
     }
 
     override fun isEnabled(configuration: LinterConfiguration): Boolean {
@@ -45,12 +47,7 @@ class SymbolFormatRule(
         val checker = formatCheckers[expectedFormat] ?: return
         if (!checker.isValid(symbol.value)) {
             val range = Range(symbol.position, symbol.position)
-            violations.add(
-                LinterViolation(
-                    checker.message(symbol.value, range),
-                    range
-                )
-            )
+            errorHandler.handleError(checker.message(symbol.value, range))
         }
     }
 }
