@@ -2,12 +2,17 @@ package org.example.linter.provider
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
+import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.expressions.NumberExpression
+import org.example.ast.expressions.ReadEnvExpression
+import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.StringExpression
+import org.example.ast.statements.Condition
 import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
+import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.ErrorHandler
 import org.example.common.PrintScriptIterator
@@ -24,7 +29,7 @@ import org.example.linter.rules.symbolformat.checker.SnakeCaseChecker
 import java.io.InputStream
 import kotlin.reflect.KClass
 
-class LinterProvider10(private val iterator: PrintScriptIterator<Result>, private val inputStream: InputStream, private val errorHandler: ErrorHandler) : LinterProvider {
+class LinterProvider11(private val iterator: PrintScriptIterator<Result>, private val inputStream: InputStream, private val errorHandler: ErrorHandler) : LinterProvider {
     override fun provide(): Linter {
         val symbolFormats = mapOf(
             SymbolFormat.CAMEL_CASE to CamelCaseChecker(),
@@ -48,13 +53,16 @@ class LinterProvider10(private val iterator: PrintScriptIterator<Result>, privat
     private fun createSupportedNodes(): Set<KClass<out ASTNode>> {
         val supported = setOf(
             BinaryExpression::class,
+            BooleanExpression::class,
+            ReadEnvExpression::class,
+            ReadInputExpression::class,
             SymbolExpression::class,
             NumberExpression::class,
             StringExpression::class,
             PrintFunction::class,
             VariableAssigner::class,
             VariableDeclarator::class
-            )
+        )
         return supported
     }
 
@@ -77,7 +85,24 @@ class LinterProvider10(private val iterator: PrintScriptIterator<Result>, privat
                     symbolChecker(node.symbol)
                     checkOptionalExpression(node.value, symbolChecker)
                 }
+                is VariableImmutableDeclarator -> {
+                    symbolChecker(node.symbol)
+                    checkOptionalExpression(node.value, symbolChecker)
+                }
+                is ReadInputExpression -> {
+                    checkOptionalExpression(node.value, symbolChecker)
+                }
+                is BooleanExpression -> {}
                 is NumberExpression -> {}
+                is ReadEnvExpression -> {}//cambiar?
+                is Condition -> {
+                    node.ifBlock.forEach { astNode ->
+                        createSymbolNodeHandler()(astNode, symbolChecker)
+                    }
+                    node.elseBlock?.forEach { astNode ->
+                        createSymbolNodeHandler()(astNode, symbolChecker)
+                    }
+                }
                 is StringExpression -> {}
                 else -> throw IllegalArgumentException("Unsupported node type: $node")
             }

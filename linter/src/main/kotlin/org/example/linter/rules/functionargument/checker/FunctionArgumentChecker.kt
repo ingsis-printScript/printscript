@@ -12,7 +12,11 @@ class FunctionArgumentChecker(
     private val supportedNodes: Set<KClass<out ASTNode>>
 ) {
 
-    fun checkNodes(node: ASTNode, shouldCheckNode: (ASTNode) -> Boolean, extractValue: (ASTNode) -> OptionalExpression, getFunctionName: () -> String, getRange: (ASTNode) -> Any
+    fun checkNodes(node: ASTNode,
+                   shouldCheckNode: (ASTNode) -> Boolean,
+                   extractValue: (ASTNode) -> OptionalExpression,
+                   getFunctionName: () -> String,
+                   getRange: (ASTNode) -> Any
     ): List<LinterViolation> {
         val violations = mutableListOf<LinterViolation>()
 
@@ -33,9 +37,7 @@ class FunctionArgumentChecker(
                 }
             }
         }
-
-
-
+        //devolver un error, no es un nodo soportado
         return violations
     }
 }

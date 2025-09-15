@@ -1,16 +1,6 @@
 package org.example.linter.rules.functionargument
 
 import org.example.ast.ASTNode
-import org.example.ast.expressions.BinaryExpression
-import org.example.ast.expressions.BooleanExpression
-import org.example.ast.expressions.Expression
-import org.example.ast.expressions.NumberExpression
-import org.example.ast.expressions.OptionalExpression
-import org.example.ast.expressions.StringExpression
-import org.example.ast.expressions.SymbolExpression
-import org.example.ast.statements.VariableAssigner
-import org.example.ast.statements.VariableDeclarator
-import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.linter.LinterConfiguration
 import org.example.linter.data.LinterViolation
