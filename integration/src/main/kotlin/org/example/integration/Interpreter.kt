@@ -1,6 +1,6 @@
 package org.example.integration
 
-import org.example.common.ErrorHandler
+import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.input.InputProvider
 import org.example.interpreter.output.OutputPrinter
 import org.example.interpreter.providers.InterpreterVersionProvider

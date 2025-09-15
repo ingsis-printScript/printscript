@@ -1,7 +1,7 @@
 package org.example.interpreter
 
 import org.example.ast.ASTNode
-import org.example.common.ErrorHandler
+import org.example.interpreter.output.ErrorHandler
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler

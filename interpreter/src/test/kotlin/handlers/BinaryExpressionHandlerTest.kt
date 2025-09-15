@@ -1,7 +1,7 @@
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.NumberExpression
-import org.example.common.ErrorHandler
+import org.example.interpreter.output.ErrorHandler
 import org.example.common.Position
 import org.example.common.PrintScriptIterator
 import org.example.common.Range

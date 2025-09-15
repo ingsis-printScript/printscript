@@ -5,7 +5,7 @@ import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.Statement
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.functions.PrintFunction
-import org.example.common.ErrorHandler
+import org.example.interpreter.output.ErrorHandler
 import org.example.common.Position
 import org.example.common.PrintScriptIterator
 import org.example.common.Range

@@ -2,7 +2,7 @@ package handlers
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.ReadEnvNode
-import org.example.common.ErrorHandler
+import org.example.interpreter.output.ErrorHandler
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.asthandlers.ReadEnvNodeHandler

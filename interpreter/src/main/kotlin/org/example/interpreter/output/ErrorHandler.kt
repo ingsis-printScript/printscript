@@ -1,4 +1,4 @@
-package org.example.common
+package org.example.interpreter.output
 
 interface ErrorHandler {
     fun handleError(message: String)

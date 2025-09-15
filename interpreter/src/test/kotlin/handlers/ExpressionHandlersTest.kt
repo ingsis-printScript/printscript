@@ -2,7 +2,7 @@ package handlers
 
 import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.StringExpression
-import org.example.common.ErrorHandler
+import org.example.interpreter.output.ErrorHandler
 import org.example.common.Position
 import org.example.common.enums.Type
 import org.example.interpreter.Validator
