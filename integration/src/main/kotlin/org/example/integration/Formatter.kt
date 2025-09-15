@@ -1,32 +1,27 @@
 package org.example.integration
 
-import org.example.interpreter.output.ErrorHandler
+import org.example.formatter.providers.FormatterVersionProvider
 import org.example.interpreter.input.InputProvider
-import org.example.interpreter.output.OutputPrinter
-import org.example.interpreter.providers.InterpreterVersionProvider
+
 import org.example.lexer.provider.LexerVersionProvider
 import org.example.parser.TokenBuffer
 import org.example.parser.provider.ParserVersionProvider
 
-class Interpreter {
+class Formatter {
     fun execute(
         src: Iterator<String>,
         version: String,
-        emitter: OutputPrinter,
-        handler: ErrorHandler, // keep throws??
+        config: Iterator<String>,
         provider: InputProvider
     ) {
         val lexer = LexerVersionProvider().with(version).provide(src)
         val parser = ParserVersionProvider().with(version).provide(TokenBuffer(lexer))
-        val interpreter = InterpreterVersionProvider()
+        val formatter = FormatterVersionProvider()
             .with(version).provide(
                 parser,
-                provider,
-                emitter,
-                handler
             )
-        while (interpreter.hasNext()) {
-            interpreter.getNext() // todo: duda con que sea un Iterator<Result> teniendo emitter y handler
+        while (formatter.hasNext()) {
+            formatter.getNext() // todo: duda con que sea un Iterator<Result> teniendo emitter y handler
         }
     }
 }

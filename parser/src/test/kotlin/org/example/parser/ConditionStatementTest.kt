@@ -92,12 +92,12 @@ class ConditionStatementTest {
 
     @Test
     fun `build - if con declaracion adentro`() {
-        // if (true) { let x: Number; }
+        // if (true) { let x: number; }
         val node = parseOne(
             tokens(
                 keyword("if"), punct("("), boolean("true"), punct(")"),
                 punct("{"),
-                keyword("let"), symbol("x"), punct(":"), symbol("Number"), semi(),
+                keyword("let"), symbol("x"), punct(":"), symbol("number"), semi(),
                 punct("}")
             )
         )

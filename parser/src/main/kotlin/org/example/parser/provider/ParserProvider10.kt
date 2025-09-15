@@ -18,7 +18,7 @@ class ParserProvider10 : ParserProvider {
         val keywordFactoryMap = createKeywordFactoryMap()
 
         val keywords = setOf("let")
-        val types = setOf("Number", "String")
+        val types = setOf("number", "string")
         val expressions = listOf(NumberValidator(), SymbolValidator(), StringValidator())
 
         val parsers = listOf<StatementParser>(

@@ -31,9 +31,14 @@ class Executor(
 
     fun lookupVariable(name: String): Any? = environment[name]
 
-    fun printValue(value: Any?) {
-        outputPrinter.print(value.toString()) // manda solo a Printer
+    fun printValue(value: Any) {
+        val s = value.toString()
+        val unquoted = if (s.length >= 2 && s.first() == '"' && s.last() == '"') {
+            s.substring(1, s.length - 1)
+        } else s
+        outputPrinter.print(unquoted)
     }
+
 
     fun reportError(message: String) {
         errorHandler.handleError(message)

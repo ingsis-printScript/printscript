@@ -11,7 +11,7 @@ import org.example.lexer.constructors.SymbolTokenConstructor
 
 class LexerProvider11 : LexerProvider {
     override fun provide(reader: Iterator<String>): Lexer {
-        val keywords = setOf("let, const", "if", "else")
+        val keywords = setOf("let", "const", "if", "else")
         val operators = setOf("+", "-", "*", "/")
         val punctuations = setOf(":", ";", ",", "(", ")", "{", "}", "=")
 

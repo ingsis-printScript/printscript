@@ -1,10 +1,11 @@
-package org.example.interpreter.handlers
+package org.example.interpreter.asthandlers
 
 import org.example.ast.expressions.BinaryExpression
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
+import org.example.interpreter.handlers.ASTNodeHandler
 
 class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
     override fun handleExecution(node: BinaryExpression, executor: Executor) {
@@ -12,15 +13,15 @@ class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
         val right = executor.evaluate(node.right) as Number
 
         val result = when (node.operator) {
-            Operator.ADD -> left.toInt() + right.toInt()
-            Operator.SUB -> left.toInt() - right.toInt()
-            Operator.MUL -> left.toInt() * right.toInt()
-            Operator.DIV -> left.toInt() / right.toInt()
-            Operator.MOD -> left.toInt() % right.toInt()
+            Operator.ADD -> left.toDouble() + right.toDouble()
+            Operator.SUB -> left.toDouble() - right.toDouble()
+            Operator.MUL -> left.toDouble() * right.toDouble()
+            Operator.DIV -> left.toDouble() / right.toDouble()
+            Operator.MOD -> left.toDouble() % right.toDouble()
             else -> throw IllegalArgumentException("Unsupported operator: ${node.operator}")
         }
 
-        executor.pushLiteral(result)
+        executor.pushLiteral(collapseNumber(result))
     }
 
     override fun handleValidation(node: BinaryExpression, validator: Validator) {
@@ -37,4 +38,12 @@ class BinaryExpressionHandler : ASTNodeHandler<BinaryExpression> {
     }
 
     private fun isNumericType(type: Type?) = type == Type.NUMBER
+
+    private fun collapseNumber(value: Double): Number {
+        return if (value % 1.0 == 0.0) {
+            value.toInt()
+        } else {
+            value
+        }
+    }
 }

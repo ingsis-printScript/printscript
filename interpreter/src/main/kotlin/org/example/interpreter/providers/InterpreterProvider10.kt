@@ -8,7 +8,6 @@ import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.functions.PrintFunction
-import org.example.common.ErrorHandler
 import org.example.common.PrintScriptIterator
 import org.example.interpreter.Executor
 import org.example.interpreter.Interpreter
@@ -20,35 +19,23 @@ import org.example.interpreter.asthandlers.SymbolExpressionHandler
 import org.example.interpreter.asthandlers.VariableAssignerHandler
 import org.example.interpreter.asthandlers.VariableDeclaratorHandler
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.handlers.BinaryExpressionHandler
+import org.example.interpreter.asthandlers.BinaryExpressionHandler
 import org.example.interpreter.input.InputProvider
+import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 
 class InterpreterProvider10 : InterpreterProvider {
-    override fun provide(iterator: PrintScriptIterator<ASTNode>): Interpreter {
+    override fun provide(
+        iterator: PrintScriptIterator<ASTNode>,
+        inputProvider: InputProvider,
+        outputPrinter: OutputPrinter,
+        errorHandler: ErrorHandler
+    ): Interpreter {
 
         val handlers = createHandlers()
 
-        val errorHandler = object : ErrorHandler {
-            val errors = mutableListOf<String>()
-            override fun handleError(message: String) {
-                errors.add(message)
-            }
-        }
-
-        val fakePrinter = object : OutputPrinter {
-            val printed = mutableListOf<String>()
-            override fun print(value: String) {
-                printed.add(value)
-            }
-        }
-
-        val fakeInputProvider = object : InputProvider {
-            override fun readInput(prompt: String) = "123"
-        }
-
-        val validator = Validator(handlers, errorHandler) //queremos quese errorHandler?
-        val executor = Executor(handlers, fakeInputProvider, fakePrinter, errorHandler)
+        val validator = Validator(handlers, errorHandler)
+        val executor = Executor(handlers, inputProvider, outputPrinter, errorHandler)
 
 
         val interpreter = Interpreter(iterator, validator, executor)

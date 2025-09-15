@@ -74,12 +74,12 @@ class ConditionParserTest {
 
     @Test
     fun `validate if with non-empty block (declaration inside)`() {
-        // if (true) { let x:Number; }
+        // if (true) { let x:number; }
         assertValidByAnalyze(
             tokens(
                 keyword("if"), punct("("), boolean("true"), punct(")"),
                 punct("{"),
-                keyword("let"), symbol("x"), punct(":"), symbol("Number"), semi(),
+                keyword("let"), symbol("x"), punct(":"), symbol("number"), semi(),
                 punct("}")
             )
         )
@@ -104,12 +104,12 @@ class ConditionParserTest {
 
     @Test
     fun `validate if-else with non-empty blocks (decl + print)`() {
-        // if (false) { let x: Number; } else { println("ok"); }
+        // if (false) { let x: number; } else { println("ok"); }
         assertValidByAnalyze(
             tokens(
                 keyword("if"), punct("("), boolean("false"), punct(")"),
                 punct("{"),
-                keyword("let"), symbol("x"), punct(":"), symbol("Number"), semi(),
+                keyword("let"), symbol("x"), punct(":"), symbol("number"), semi(),
                 punct("}"),
                 keyword("else"),
                 punct("{"),

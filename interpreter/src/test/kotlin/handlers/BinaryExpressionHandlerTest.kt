@@ -12,7 +12,7 @@ import org.example.interpreter.Interpreter
 import org.example.interpreter.Validator
 import org.example.interpreter.asthandlers.NumberExpressionHandler
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.handlers.BinaryExpressionHandler
+import org.example.interpreter.asthandlers.BinaryExpressionHandler
 import org.example.interpreter.input.InputProvider
 import org.example.interpreter.output.OutputPrinter
 import org.junit.jupiter.api.Assertions.assertEquals

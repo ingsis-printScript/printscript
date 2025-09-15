@@ -1,4 +1,5 @@
 import org.example.ast.ASTNode
+import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.NumberExpression
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
@@ -9,10 +10,12 @@ import org.example.interpreter.output.ErrorHandler
 import org.example.common.Position
 import org.example.common.PrintScriptIterator
 import org.example.common.Range
+import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.Interpreter
 import org.example.interpreter.Validator
+import org.example.interpreter.asthandlers.BinaryExpressionHandler
 import org.example.interpreter.asthandlers.NumberExpressionHandler
 import org.example.interpreter.asthandlers.PrintFunctionHandler
 import org.example.interpreter.asthandlers.SymbolExpressionHandler
@@ -55,6 +58,7 @@ class InterpreterTest {
 
         val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>> = mapOf(
             NumberExpression::class.java to NumberExpressionHandler(),
+            BinaryExpression::class.java to BinaryExpressionHandler(),
             PrintFunction::class.java to PrintFunctionHandler()
         )
 
@@ -62,8 +66,10 @@ class InterpreterTest {
         val dummyRange = Range(Position(0, 0), Position(0, 0))
 
         val astNodes: List<ASTNode> = listOf(
-            PrintFunction(OptionalExpression.HasExpression(NumberExpression("10", dummyPosition)), dummyRange),
-            PrintFunction(OptionalExpression.HasExpression(NumberExpression("20", dummyPosition)), dummyRange)
+            PrintFunction(OptionalExpression.HasExpression(NumberExpression("10.2", dummyPosition)), dummyRange),
+            PrintFunction(OptionalExpression.HasExpression(NumberExpression("20", dummyPosition)), dummyRange),
+            PrintFunction(OptionalExpression.HasExpression(BinaryExpression(NumberExpression("30", dummyPosition), Operator.ADD,
+                NumberExpression("20", dummyPosition), dummyRange)), dummyRange)
         )
 
         val iterator = TestIterator(astNodes)
@@ -75,9 +81,9 @@ class InterpreterTest {
         val results = interpreter.run()
 
         // --- ASSERT ---
-        assertEquals(listOf("10.0", "20.0"), fakePrinter.printed)
+        assertEquals(listOf("10.2", "20", "50"), fakePrinter.printed)
         assertTrue(fakeErrorHandler.errors.isEmpty())
-        assertEquals(2, results.size)
+        assertEquals(3, results.size)
     }
 
     @Test
@@ -113,7 +119,7 @@ class InterpreterTest {
         interpreter.run()
 
         // --- ASSERT ---
-        assertEquals(listOf("42.0"), fakePrinter.printed)
+        assertEquals(listOf("42"), fakePrinter.printed)
         assertTrue(fakeErrorHandler.errors.isEmpty())
     }
 
@@ -165,12 +171,12 @@ class InterpreterTest {
 
         val astNodes: List<ASTNode> = listOf(
             PrintFunction(
-                OptionalExpression.HasExpression(org.example.ast.expressions.SymbolExpression("y", dummyPos)),
+                OptionalExpression.HasExpression(SymbolExpression("y", dummyPos)),
                 dummyRange
             )
         )
 
-        val iterator = InterpreterTest.TestIterator(astNodes)
+        val iterator =TestIterator(astNodes)
         val executor = Executor(handlers, fakeInputProvider, fakePrinter, fakeErrorHandler)
         val validator = Validator(handlers, fakeErrorHandler)
         val interpreter = Interpreter(iterator, validator, executor)

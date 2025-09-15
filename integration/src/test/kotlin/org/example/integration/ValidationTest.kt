@@ -195,20 +195,20 @@ class ValidationTest {
     @Test
     fun `declaracion simple sin asignacion`() {
         val expected = decl("x", Type.NUMBER)
-        assertParsedSource("let x: Number;", expected)
+        assertParsedSource("let x: number;", expected)
     }
 
     @Test
     fun `declaracion con asignacion aritmetica simple`() {
         val expr = bin(n("5"), Operator.ADD, n("3"))
         val expected = decl("x", Type.NUMBER, OptionalExpression.HasExpression(expr))
-        assertParsedSource("let x: Number = 5 + 3;", expected)
+        assertParsedSource("let x: number = 5 + 3;", expected)
     }
 
     @Test
     fun `declaracion con string literal`() {
         val expected = decl("x", Type.STRING, OptionalExpression.HasExpression(s("'John'")))
-        assertParsedSource("""let x: String = 'John';""", expected)
+        assertParsedSource("""let x: string = 'John';""", expected)
     }
 
     @Test
@@ -236,7 +236,7 @@ class ValidationTest {
     @Test
     fun `secuencia declare-assign-print (string)`() {
         val src = """
-            let x: Number = 5;
+            let x: number = 5;
             y = x;
             println('done');
         """.trimIndent()
@@ -255,9 +255,9 @@ class ValidationTest {
 
     @Test
     fun `operaciones aritmeticas y print`() {
-        // let numberResult: Number = 5 * 5 - 8; println(numberResult);
+        // let numberResult: number = 5 * 5 - 8; println(numberResult);
         val src = """
-            let numberResult: Number = 5 * 5 - 8;
+            let numberResult: number = 5 * 5 - 8;
             println(numberResult);
         """.trimIndent()
 
@@ -275,10 +275,10 @@ class ValidationTest {
 
     @Test
     fun `concat string + number y print`() {
-        // let someNumber: Number = 1; let someString: String = "hello world "; println(someString + someNumber);
+        // let someNumber: number = 1; let someString: string = "hello world "; println(someString + someNumber);
         val src = """
-            let someNumber: Number = 1;
-            let someString: String = 'hello world ';
+            let someNumber: number = 1;
+            let someString: string = 'hello world ';
             println(someString + someNumber);
         """.trimIndent()
 
@@ -297,9 +297,9 @@ class ValidationTest {
 
     @Test
     fun `aritmetica con decimales y print`() {
-        // let pi: Number; pi = 3.14; println(pi / 2);
+        // let pi: number; pi = 3.14; println(pi / 2);
         val src = """
-            let pi: Number;
+            let pi: number;
             pi = 3.14;
             println(pi / 2);
         """.trimIndent()
@@ -345,7 +345,7 @@ class ValidationTest {
 
     @Test
     fun `posiciones - declaracion con 5 + 3`() {
-        val src = "let x: Number = 5 + 3;"
+        val src = "let x: number = 5 + 3;"
         val parser = parserFromSource(src)
         val decl = (parser.parse() as Success<*>).value as VariableDeclarator
         val line = firstLine(src)

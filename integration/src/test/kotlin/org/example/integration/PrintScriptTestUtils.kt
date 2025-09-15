@@ -107,22 +107,6 @@ class PrintScriptTestUtils {
         }
     }
 
-    /**
-     * Verifica que los tipos de statements sean los esperados
-     */
-    fun assertStatementTypes(sourceCode: String, expectedTypes: List<Class<*>>, version: String = "1.0") {
-        val statements = parse(sourceCode, version)
-        val actualTypes = statements.map { it::class.java }
-
-        if (actualTypes != expectedTypes) {
-            throw AssertionError(
-                "Statement types mismatch:\n" +
-                    "Expected: ${expectedTypes.map { it.simpleName }}\n" +
-                    "Actual:   ${actualTypes.map { it.simpleName }}"
-            )
-        }
-    }
-
     // ========================================
     // CASOS DE TEST COMUNES
     // ========================================
@@ -175,43 +159,3 @@ class PrintScriptTestUtils {
         """.trimIndent()
     }
 }
-
-// ========================================
-// EJEMPLO DE USO EN TESTS
-// ========================================
-
-/*
-class ExampleUsageTest {
-    private val utils = PrintScriptTestUtils()
-
-    @Test
-    fun testSimpleTokenization() {
-        val tokens = utils.tokenize("let x: Number = 5;")
-        assertEquals(7, tokens.size)
-        assertEquals(TokenType.KEYWORD, tokens[0].type)
-        assertEquals("let", tokens[0].value)
-    }
-
-    @Test
-    fun testMultiStatementParsing() {
-        utils.assertStatementCount(TestCases.SIMPLE_DECLARE_ASSIGN, 3)
-        utils.assertStatementTypes(
-            TestCases.SIMPLE_DECLARE_ASSIGN,
-            listOf(VariableDeclarator::class.java, VariableAssigner::class.java, PrintFunction::class.java)
-        )
-    }
-
-    @Test
-    fun testTokenSequenceValidation() {
-        utils.assertTokenSequence(
-            "let x: Number;",
-            listOf(TokenType.KEYWORD, TokenType.SYMBOL, TokenType.PUNCTUATION, TokenType.KEYWORD, TokenType.PUNCTUATION)
-        )
-    }
-
-    @Test
-    fun debugComplexCase() {
-        utils.debugPipeline(TestCases.ARITHMETIC_OPERATIONS)
-    }
-}
-*/
