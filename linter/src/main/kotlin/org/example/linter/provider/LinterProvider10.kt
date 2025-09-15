@@ -24,8 +24,8 @@ import org.example.linter.rules.symbolformat.checker.SnakeCaseChecker
 import java.io.InputStream
 import kotlin.reflect.KClass
 
-class LinterProvider10(private val iterator: PrintScriptIterator<Result>, private val inputStream: InputStream, private val errorHandler: ErrorHandler) : LinterProvider {
-    override fun provide(): Linter {
+class LinterProvider10() : LinterProvider {
+    override fun provide(iterator: PrintScriptIterator<Result>, inputStream: InputStream, errorHandler: ErrorHandler): Linter {
         val symbolFormats = mapOf(
             SymbolFormat.CAMEL_CASE to CamelCaseChecker(),
             SymbolFormat.SNAKE_CASE to SnakeCaseChecker()
