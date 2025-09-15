@@ -3,7 +3,6 @@ package handlers
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableImmutableDeclarator
-import org.example.interpreter.output.ErrorHandler
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Type
@@ -11,6 +10,7 @@ import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 import org.example.interpreter.asthandlers.VariableImmutableDeclaratorHandler
 import org.example.interpreter.handlers.ASTNodeHandler
+import org.example.interpreter.output.ErrorHandler
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

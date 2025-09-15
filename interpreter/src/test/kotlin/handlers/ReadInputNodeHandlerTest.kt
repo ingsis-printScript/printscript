@@ -1,11 +1,11 @@
 import org.example.ast.ASTNode
 import org.example.ast.expressions.ReadInputNode
-import org.example.interpreter.output.ErrorHandler
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.asthandlers.ReadInputNodeHandler
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
+import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

@@ -1,11 +1,11 @@
 package org.example.interpreter
 
 import org.example.ast.ASTNode
-import org.example.interpreter.output.ErrorHandler
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
+import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 
 class Executor(
@@ -35,10 +35,11 @@ class Executor(
         val s = value.toString()
         val unquoted = if (s.length >= 2 && s.first() == '"' && s.last() == '"') {
             s.substring(1, s.length - 1)
-        } else s
+        } else {
+            s
+        }
         outputPrinter.print(unquoted)
     }
-
 
     fun reportError(message: String) {
         errorHandler.handleError(message)

@@ -35,7 +35,7 @@ class ConditionStatementTest {
 
     private fun parseOne(tokens: List<Token>): ASTNode {
         val parser = parserWith(tokens)
-        val res = parser.parse()
+        val res = parser.getNext()
         require(res is Success<*>) { "Se esperaba Success, obtuvo: $res" }
         return res.value as ASTNode
     }
@@ -43,7 +43,7 @@ class ConditionStatementTest {
     private fun parseAll(parser: Parser): List<ASTNode> {
         val nodes = mutableListOf<ASTNode>()
         while (parser.hasNext()) {
-            val r = parser.parse()
+            val r = parser.getNext()
             require(r is Success<*>) { "Se esperaba Success, obtuvo: $r" }
             nodes.add(r.value as ASTNode)
         }
@@ -52,7 +52,7 @@ class ConditionStatementTest {
 
     private fun assertInvalid(tokens: List<Token>) {
         val parser = parserWith(tokens)
-        val result = parser.parse()
+        val result = parser.getNext()
         assertTrue(
             result is Error && result.message.contains("Error in statement: "),
             "Se esperaba SyntaxError, obtuvo: $result"

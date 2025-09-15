@@ -2,12 +2,12 @@ package handlers
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.ReadEnvNode
-import org.example.interpreter.output.ErrorHandler
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.asthandlers.ReadEnvNodeHandler
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
+import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

@@ -11,7 +11,7 @@ class Linter {
         src: Iterator<String>,
         version: String,
         config: Iterator<String>,
-        handler: ErrorHandler,
+        handler: ErrorHandler
     ) {
         val lexer = LexerVersionProvider().with(version).provide(src)
         val parser = ParserVersionProvider().with(version).provide(TokenBuffer(lexer))

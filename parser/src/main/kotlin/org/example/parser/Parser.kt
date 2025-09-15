@@ -12,7 +12,7 @@ import org.example.parser.parsers.StatementParser
 class Parser(
     private val parsers: List<StatementParser>,
     private val tokenBuffer: TokenBuffer
-) : PrintScriptIterator<ASTNode> {
+) : PrintScriptIterator<Result> {
 
     override fun hasNext(): Boolean {
         // duda: miro si buffer tiene next o si recibo un ASTNode?
@@ -20,17 +20,7 @@ class Parser(
         return tokenBuffer.hasNext()
     }
 
-    override fun getNext(): ASTNode {
-        // dudas:
-        // return ASTNode o Result? (keep 'parse' intact, or use it?)
-        // if ASTNode, upon error, throw exception?
-        return parseStatement(tokenBuffer, parsers)
-    }
-
-    // Safe and type-oriented/expressive version of getNext()
-    // Still used in testing (for individual statements), and possibly in validating without interpreting
-    // Useful for error detection, nicer to interact with return type that exception
-    fun parse(): Result {
+    override fun getNext(): Result {
         if (!hasNext()) { return Error("No tokens to parse") }
         try {
             val node: ASTNode = parseStatement(tokenBuffer, parsers)

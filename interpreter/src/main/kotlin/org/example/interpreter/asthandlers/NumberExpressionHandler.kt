@@ -24,5 +24,4 @@ class NumberExpressionHandler : ASTNodeHandler<NumberExpression> {
             s.toInt()
         }
     }
-
 }

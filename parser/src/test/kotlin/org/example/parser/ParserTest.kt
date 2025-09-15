@@ -39,7 +39,7 @@ class ParserTest {
     private fun parseAll(parser: Parser): List<ASTNode> {
         val nodes = mutableListOf<ASTNode>()
         while (parser.hasNext()) {
-            val result = parser.parse()
+            val result = parser.getNext()
             require(result is Success<*>) { "Expected success but got $result" }
             nodes.add(result.value as ASTNode)
         }
@@ -48,13 +48,13 @@ class ParserTest {
 
     private fun assertInvalid(tokens: List<Token>) {
         val parser = parserWith(tokens)
-        val result = parser.parse()
+        val result = parser.getNext()
         assertTrue(result is Error && result.message.contains("Error in statement: "))
     }
 
     private inline fun <reified T> assertParsed(tokens: List<Token>, expected: T) {
         val parser = parserWith(tokens)
-        val result = parser.parse()
+        val result = parser.getNext()
         assertTrue(result is Success<*> && result.value == expected)
     }
 
@@ -63,7 +63,7 @@ class ParserTest {
     @Test
     fun `parse empty token list returns empty program`() {
         val parser = parserWith(emptyList())
-        assertEquals(Error("No tokens to parse"), parser.parse())
+        assertEquals(Error("No tokens to parse"), parser.getNext())
     }
 
     @Test
@@ -146,7 +146,7 @@ class ParserTest {
         val parser = parserWith(
             tokens(symbol("println"), punct("["), punct("]"), semi())
         )
-        val result = parser.parse()
+        val result = parser.getNext()
         assertTrue(result is Error)
     }
 

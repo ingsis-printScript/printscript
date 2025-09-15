@@ -11,7 +11,7 @@ class Linter(
     private val iterator: PrintScriptIterator<ASTNode>,
     private val rules: List<(Rule)>,
     private val configurationReader: ConfigurationReader
-): PrintScriptIterator<ASTNode> {
+) : PrintScriptIterator<ASTNode> {
 
     fun analyze(ast: ASTNode, configPath: String): LinterReport {
         val configData = configurationReader.read(configPath)

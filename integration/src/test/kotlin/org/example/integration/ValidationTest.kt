@@ -57,7 +57,7 @@ class ValidationTest {
         val parser = parserFromSource(source)
         val nodes = mutableListOf<ASTNode>()
         while (parser.hasNext()) {
-            val result = parser.parse()
+            val result = parser.getNext()
             require(result is Success<*>) { "Se esperaba Success pero fue $result" }
             nodes.add(result.value as ASTNode)
         }
@@ -149,7 +149,7 @@ class ValidationTest {
     /** Parsea un único statement y compara contra el AST esperado ignorando posiciones. */
     private inline fun <reified T> assertParsedSource(source: String, expected: T) {
         val parser = parserFromSource(source)
-        val result = parser.parse()
+        val result = parser.getNext()
         assertTrue(result is Success<*>, "Se esperaba Success pero fue $result")
         @Suppress("UNCHECKED_CAST")
         assertAstEqualsIgnoringPos(expected as ASTNode, (result as Success<*>).value as ASTNode)
@@ -159,7 +159,7 @@ class ValidationTest {
     /** Parsea y valida que devuelva Error con prefijo coherente. */
     private fun assertInvalidSource(source: String, messagePrefix: String = "Error in statement: ") {
         val parser = parserFromSource(source)
-        val result: Result = parser.parse()
+        val result: Result = parser.getNext()
         assertTrue(result is Error, "Se esperaba Error pero fue $result")
         assertTrue(
             (result as Error).message.startsWith(messagePrefix),
@@ -189,7 +189,7 @@ class ValidationTest {
     @Test
     fun `empty source devuelve Error No tokens`() {
         val parser = parserFromSource("")
-        assertEquals(Error("No tokens to parse"), parser.parse())
+        assertEquals(Error("No tokens to parse"), parser.getNext())
     }
 
     @Test
@@ -347,7 +347,7 @@ class ValidationTest {
     fun `posiciones - declaracion con 5 + 3`() {
         val src = "let x: number = 5 + 3;"
         val parser = parserFromSource(src)
-        val decl = (parser.parse() as Success<*>).value as VariableDeclarator
+        val decl = (parser.getNext() as Success<*>).value as VariableDeclarator
         val line = firstLine(src)
 
         val colX = colOf(line, "x")
@@ -392,7 +392,7 @@ class ValidationTest {
     fun `posiciones - asignacion decimal 3_14`() {
         val src = "pi = 3.14;"
         val parser = parserFromSource(src)
-        val assign = (parser.parse() as Success<*>).value as VariableAssigner
+        val assign = (parser.getNext() as Success<*>).value as VariableAssigner
         val line = firstLine(src)
 
         val colPi = colOf(line, "pi")
@@ -415,7 +415,7 @@ class ValidationTest {
     fun `posiciones - println con suma de simbolos`() {
         val src = "println(someString + someNumber);"
         val parser = parserFromSource(src)
-        val printFn = (parser.parse() as Success<*>).value as PrintFunction
+        val printFn = (parser.getNext() as Success<*>).value as PrintFunction
         val line = firstLine(src)
 
         val colLparen = colOf(line, "(")

@@ -15,8 +15,8 @@ import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
 import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -71,18 +71,18 @@ class VariableAssignerHandlerTest {
     @Test
     fun `should assign value to existing variable`() {
         val declarator = VariableImmutableDeclarator(
-            SymbolExpression("x", Position(0,0)),
+            SymbolExpression("x", Position(0, 0)),
             Type.NUMBER,
-            Range(Position(0,0), Position(0,1)),
-            OptionalExpression.HasExpression(SymbolExpression("5", Position(0,0)))
+            Range(Position(0, 0), Position(0, 1)),
+            OptionalExpression.HasExpression(SymbolExpression("5", Position(0, 0)))
         )
         val declaratorHandler = VariableImmutableDeclaratorHandler()
         declaratorHandler.handleValidation(declarator, validator)
 
         val assigner = VariableAssigner(
-            SymbolExpression("x", Position(1,0)),
-            OptionalExpression.HasExpression(SymbolExpression("10", Position(1,0))),
-            Range(Position(1,0), Position(1,1))
+            SymbolExpression("x", Position(1, 0)),
+            OptionalExpression.HasExpression(SymbolExpression("10", Position(1, 0))),
+            Range(Position(1, 0), Position(1, 1))
         )
         val handler = handlers[VariableAssigner::class.java] as VariableAssignerHandler
         handler.handleValidation(assigner, validator)
@@ -94,18 +94,18 @@ class VariableAssignerHandlerTest {
     @Test
     fun `should throw error if type mismatch`() {
         val declarator = VariableImmutableDeclarator(
-            SymbolExpression("x", Position(0,0)),
+            SymbolExpression("x", Position(0, 0)),
             Type.NUMBER,
-            Range(Position(0,0), Position(0,1)),
-            OptionalExpression.HasExpression(SymbolExpression("5", Position(0,0)))
+            Range(Position(0, 0), Position(0, 1)),
+            OptionalExpression.HasExpression(SymbolExpression("5", Position(0, 0)))
         )
         val declaratorHandler = VariableImmutableDeclaratorHandler()
         declaratorHandler.handleValidation(declarator, validator)
 
         val assigner = VariableAssigner(
-            SymbolExpression("x", Position(1,0)),
-            OptionalExpression.HasExpression(SymbolExpression("true", Position(1,0))),
-            Range(Position(1,0), Position(1,1))
+            SymbolExpression("x", Position(1, 0)),
+            OptionalExpression.HasExpression(SymbolExpression("true", Position(1, 0))),
+            Range(Position(1, 0), Position(1, 1))
         )
         val handler = handlers[VariableAssigner::class.java] as VariableAssignerHandler
         val exception = assertThrows<RuntimeException> {
@@ -117,9 +117,9 @@ class VariableAssignerHandlerTest {
     @Test
     fun `should throw error if no expression`() {
         val assigner = VariableAssigner(
-            SymbolExpression("x", Position(0,0)),
+            SymbolExpression("x", Position(0, 0)),
             OptionalExpression.NoExpression,
-            Range(Position(0,0), Position(0,1))
+            Range(Position(0, 0), Position(0, 1))
         )
         val handler = handlers[VariableAssigner::class.java] as VariableAssignerHandler
         val exception = assertThrows<RuntimeException> {
@@ -134,19 +134,19 @@ class VariableAssignerHandlerTest {
 
         // Primero declaramos la variable con su handler de declarador
         val declarator = VariableImmutableDeclarator(
-            SymbolExpression("x", Position(0,0)),
+            SymbolExpression("x", Position(0, 0)),
             Type.NUMBER,
-            Range(Position(0,0), Position(0,1)),
-            OptionalExpression.HasExpression(SymbolExpression("5", Position(0,0)))
+            Range(Position(0, 0), Position(0, 1)),
+            OptionalExpression.HasExpression(SymbolExpression("5", Position(0, 0)))
         )
         val declaratorHandler = VariableImmutableDeclaratorHandler()
         declaratorHandler.handleExecution(declarator, executor)
 
         // Luego asignamos un nuevo valor
         val assigner = VariableAssigner(
-            SymbolExpression("x", Position(1,0)),
-            OptionalExpression.HasExpression(SymbolExpression("10", Position(1,0))),
-            Range(Position(1,0), Position(1,1))
+            SymbolExpression("x", Position(1, 0)),
+            OptionalExpression.HasExpression(SymbolExpression("10", Position(1, 0))),
+            Range(Position(1, 0), Position(1, 1))
         )
         val handler = handlers[VariableAssigner::class.java] as VariableAssignerHandler
         handler.handleExecution(assigner, executor)

@@ -1,19 +1,21 @@
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.NumberExpression
-import org.example.interpreter.output.ErrorHandler
 import org.example.common.Position
 import org.example.common.PrintScriptIterator
 import org.example.common.Range
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
+import org.example.common.results.Result
+import org.example.common.results.Success
 import org.example.interpreter.Executor
 import org.example.interpreter.Interpreter
 import org.example.interpreter.Validator
+import org.example.interpreter.asthandlers.BinaryExpressionHandler
 import org.example.interpreter.asthandlers.NumberExpressionHandler
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.asthandlers.BinaryExpressionHandler
 import org.example.interpreter.input.InputProvider
+import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -55,10 +57,10 @@ class BinaryExpressionHandlerTest {
         val validator = Validator(handlers, fakeErrorHandler)
 
         val astNodes: List<ASTNode> = listOf(expr)
-        val iterator = object : PrintScriptIterator<ASTNode> {
+        val iterator = object : PrintScriptIterator<Result> {
             var index = 0
             override fun hasNext() = index < astNodes.size
-            override fun getNext() = astNodes[index++]
+            override fun getNext() = Success(astNodes[index++])
         }
 
         val interpreter = Interpreter(iterator, validator, executor)
