@@ -2,13 +2,13 @@ package handlers
 
 import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.StringExpression
+import org.example.common.ErrorHandler
 import org.example.common.Position
 import org.example.common.enums.Type
 import org.example.interpreter.Validator
 import org.example.interpreter.asthandlers.BooleanExpressionHandler
 import org.example.interpreter.asthandlers.StringExpressionHandler
 import org.example.interpreter.handlers.ASTNodeHandler
-import org.example.interpreter.output.ErrorHandler
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

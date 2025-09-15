@@ -2,12 +2,13 @@ package handlers
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.ReadEnvExpression
-import org.example.common.enums.Type
+import org.example.common.ErrorHandler
+import org.example.common.Position
+import org.example.common.Range
 import org.example.interpreter.Executor
 import org.example.interpreter.asthandlers.ReadEnvNodeHandler
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
-import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -25,7 +26,7 @@ class ReadEnvNodeHandlerTest {
         override fun print(value: String) { printed.add(value) }
     }
 
-    val fakeInputProvider = object : InputProvider {
+    private val fakeInputProvider = object : InputProvider {
         override fun readInput(prompt: String): String = ""
     }
 
@@ -36,7 +37,10 @@ class ReadEnvNodeHandlerTest {
     @Test
     fun `should read string env variable correctly`() {
         val varName = "PATH"
-        val node = ReadEnvExpression(varName, Type.STRING)
+        val startPos = Position(0, 0)
+        val endPos = Position(0, 0)
+        val range = Range(startPos, endPos)
+        val node = ReadEnvExpression(varName, range)
         val executor = Executor(
             handlers,
             inputProvider = fakeInputProvider,
@@ -53,16 +57,17 @@ class ReadEnvNodeHandlerTest {
 
     @Test
     fun `should report error if env variable not found`() {
-        val node = ReadEnvExpression("NON_EXISTENT_VAR", Type.STRING)
-        val fakeInputProvider = object : InputProvider {
-            override fun readInput(prompt: String): String = ""
-        }
+        val startPos = Position(0, 0)
+        val endPos = Position(0, 0)
+        val range = Range(startPos, endPos)
+        val node = ReadEnvExpression("NON_EXISTENT_VAR", range)
         val executor = Executor(
             handlers,
             inputProvider = fakeInputProvider,
             outputPrinter = fakePrinter,
             errorHandler = fakeErrorHandler
         )
+
         val result = executor.evaluate(node)
 
         assertEquals(null, result)

@@ -1,6 +1,7 @@
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.NumberExpression
+import org.example.common.ErrorHandler
 import org.example.common.Position
 import org.example.common.PrintScriptIterator
 import org.example.common.Range
@@ -15,7 +16,6 @@ import org.example.interpreter.asthandlers.BinaryExpressionHandler
 import org.example.interpreter.asthandlers.NumberExpressionHandler
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
-import org.example.interpreter.output.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

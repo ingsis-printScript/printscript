@@ -1,43 +1,57 @@
 package org.example.interpreter.asthandlers
 
-import org.example.ast.expressions.ReadInputNode
+import org.example.ast.expressions.OptionalExpression
+import org.example.ast.expressions.ReadInputExpression
 import org.example.common.enums.Type
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
 import org.example.interpreter.handlers.ASTNodeHandler
 
-class ReadInputNodeHandler : ASTNodeHandler<ReadInputNode> {
+class ReadInputNodeHandler : ASTNodeHandler<ReadInputExpression> {
 
     override fun handleExecution(node: ReadInputExpression, executor: Executor) {
-        val input = executor.inputProvider.readInput(node.value)
+        val prompt: String = when (val opt = node.value) {
+            is OptionalExpression.HasExpression -> executor.evaluate(opt.expression) as? String ?: ""
+            is OptionalExpression.NoExpression -> ""
+        }
 
-        val value = when {
-            input == null -> {
-                executor.reportError("No input provided")
-                null
+        val input = executor.inputProvider.readInput(prompt)
+
+        if (input == null) {
+            executor.reportError("No input provided")
+            return
+        }
+
+        val value: Any
+        val typeDetected: String = when {
+            input.equals("true", ignoreCase = true) || input.equals("false", ignoreCase = true) -> {
+                value = input.equals("true", ignoreCase = true)
+                "BOOLEAN"
             }
-            node.expectedType == Type.NUMBER -> input.toIntOrNull().also {
-                if (it == null) executor.reportError("Expected NUMBER but got '$input'")
+            input.toIntOrNull() != null -> {
+                value = input.toInt()
+                "NUMBER"
             }
-            node.expectedType == Type.BOOLEAN -> when (input.lowercase()) {
-                "true" -> true
-                "false" -> false
-                else -> {
-                    executor.reportError("Expected BOOLEAN but got '$input'")
-                    null
-                }
+            input.toDoubleOrNull() != null -> {
+                value = input.toDouble()
+                "NUMBER"
             }
-            node.expectedType == Type.STRING -> input
             else -> {
-                executor.reportError("Unsupported type")
-                null
+                value = input
+                "STRING"
             }
         }
 
-        executor.pushLiteral(value)
+        if (typeDetected == "STRING" || typeDetected == "NUMBER" || typeDetected == "BOOLEAN") {
+            executor.pushLiteral(value)
+        } else {
+            executor.reportError("Invalid input type: '$input'")
+        }
     }
 
     override fun handleValidation(node: ReadInputExpression, validator: Validator) {
-        validator.pushLiteral(node.expectedType)
+        validator.pushLiteral(null)
+
     }
 }
+
