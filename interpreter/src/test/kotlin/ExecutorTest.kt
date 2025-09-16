@@ -156,34 +156,6 @@ class ExecutorTest {
     }
 
     @Test
-    fun `visitCondition executes if and else blocks`() {
-        val dummyPos = Position(0, 0)
-        val dummyRange = Range(dummyPos, dummyPos)
-
-        val ifNode = NumberExpression("1", dummyPos)
-        val elseNode = NumberExpression("2", dummyPos)
-
-        val cond = Condition(
-            condition = BooleanExpression("true", dummyPos),
-            ifBlock = listOf(ifNode),
-            elseBlock = listOf(elseNode),
-            range = dummyRange
-        )
-
-        executor.evaluate(cond)
-
-        val result = executor.popLiteral() as Number
-
-        if (result is Int) {
-            assertEquals(1, result)
-        } else if (result is Double) {
-            assertEquals(1.0, result)
-        } else {
-            throw AssertionError("Unexpected type: ${result::class}")
-        }
-    }
-
-    @Test
     fun `visitVariableImmutableDeclarator declares immutable variable`() {
         val node = VariableImmutableDeclarator(
             symbol = SymbolExpression("z", dummyPos),

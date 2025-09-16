@@ -97,6 +97,8 @@ class Executor(
         return expr
     }
 
+
+
     override fun visitBoolean(expr: BooleanExpression): ASTNode {
         pushLiteral(expr.value.equals("true", ignoreCase = true))
         return expr
@@ -144,6 +146,7 @@ class Executor(
         return expr
     }
 
+
     override fun visitReadEnv(expr: ReadEnvExpression): ASTNode {
         val varName = when (val opt = expr.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression) as? String ?: ""
@@ -171,6 +174,7 @@ class Executor(
         return expr
     }
 
+
     override fun visitPrintFunction(statement: PrintFunction): ASTNode {
         val value = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
@@ -180,18 +184,6 @@ class Executor(
         return statement
     }
 
-    override fun visitCondition(statement: Condition): ASTNode {
-        val cond = evaluate(statement.condition) as? Boolean ?: false
-        val blockToExecute = if (cond) statement.ifBlock else statement.elseBlock.orEmpty()
-
-        var lastValue: Any? = null
-        blockToExecute.forEach {
-            lastValue = evaluate(it)
-        }
-
-        pushLiteral(lastValue)
-        return statement
-    }
 
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val value = when (val opt = statement.value) {
@@ -219,4 +211,22 @@ class Executor(
         declareVariable(Variable(statement.symbol.value, value, immutable = true))
         return statement
     }
+
+    override fun visitCondition(statement: Condition): ASTNode {
+        val conditionResult = evaluate(statement.condition)
+        val cond = (conditionResult as? Boolean) ?: false
+        stack.clear()
+
+        val blockToExecute = if (cond) statement.ifBlock else statement.elseBlock.orEmpty()
+
+        var lastValue: Any? = null
+        for (stmt in blockToExecute) {
+            stmt.accept(this)
+            lastValue = popLiteral()
+        }
+
+        pushLiteral(lastValue)
+        return statement
+    }
+
 }
