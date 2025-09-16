@@ -6,7 +6,6 @@ import org.example.ast.expressions.ReadEnvExpression
 import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.StringExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.ast.statements.Condition
 import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.VariableImmutableDeclarator

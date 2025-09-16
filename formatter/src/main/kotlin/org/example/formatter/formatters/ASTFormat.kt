@@ -1,8 +1,8 @@
 package org.example.formatter.formatters
 
+import java.io.Writer
 import org.example.ast.ASTNode
 import org.example.formatter.Rule
-import java.io.Writer
 import org.example.formatter.PrivateIterator
 
 interface ASTFormat {

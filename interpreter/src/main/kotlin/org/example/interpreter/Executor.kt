@@ -97,8 +97,6 @@ class Executor(
         return expr
     }
 
-
-
     override fun visitBoolean(expr: BooleanExpression): ASTNode {
         pushLiteral(expr.value.equals("true", ignoreCase = true))
         return expr
@@ -146,7 +144,6 @@ class Executor(
         return expr
     }
 
-
     override fun visitReadEnv(expr: ReadEnvExpression): ASTNode {
         val varName = when (val opt = expr.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression) as? String ?: ""
@@ -174,7 +171,6 @@ class Executor(
         return expr
     }
 
-
     override fun visitPrintFunction(statement: PrintFunction): ASTNode {
         val value = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
@@ -183,7 +179,6 @@ class Executor(
         value?.let { printValue(it) }
         return statement
     }
-
 
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val value = when (val opt = statement.value) {
