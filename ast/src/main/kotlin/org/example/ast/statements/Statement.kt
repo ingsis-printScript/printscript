@@ -7,5 +7,5 @@ import org.example.common.Range
 interface Statement : ASTNode {
     val range: Range
 
-    fun <T> accept(visitor: ASTVisitor<T>): T
+    override fun <T> accept(visitor: ASTVisitor<T>): T
 }

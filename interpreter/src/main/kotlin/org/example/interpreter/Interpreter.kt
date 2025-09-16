@@ -23,14 +23,17 @@ class Interpreter(
             executor.errorHandler.handleError(result.message)
             return result
         } else {
-            val node = (result as Success<ASTNode>).value
-            // Primero validamos el nodo
-            validator.processNode(node)
+            val node = (result as? Success<ASTNode>)?.value
+                ?: return result
 
-            // Luego ejecutamos el nodo
-            return executor.processNode(node)
+            // Primero validamos usando Visitor
+            node.accept(validator)
+
+            // Luego ejecutamos usando Visitor
+            return node.accept(executor).let { Success(node) }
         }
     }
+
 
     fun run(): List<Result> {
         val results = mutableListOf<Result>()

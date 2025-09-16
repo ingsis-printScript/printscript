@@ -149,16 +149,8 @@ class Executor(
     }
 
     override fun visitSymbol(expr: SymbolExpression): ASTNode {
-        val value = getEnvVar(expr.name)
+        val value = getEnvVar(expr.value)
         pushLiteral(value)
-        return expr
-    }
-
-    override fun visitOptional(expr: OptionalExpression): ASTNode {
-        when (expr) {
-            is OptionalExpression.HasExpression -> evaluate(expr.expression)
-            is OptionalExpression.NoExpression -> pushLiteral(null)
-        }
         return expr
     }
 
@@ -186,7 +178,7 @@ class Executor(
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        assignVariable(statement.symbol.name, value)
+        assignVariable(statement.symbol.value, value)
         return statement
     }
 
@@ -195,7 +187,7 @@ class Executor(
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        declareVariable(statement.symbol.name, value)
+        declareVariable(statement.symbol.value, value)
         return statement
     }
 
@@ -204,7 +196,7 @@ class Executor(
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        declareVariable(statement.symbol.name, value)
+        declareVariable(statement.symbol.value, value)
         return statement
     }
 

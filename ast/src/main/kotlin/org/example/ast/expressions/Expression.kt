@@ -4,5 +4,5 @@ import org.example.ast.ASTNode
 import org.example.ast.visitor.ASTVisitor
 
 sealed interface Expression : ASTNode{
-    fun <T> accept(visitor: ASTVisitor<T>): T
+    override fun <T> accept(visitor: ASTVisitor<T>): T
 }
