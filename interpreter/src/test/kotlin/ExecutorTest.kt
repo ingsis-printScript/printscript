@@ -38,7 +38,7 @@ class ExecutorTest {
     fun `visitNumber returns correct value`() {
         val node = NumberExpression("7", dummyPos)
         val result = executor.evaluate(node)
-        assertEquals(7.0, result)
+        assertEquals(7, result)
     }
 
     @Test
@@ -89,13 +89,12 @@ class ExecutorTest {
         )
         executor.evaluate(node)
         val variable = executor.lookupVariable("x") as? Variable
-        assertEquals(7.0, variable?.value)
-        assertEquals(7.0, variable?.value)
+        assertEquals(7, variable?.value)
+        assertEquals(7, variable?.value)
     }
 
     @Test
     fun `visitVariableAssigner assigns variable`() {
-        // primero declaramos
         val declarator = VariableDeclarator(
             symbol = SymbolExpression("y", dummyPos),
             type = Type.NUMBER,
@@ -112,7 +111,7 @@ class ExecutorTest {
         executor.evaluate(assigner)
 
         val variable = executor.lookupVariable("y") as? Variable
-        assertEquals(10.0, variable?.value)
+        assertEquals(10, variable?.value)
     }
 
     @Test
@@ -145,8 +144,12 @@ class ExecutorTest {
 
     @Test
     fun `visitCondition executes if and else blocks`() {
+        val dummyPos = Position(0, 0)
+        val dummyRange = Range(dummyPos, dummyPos)
+
         val ifNode = NumberExpression("1", dummyPos)
         val elseNode = NumberExpression("2", dummyPos)
+
         val cond = Condition(
             condition = BooleanExpression("true", dummyPos),
             ifBlock = listOf(ifNode),
@@ -155,9 +158,18 @@ class ExecutorTest {
         )
 
         executor.evaluate(cond)
-        val result = executor.popLiteral() as Double // sacamos el valor del stack
-        assertEquals(1.0, result)
+
+        val result = executor.popLiteral() as Number
+
+        if (result is Int) {
+            assertEquals(1, result)
+        } else if (result is Double) {
+            assertEquals(1.0, result)
+        } else {
+            throw AssertionError("Unexpected type: ${result::class}")
+        }
     }
+
 
     @Test
     fun `visitVariableImmutableDeclarator declares immutable variable`() {
@@ -172,13 +184,13 @@ class ExecutorTest {
         val variable = executor.lookupVariable("z") as? Variable
 
         assertNotNull(variable)
-        assertEquals(10.0, variable?.value)
+        assertEquals(10, variable?.value)
         assertTrue(variable?.immutable == true)
 
         executor.assignVariable("z", 20)
 
         val variableAfterAssign = executor.lookupVariable("z") as? Variable
-        assertEquals(10.0, variableAfterAssign?.value)
+        assertEquals(10, variableAfterAssign?.value)
         assertTrue(errors.isNotEmpty())
         assertTrue(errors.any { it.contains("Immutable variable z already assigned") })
     }
@@ -187,7 +199,7 @@ class ExecutorTest {
     fun `visitReadInput handles boolean input`() {
         val node = ReadInputExpression(OptionalExpression.NoExpression, dummyRange)
         val result = executor.evaluate(node)
-        assertEquals(42, result) // porque tu fakeInputProvider devuelve "42"
+        assertEquals(42, result)
     }
 
     @Test

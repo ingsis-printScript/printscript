@@ -17,7 +17,8 @@ class Formatter {
         val parser = ParserVersionProvider().with(version).provide(TokenBuffer(lexer))
         val formatter = FormatterVersionProvider()
             .with(version).provide(
-                parser
+                parser,
+                writer,
             )
         while (formatter.hasNext()) {
             formatter.getNext()

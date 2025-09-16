@@ -101,10 +101,16 @@ class Executor(
     }
 
     override fun visitNumber(expr: NumberExpression): ASTNode {
-        val number = expr.value.toIntOrNull() ?: expr.value.toDoubleOrNull() ?: 0
+        val intVal = expr.value.toIntOrNull()
+        val number: Any = if (intVal != null) {
+            intVal
+        } else {
+            expr.value.toDoubleOrNull() ?: 0
+        }
         pushLiteral(number)
         return expr
     }
+
 
     override fun visitString(expr: StringExpression): ASTNode {
         pushLiteral(expr.value)
@@ -152,10 +158,16 @@ class Executor(
     }
 
     override fun visitSymbol(expr: SymbolExpression): ASTNode {
-        val value = getEnvVar(expr.value)?.value
-        pushLiteral(value)
+        val variable = getEnvVar(expr.value)
+        if (variable == null) {
+            reportError("Undefined symbol: ${expr.value}")
+            pushLiteral(null)
+        } else {
+            pushLiteral(variable.value)
+        }
         return expr
     }
+
 
     override fun visitPrintFunction(statement: PrintFunction): ASTNode {
         val value = when (val opt = statement.value) {
@@ -168,13 +180,18 @@ class Executor(
 
     override fun visitCondition(statement: Condition): ASTNode {
         val cond = evaluate(statement.condition) as? Boolean ?: false
-        if (cond) {
-            statement.ifBlock.forEach { evaluate(it) }
-        } else {
-            statement.elseBlock?.forEach { evaluate(it) }
+        val blockToExecute = if (cond) statement.ifBlock else statement.elseBlock.orEmpty()
+
+        var lastValue: Any? = null
+        blockToExecute.forEach {
+            it.accept(this)
+            lastValue = stack.lastOrNull()
         }
+
+        pushLiteral(lastValue)
         return statement
     }
+
 
 
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
