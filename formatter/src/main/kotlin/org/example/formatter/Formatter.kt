@@ -2,24 +2,27 @@ package org.example.formatter
 
 import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
+import org.example.common.results.NoResult
+import org.example.common.results.Result
+import org.example.common.results.Success
+import org.example.common.results.Error
 import org.example.formatter.formatters.ASTFormat
-import java.io.StringWriter
+import java.io.Writer
 
 class Formatter(
     private val rules: Map<String, Rule>,
-    private val nodes: PrintScriptIterator<ASTNode>,
-    private val writer: StringWriter,
+    private val nodes: PrintScriptIterator<Result>,
+    private val writer: Writer,
     private val astFormat: ASTFormat
 ) : PrintScriptIterator<Unit> {
     fun format(): String {
         while (nodes.hasNext()) {
-            val node = nodes.getNext()
-            formatNode(node, writer, 0)
+            getNext()
         }
         return writer.toString()
     }
 
-    fun formatNode(node: ASTNode, writer: StringWriter, nestingLevel: Int = 0) {
+    fun formatNode(node: ASTNode, writer: Writer, nestingLevel: Int = 0) {
         astFormat.formatNode(node, writer, rules, nestingLevel)
     }
 
@@ -49,6 +52,10 @@ class Formatter(
     }
 
     override fun getNext() {
-        formatNode(nodes.getNext(), writer, )
+        when (val res = nodes.getNext()) {
+            is Success<*> -> formatNode(res.value as ASTNode, writer, 0)
+            is Error -> TODO()
+            is NoResult -> TODO()
+        }
     }
 }
