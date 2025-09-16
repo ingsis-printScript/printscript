@@ -18,14 +18,24 @@ class VariableDeclaratorFormat : ASTFormat {
     ) {
         val declarator = node as VariableDeclarator
 
-        // Indentación según nesting level
-        val indentQty = rules["indentation"]?.quantity ?: 0
-        repeat(nestingLevel * indentQty) { writer.write(" ") }
+        // Indentación según rule
+        val leftColonSpace = if (rules["enforce-spacing-before-colon-in-declaration"]?.rule == true) " " else ""
+        val rightColonSpace = if (rules["enforce-spacing-after-colon-in-declaration"]?.rule == true) " " else ""
+        val arroundColonSpace = if (rules["enforce-spacing-around-colon"]?.rule == true) " " else ""
+        val leftEqualSpace = if (rules["enforce-spacing-before-equals-in-declaration"]?.rule == true) " " else ""
+        val rightEqualSpace = if (rules["enforce-spacing-after-equals-in-declaration"]?.rule == true) " " else ""
+        val arroundEqualSpace = if (rules["enforce-spacing-around-equals"]?.rule == true) " " else ""
 
         // Escribir tipo y nombre
-        writer.write(declarator.type.name) // asumiendo que Type tiene .name
-        writer.write(" ")
+        writer.write("let ")
         writer.write(declarator.symbol.value)
+        writer.write(leftColonSpace + arroundColonSpace)
+        writer.write(":")
+        writer.write(rightColonSpace + arroundColonSpace)
+        writer.write(declarator.type.name.lowercase()) // asumiendo que Type tiene .name
+        writer.write(leftEqualSpace + arroundEqualSpace)
+        writer.write("=")
+        writer.write(rightEqualSpace + arroundEqualSpace)
 
         // Si hay valor, agregar '=' y formatearlo
         declarator.value.let { expr ->
@@ -33,7 +43,5 @@ class VariableDeclaratorFormat : ASTFormat {
                 ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
             }
         }
-
-        writer.write("\n")
     }
 }

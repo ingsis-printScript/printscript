@@ -17,6 +17,8 @@ class PrintFunctionFormat : ASTFormat {
         nestingLevel: Int
     ) {
         val printFunc = node as PrintFunction
+
+        val indentation = rules["line-breaks-after-println"]?.quantity ?: 0
         writer.write("println(")
 
         printFunc.value.let { expr ->
@@ -26,5 +28,8 @@ class PrintFunctionFormat : ASTFormat {
         }
 
         writer.write(")")
+        for (i in 0 until indentation) {
+            writer.write("\n")
+        }
     }
 }
