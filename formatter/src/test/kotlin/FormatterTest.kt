@@ -1,1 +1,3 @@
-class FormatterTest
+class FormatterTest{
+    
+}

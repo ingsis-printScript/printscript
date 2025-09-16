@@ -29,13 +29,6 @@ class Formatter(
 
     private val rules = ruler.allRules()
 
-    fun format(): String {
-        while (nodes.hasNext()) {
-            getNext()
-        }
-        return writer.toString()
-    }
-
     fun formatNode(node: ASTNode, writer: Writer, nestingLevel: Int = 0) {
         astFormat.formatNode(node, writer, rules, nestingLevel)
     }
