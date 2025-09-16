@@ -15,6 +15,7 @@ import org.example.formatter.formatters.StringExpressionFormat
 import org.example.formatter.formatters.SymbolExpressionFormat
 import org.example.formatter.formatters.VariableAssignerFormat
 import org.example.formatter.formatters.VariableDeclaratorFormat
+import org.example.formatter.formatters.VariableInmutableDeclaratorFormat
 import java.io.InputStream
 import java.io.Writer
 
@@ -27,7 +28,7 @@ class FormatterProvider11() : FormatterProvider {
             PrintFunctionFormat(),
             BooleanExpressionFormat(),
             VariableDeclaratorFormat(),
-            VariableDeclaratorFormat(),
+            VariableInmutableDeclaratorFormat(),
             SymbolExpressionFormat(),
             VariableAssignerFormat(),
             ConditionFormat(),

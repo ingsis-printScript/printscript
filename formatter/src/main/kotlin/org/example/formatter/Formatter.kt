@@ -33,26 +33,26 @@ class Formatter(
         astFormat.formatNode(node, writer, rules, nestingLevel, PrivateIterator(nodes))
     }
 
-    // standard rules I'll probably have to use in most formatters, I made them private functions
-    private fun checkNewLines(): String {
-        val rule = rules["newLines"]
-        return if (rule?.rule == true) "\n" else ""
-    }
-
-    private fun checkSpaces(nestingLevel: Int): String {
-        val rule = rules["spaces"]
-        return if (rule?.rule == true) {
-            val qty = rule.quantity ?: 4
-            " ".repeat(nestingLevel * qty)
-        } else {
-            ""
-        }
-    }
-
-    private fun checkRules(ruleName: String, append: String): String {
-        val rule = rules[ruleName]
-        return if (rule?.rule == true) append else ""
-    }
+//    // standard rules I'll probably have to use in most formatters, I made them private functions
+//    private fun checkNewLines(): String {
+//        val rule = rules["newLines"]
+//        return if (rule?.rule == true) "\n" else ""
+//    }
+//
+//    private fun checkSpaces(nestingLevel: Int): String {
+//        val rule = rules["spaces"]
+//        return if (rule?.rule == true) {
+//            val qty = rule.quantity ?: 4
+//            " ".repeat(nestingLevel * qty)
+//        } else {
+//            ""
+//        }
+//    }
+//
+//    private fun checkRules(ruleName: String, append: String): String {
+//        val rule = rules[ruleName]
+//        return if (rule?.rule == true) append else ""
+//    }
 
     private fun createTempConfigFile(configInputStream: InputStream): File {
         val tempFile = File.createTempFile("formatter_rules", ".json")

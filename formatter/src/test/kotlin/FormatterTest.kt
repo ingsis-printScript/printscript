@@ -1,6 +1,7 @@
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableAssigner
+import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.common.PrintScriptIterator
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
@@ -8,6 +9,7 @@ import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.formatter.Formatter
 import org.example.formatter.providers.FormatterProvider10
+import org.example.formatter.providers.FormatterVersionProvider
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.io.StringWriter
@@ -77,11 +79,12 @@ class FormatterTest {
     }
 
     private fun createFormatter(
+        version: String,
         nodes: List<ASTNode>,
         config: InputStream,
         writer: StringWriter = StringWriter()
     ): Pair<Formatter, StringWriter> {
-        val provider = FormatterProvider10()
+        val provider = FormatterVersionProvider().with(version)
         val formatter = provider.provide(TestIterator(nodes), writer, config)
         return formatter to writer
     }
@@ -96,7 +99,7 @@ class FormatterTest {
             OptionalExpression.HasExpression(astFactory.createString("\"hola\""))
         )
 
-        val (formatter, out) = createFormatter(listOf(print), configStream())
+        val (formatter, out) = createFormatter("1.0", listOf(print), configStream())
 
         assertTrue(formatter.hasNext())
         formatter.getNext()
@@ -113,6 +116,7 @@ class FormatterTest {
         // caso 1: un solo nodo -> no hay siguiente, NO agrega \n
         run {
             val (formatter, out) = createFormatter(
+                "1.0",
                 listOf(p1),
                 configStream(lineBreaksAfterPrintln = 2)
             )
@@ -126,6 +130,7 @@ class FormatterTest {
                 OptionalExpression.HasExpression(astFactory.createString("\"chau\""))
             )
             val (formatter, out) = createFormatter(
+                "1.0",
                 listOf(p1, p2),
                 configStream(lineBreaksAfterPrintln = 2)
             )
@@ -143,7 +148,7 @@ class FormatterTest {
         val expr = astFactory.createBinaryExpression(
             astFactory.createNumber("1"), Operator.MUL, astFactory.createNumber("3")
         )
-        val (formatter, out) = createFormatter(listOf(expr), configStream(spacesAroundOperators = true))
+        val (formatter, out) = createFormatter("1.0", listOf(expr), configStream(spacesAroundOperators = true))
 
         formatter.getNext()
 
@@ -163,6 +168,7 @@ class FormatterTest {
         )
 
         val (formatter, out) = createFormatter(
+            "1.0",
             listOf(decl),
             configStream(
                 spaceAroundColon = true,
@@ -184,6 +190,7 @@ class FormatterTest {
         )
 
         val (formatter, out) = createFormatter(
+            "1.0",
             listOf(decl),
             configStream(
                 spaceBeforeColonInDecl = true,
@@ -205,6 +212,7 @@ class FormatterTest {
         )
 
         val (formatter, out) = createFormatter(
+            "1.0",
             listOf(decl),
             configStream(
                 spaceBeforeColonInDecl = false,
@@ -226,6 +234,7 @@ class FormatterTest {
         )
 
         val (formatter, out) = createFormatter(
+            "1.0",
             listOf(decl),
             configStream(
                 spaceAroundColon = true, // para que quede 'a : number'
@@ -248,6 +257,7 @@ class FormatterTest {
         )
 
         val (formatter, out) = createFormatter(
+            "1.0",
             listOf(decl),
             configStream(
                 spaceAroundColon = false, // sin espacios alrededor del ':'
@@ -270,6 +280,7 @@ class FormatterTest {
         )
 
         val (formatter, out) = createFormatter(
+            "1.0",
             listOf(decl),
             configStream(
                 spaceAroundColon = false,
@@ -292,6 +303,7 @@ class FormatterTest {
         )
 
         val (formatter, out) = createFormatter(
+            "1.0",
             listOf(assign),
             configStream(spaceAroundEquals = true)
         )
@@ -308,6 +320,7 @@ class FormatterTest {
         )
 
         val (formatter, out) = createFormatter(
+            "1.0",
             listOf(assign),
             configStream(spaceAroundEquals = false)
         )
@@ -333,6 +346,7 @@ class FormatterTest {
         val nodes = listOf(decl, assign)
 
         val (formatter, out) = createFormatter(
+            "1.0",
             nodes,
             configStream(
                 spaceAroundColon = true,
@@ -348,5 +362,161 @@ class FormatterTest {
         }
         assertEquals(expected, out.toString())
         assertFalse(out.toString().contains("  "), "No debe haber dobles espacios")
+    }
+
+
+    @Test
+    fun `immutable declarators con around en colon y equals, y boolean+symbol como valores`() {
+        // const status : boolean = true;
+        val constBool: VariableImmutableDeclarator = astFactory.createVariableImmutableDeclarator(
+            astFactory.createSymbol("status"),
+            Type.BOOLEAN,
+            OptionalExpression.HasExpression(astFactory.createBoolean("true"))
+        )
+        // const alias : string = userName;
+        val constSym: VariableImmutableDeclarator = astFactory.createVariableImmutableDeclarator(
+            astFactory.createSymbol("alias"),
+            Type.STRING,
+            OptionalExpression.HasExpression(astFactory.createSymbol("userName"))
+        )
+        // nodo final: BooleanExpression suelto para tocar BooleanExpressionFormat también
+        val boolLoose = astFactory.createBoolean("false")
+
+        val nodes = listOf(constBool, constSym, boolLoose)
+
+        val (fmt, out) = createFormatter(
+            "1.1",
+            nodes,
+            configStream(
+                spaceAroundColon = true,
+                spaceAroundEquals = true
+            )
+        )
+
+        while (fmt.hasNext()) fmt.getNext()
+
+        // Regla en VariableInmutableDeclaratorFormat: escribe ';' y agrega '\n' solo si hay siguiente.
+        // constBool -> tiene siguiente -> '\n'
+        // constSym  -> tiene siguiente -> '\n'
+        // boolLoose -> no agrega ';' ni '\n'
+        val expected = buildString {
+            append("const status : boolean = true;\n")
+            append("const alias : string = userName;\n")
+            append("false")
+        }
+        assertEquals(expected, out.toString())
+    }
+
+    @Test
+    fun `immutable declarator sin valor + combinaciones de espacios en colon y equals`() {
+        // const k :number;   (solo espacio antes de ':', sin valor)
+        val constNoValue: VariableImmutableDeclarator = astFactory.createVariableImmutableDeclarator(
+            astFactory.createSymbol("k"),
+            Type.NUMBER,
+            OptionalExpression.NoExpression
+        )
+        // const v:string =10;  (sin around en ':', '=' con espacio solo antes)
+        val constNumValue: VariableImmutableDeclarator = astFactory.createVariableImmutableDeclarator(
+            astFactory.createSymbol("v"),
+            Type.STRING,
+            OptionalExpression.HasExpression(astFactory.createNumber("10"))
+        )
+        // Agregamos un boolean al final para que el segundo const también agregue '\n'
+        val tail = astFactory.createBoolean("true")
+
+        val nodes = listOf(constNoValue, constNumValue, tail)
+
+        val (fmt, out) = createFormatter(
+            "1.1",
+            nodes,
+            configStream(
+                // para k: espacio antes de ':' solamente
+                spaceBeforeColonInDecl = true,
+                spaceAfterColonInDecl = false,
+                spaceAroundColon = false,
+                // para v: '=' con espacio solo antes, y sin around
+                spaceBeforeEqualsInDecl = true,
+                spaceAfterEqualsInDecl = false,
+                spaceAroundEquals = false
+            )
+        )
+
+        while (fmt.hasNext()) fmt.getNext()
+
+        // k -> "const k :number;" + '\n' (tiene siguiente)
+        // v -> "const v:string =10;" + '\n' (tiene siguiente)
+        // tail -> "true"
+        val expected = buildString {
+            append("const k :number;\n")
+            append("const v :string =10;\n")
+            append("true")
+        }
+        assertEquals(expected, out.toString())
+    }
+
+    @Test
+    fun `readEnv con string literal - no cierra parentesis ni pone 'semicolon'`() {
+        // readEnv("HOME")
+        val readEnv = astFactory.createReadEnv(
+            OptionalExpression.HasExpression(astFactory.createString("\"HOME\""))
+        )
+
+        val (fmt, out) = createFormatter("1.1", listOf(readEnv), configStream())
+        assertTrue(fmt.hasNext())
+        fmt.getNext()
+
+        assertEquals("readEnv(\"HOME\")", out.toString())
+    }
+
+    @Test
+    fun `readInput con simbolo - no cierra parentesis ni pone 'semicolon'`() {
+        // readInput(userName)
+        val readInput = astFactory.createReadInput(
+            OptionalExpression.HasExpression(astFactory.createSymbol("userName"))
+        )
+
+        val (fmt, out) = createFormatter("1.1", listOf(readInput), configStream())
+        assertTrue(fmt.hasNext())
+        fmt.getNext()
+
+        assertEquals("readInput(userName)", out.toString())
+    }
+
+    @Test
+    fun `readInput con binaria - spacesAroundOperators=false`() {
+        // readInput(1+2)
+        val bin = astFactory.createBinaryExpression(
+            astFactory.createNumber("1"), Operator.ADD, astFactory.createNumber("2")
+        )
+        val readInput = astFactory.createReadInput(OptionalExpression.HasExpression(bin))
+
+        val (fmt, out) = createFormatter(
+            "1.1",
+            listOf(readInput),
+            configStream(spacesAroundOperators = false)
+        )
+        assertTrue(fmt.hasNext())
+        fmt.getNext()
+
+        assertEquals("readInput(1 + 2)", out.toString())
+    }
+
+    @Test
+    fun `readInput con binaria - spacesAroundOperators=true`() {
+        // readInput(1 + 2)
+        val bin = astFactory.createBinaryExpression(
+            astFactory.createNumber("1"), Operator.ADD, astFactory.createNumber("2")
+        )
+        val readInput = astFactory.createReadInput(OptionalExpression.HasExpression(bin))
+
+        val (fmt, out) = createFormatter(
+            "1.1",
+            listOf(readInput),
+            configStream(spacesAroundOperators = true)
+        )
+        assertTrue(fmt.hasNext())
+        fmt.getNext()
+
+        assertEquals("readInput(1 + 2)", out.toString())
     }
 }

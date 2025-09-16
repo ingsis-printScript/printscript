@@ -22,10 +22,10 @@ class Ruler(private val rules: Map<String, Rule>) {
 
     fun allRules(): Map<String, Rule> = rules
 
-    fun getRule(name: String): Rule? = rules[name]
-
-    fun isActive(name: String): Boolean = rules[name]?.rule == true
-
-    fun quantity(name: String, default: Int = 4): Int =
-        rules[name]?.quantity ?: default
+//    fun getRule(name: String): Rule? = rules[name]
+//
+//    fun isActive(name: String): Boolean = rules[name]?.rule == true
+//
+//    fun quantity(name: String, default: Int = 4): Int =
+//        rules[name]?.quantity ?: default
 }
