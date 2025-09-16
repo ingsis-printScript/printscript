@@ -24,7 +24,7 @@ class Executor(
     val inputProvider: InputProvider,
     val outputPrinter: OutputPrinter,
     val errorHandler: ErrorHandler
-) : ASTVisitor<ASTNode>{
+) : ASTVisitor<ASTNode> {
 
     private val environment = mutableMapOf<String, Variable>()
     private val stack = mutableListOf<Any?>()
@@ -82,18 +82,20 @@ class Executor(
         val result = when (expr.operator) {
             Operator.ADD -> when {
                 left is Number && right is Number -> left.toDouble() + right.toDouble()
-                else -> left.toString() + right.toString() // concatenación
+                else -> left.toString() + right.toString()
             }
             Operator.SUB -> (left as Number).toDouble() - (right as Number).toDouble()
             Operator.MUL -> (left as Number).toDouble() * (right as Number).toDouble()
             Operator.DIV -> (left as Number).toDouble() / (right as Number).toDouble()
             Operator.MOD -> (left as Number).toDouble() % (right as Number).toDouble()
         }
-        pushLiteral(result)
+        if (result is Double && result % 1 == 0.0) {
+            pushLiteral(result.toInt())
+        } else {
+            pushLiteral(result)
+        }
         return expr
     }
-
-
 
     override fun visitBoolean(expr: BooleanExpression): ASTNode {
         pushLiteral(expr.value.equals("true", ignoreCase = true))
@@ -111,9 +113,14 @@ class Executor(
         return expr
     }
 
-
     override fun visitString(expr: StringExpression): ASTNode {
-        pushLiteral(expr.value)
+        val raw = expr.value
+        val unquoted = if (raw.length >= 2 && raw.first() == '"' && raw.last() == '"') {
+            raw.substring(1, raw.length - 1)
+        } else {
+            raw
+        }
+        pushLiteral(unquoted)
         return expr
     }
 
@@ -124,20 +131,16 @@ class Executor(
         }
 
         val input = inputProvider.readInput(prompt)
-        if (input == null) {
-            reportError("No input provided")
-            pushLiteral(null)
-            return expr
-        }
 
-        val value: Any = when {
-            input.equals("true", ignoreCase = true) || input.equals("false", ignoreCase = true) -> input.equals("true", ignoreCase = true)
+        val result: Any = when {
+            input.equals("true", ignoreCase = true) -> true
+            input.equals("false", ignoreCase = true) -> false
             input.toIntOrNull() != null -> input.toInt()
             input.toDoubleOrNull() != null -> input.toDouble()
             else -> input
         }
 
-        pushLiteral(value)
+        pushLiteral(result)
         return expr
     }
 
@@ -168,7 +171,6 @@ class Executor(
         return expr
     }
 
-
     override fun visitPrintFunction(statement: PrintFunction): ASTNode {
         val value = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
@@ -184,15 +186,12 @@ class Executor(
 
         var lastValue: Any? = null
         blockToExecute.forEach {
-            it.accept(this)
-            lastValue = stack.lastOrNull()
+            lastValue = evaluate(it)
         }
 
         pushLiteral(lastValue)
         return statement
     }
-
-
 
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val value = when (val opt = statement.value) {

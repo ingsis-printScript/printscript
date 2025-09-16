@@ -1,7 +1,5 @@
 package org.example.formatter.providers
 
-import org.example.formatter.Ruler
-
 class FormatterVersionProvider {
     fun with(version: String): FormatterProvider {
         return when (version) {

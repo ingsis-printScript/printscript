@@ -6,6 +6,7 @@ import org.example.formatter.Rule
 import java.io.Writer
 
 class ReadEnvExpressionFormat : ASTFormat {
+
     override fun canHandle(node: ASTNode): Boolean = node is ReadEnvExpression
 
     override fun formatNode(
@@ -14,6 +15,14 @@ class ReadEnvExpressionFormat : ASTFormat {
         rules: Map<String, Rule>,
         nestingLevel: Int
     ) {
-        TODO("Not yet implemented")
+        if (node !is ReadEnvExpression) return
+
+        val spaces = " ".repeat(nestingLevel * (rules["spaces"]?.quantity ?: 4))
+        val newLine = if (rules["newLines"]?.rule == true) "\n" else ""
+
+        writer.append(spaces)
+        writer.append("readEnv(")
+        writer.append(node.value.toString())
+        writer.append(")$newLine")
     }
 }

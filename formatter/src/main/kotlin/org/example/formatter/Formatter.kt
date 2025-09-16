@@ -2,10 +2,10 @@ package org.example.formatter
 
 import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
+import org.example.common.results.Error
 import org.example.common.results.NoResult
 import org.example.common.results.Result
 import org.example.common.results.Success
-import org.example.common.results.Error
 import org.example.formatter.formatters.ASTFormat
 import java.io.File
 import java.io.InputStream

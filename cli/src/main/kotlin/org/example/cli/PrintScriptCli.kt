@@ -14,7 +14,8 @@ fun main(args: Array<String>) {
         arrayOf(
             "execution",
             "test.ps",
-            "--version", "1.1"
+            "--version",
+            "1.1"
         )
     } else {
         args

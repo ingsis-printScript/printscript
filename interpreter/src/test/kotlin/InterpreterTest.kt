@@ -3,7 +3,6 @@ import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.NumberExpression
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.ast.statements.Statement
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.ErrorHandler
@@ -28,27 +27,39 @@ class InterpreterTest {
         override fun getNext(): Result = Success(items[index++])
     }
 
+    private val dummyPos = Position(0, 0)
+    private val dummyRange = Range(dummyPos, dummyPos)
+
+    private fun fakePrinter(printed: MutableList<String>) = object : OutputPrinter {
+        override fun print(value: String) { printed.add(value) }
+    }
+
+    private fun fakeErrorHandler(errors: MutableList<String>) = object : ErrorHandler {
+        override fun handleError(message: String) { errors.add(message) }
+    }
+
+    private fun fakeInputProvider(value: String = "123") = object : InputProvider {
+        override fun readInput(prompt: String) = value
+    }
+
+    private fun createInterpreter(
+        nodes: List<ASTNode>,
+        printed: MutableList<String>,
+        errors: MutableList<String>,
+        supportedNodes: Set<Class<out ASTNode>>
+    ): Interpreter {
+        val iterator = TestIterator(nodes)
+        val executor = Executor(fakeInputProvider(), fakePrinter(printed), fakeErrorHandler(errors))
+        val validator = Validator(fakeErrorHandler(errors))
+        return Interpreter(iterator, validator, executor, supportedNodes)
+    }
+
     @Test
     fun `run should execute all AST nodes`() {
         val printed = mutableListOf<String>()
         val errors = mutableListOf<String>()
 
-        val fakePrinter = object : OutputPrinter {
-            override fun print(value: String) { printed.add(value) }
-        }
-
-        val fakeErrorHandler = object : ErrorHandler {
-            override fun handleError(message: String) { errors.add(message) }
-        }
-
-        val fakeInputProvider = object : InputProvider {
-            override fun readInput(prompt: String) = "123"
-        }
-
-        val dummyPos = Position(0, 0)
-        val dummyRange = Range(dummyPos, dummyPos)
-
-        val astNodes: List<ASTNode> = listOf(
+        val astNodes = listOf(
             PrintFunction(OptionalExpression.HasExpression(NumberExpression("10.2", dummyPos)), dummyRange),
             PrintFunction(OptionalExpression.HasExpression(NumberExpression("20", dummyPos)), dummyRange),
             PrintFunction(
@@ -59,23 +70,21 @@ class InterpreterTest {
                         NumberExpression("20", dummyPos),
                         dummyRange
                     )
-                ), dummyRange
+                ),
+                dummyRange
             )
         )
 
-        val iterator = TestIterator(astNodes)
-        val executor = Executor(fakeInputProvider, fakePrinter, fakeErrorHandler)
-        val validator = Validator(fakeErrorHandler)
         val supportedNodes = setOf(
             NumberExpression::class.java,
             BinaryExpression::class.java,
             PrintFunction::class.java
         )
 
-        val interpreter = Interpreter(iterator, validator, executor, supportedNodes)
+        val interpreter = createInterpreter(astNodes, printed, errors, supportedNodes)
         val results = interpreter.run()
 
-        assertEquals(listOf("10.2", "20", "50.0"), printed)
+        assertEquals(listOf("10.2", "20", "50"), printed)
         assertTrue(errors.isEmpty())
         assertEquals(3, results.size)
     }
@@ -85,22 +94,7 @@ class InterpreterTest {
         val printed = mutableListOf<String>()
         val errors = mutableListOf<String>()
 
-        val fakePrinter = object : OutputPrinter {
-            override fun print(value: String) { printed.add(value) }
-        }
-
-        val fakeErrorHandler = object : ErrorHandler {
-            override fun handleError(message: String) { errors.add(message) }
-        }
-
-        val fakeInputProvider = object : InputProvider {
-            override fun readInput(prompt: String) = "ignored"
-        }
-
-        val dummyPos = Position(0, 0)
-        val dummyRange = Range(dummyPos, dummyPos)
-
-        val astNodes: List<ASTNode> = listOf(
+        val astNodes = listOf(
             VariableDeclarator(
                 SymbolExpression("x", dummyPos),
                 org.example.common.enums.Type.NUMBER,
@@ -113,9 +107,6 @@ class InterpreterTest {
             )
         )
 
-        val iterator = TestIterator(astNodes)
-        val executor = Executor(fakeInputProvider, fakePrinter, fakeErrorHandler)
-        val validator = Validator(fakeErrorHandler)
         val supportedNodes = setOf(
             VariableDeclarator::class.java,
             PrintFunction::class.java,
@@ -123,7 +114,7 @@ class InterpreterTest {
             NumberExpression::class.java
         )
 
-        val interpreter = Interpreter(iterator, validator, executor, supportedNodes)
+        val interpreter = createInterpreter(astNodes, printed, errors, supportedNodes)
         interpreter.run()
 
         assertEquals(listOf("42"), printed)
@@ -135,37 +126,19 @@ class InterpreterTest {
         val printed = mutableListOf<String>()
         val errors = mutableListOf<String>()
 
-        val fakePrinter = object : OutputPrinter {
-            override fun print(value: String) { printed.add(value) }
-        }
-
-        val fakeErrorHandler = object : ErrorHandler {
-            override fun handleError(message: String) { errors.add(message) }
-        }
-
-        val fakeInputProvider = object : InputProvider {
-            override fun readInput(prompt: String) = "ignored"
-        }
-
-        val dummyPos = Position(0, 0)
-        val dummyRange = Range(dummyPos, dummyPos)
-
-        val astNodes: List<ASTNode> = listOf(
+        val astNodes = listOf(
             PrintFunction(
                 OptionalExpression.HasExpression(SymbolExpression("y", dummyPos)),
                 dummyRange
             )
         )
 
-        val iterator = TestIterator(astNodes)
-        val executor = Executor(fakeInputProvider, fakePrinter, fakeErrorHandler)
-        val validator = Validator(fakeErrorHandler)
         val supportedNodes = setOf(
             PrintFunction::class.java,
             SymbolExpression::class.java
         )
 
-        val interpreter = Interpreter(iterator, validator, executor, supportedNodes)
+        val interpreter = createInterpreter(astNodes, printed, errors, supportedNodes)
         interpreter.run()
 
         assertTrue(printed.isEmpty())

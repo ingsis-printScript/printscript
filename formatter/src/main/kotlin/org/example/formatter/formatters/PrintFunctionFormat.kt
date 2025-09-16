@@ -22,7 +22,7 @@ class PrintFunctionFormat : ASTFormat {
         writer.write("println(")
 
         printFunc.value.let { expr ->
-            if (expr is OptionalExpression.HasExpression){
+            if (expr is OptionalExpression.HasExpression) {
                 ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
             }
         }

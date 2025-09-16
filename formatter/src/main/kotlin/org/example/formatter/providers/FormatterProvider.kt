@@ -1,6 +1,5 @@
 package org.example.formatter.providers
 
-
 import org.example.common.PrintScriptIterator
 import org.example.common.results.Result
 import org.example.formatter.Formatter

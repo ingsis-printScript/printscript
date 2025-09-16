@@ -67,7 +67,6 @@ class Validator(
         return statement
     }
 
-
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val type = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)

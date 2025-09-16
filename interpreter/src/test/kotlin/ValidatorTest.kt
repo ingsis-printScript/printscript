@@ -1,12 +1,22 @@
-import org.example.ast.expressions.*
-import org.example.ast.statements.*
+import org.example.ast.expressions.BinaryExpression
+import org.example.ast.expressions.BooleanExpression
+import org.example.ast.expressions.NumberExpression
+import org.example.ast.expressions.OptionalExpression
+import org.example.ast.expressions.ReadEnvExpression
+import org.example.ast.expressions.ReadInputExpression
+import org.example.ast.expressions.StringExpression
+import org.example.ast.expressions.SymbolExpression
+import org.example.ast.statements.VariableAssigner
+import org.example.ast.statements.VariableDeclarator
+import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.common.ErrorHandler
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.interpreter.Validator
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ValidatorTest {
@@ -23,7 +33,6 @@ class ValidatorTest {
     private val errorHandler = FakeErrorHandler()
 
     private val validator = Validator(errorHandler)
-
 
     @Test
     fun `should declare variable and infer type`() {
@@ -197,8 +206,4 @@ class ValidatorTest {
         val result = validator.popLiteral()
         assertEquals(Type.NUMBER, result)
     }
-
-
-
-
 }

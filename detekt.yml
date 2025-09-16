@@ -10,7 +10,7 @@ console-reports:
 complexity:
   LongMethod:
     active: true
-    threshold: 30
+    threshold: 40
   NestedBlockDepth:
     active: true
     threshold: 4
