@@ -42,16 +42,10 @@ class ReadInputNodeHandler : ASTNodeHandler<ReadInputExpression> {
             }
         }
 
-        if (typeDetected == "STRING" || typeDetected == "NUMBER" || typeDetected == "BOOLEAN") {
-            executor.pushLiteral(value)
-        } else {
-            executor.reportError("Invalid input type: '$input'")
-        }
+        executor.pushLiteral(value)
     }
 
     override fun handleValidation(node: ReadInputExpression, validator: Validator) {
-        validator.pushLiteral(null)
-
+        validator.pushLiteral(Type.STRING)
     }
 }
-

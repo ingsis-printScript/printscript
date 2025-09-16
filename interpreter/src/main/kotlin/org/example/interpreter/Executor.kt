@@ -34,14 +34,9 @@ class Executor(
     private val environment = mutableMapOf<String, Any?>()
     private val stack = mutableListOf<Any?>()
 
-    fun processNode(node: ASTNode): Result {
-        val handler = handlers[node::class.java] as ASTNodeHandler<ASTNode>
-        handler.handleExecution(node, this)
-        return Success(Unit)
-    }
 
     fun evaluate(node: ASTNode): Any? {
-        processNode(node)
+        node.accept(this)
         return popLiteral()
     }
 
@@ -166,12 +161,13 @@ class Executor(
     override fun visitCondition(statement: Condition): ASTNode {
         val cond = evaluate(statement.condition) as? Boolean ?: false
         if (cond) {
-            statement.ifBlock.forEach { processNode(it) }
+            statement.ifBlock.forEach { evaluate(it) }
         } else {
-            statement.elseBlock?.forEach { processNode(it) }
+            statement.elseBlock?.forEach { evaluate(it) }
         }
         return statement
     }
+
 
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val value = when (val opt = statement.value) {

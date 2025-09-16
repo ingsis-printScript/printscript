@@ -16,7 +16,6 @@ import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.ast.visitor.ASTVisitor
 import org.example.common.enums.Type
-import org.example.common.results.NoResult
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.handlers.ASTNodeHandler
@@ -29,16 +28,9 @@ class Validator(
 
     private val stack = mutableListOf<Type?>()
     private val environment = mutableMapOf<String, Type>() // ahora guarda Type
-    private var lastResult: Result = NoResult()
-
-    fun processNode(node: ASTNode): Result {
-        val handler = handlers[node::class.java] as ASTNodeHandler<ASTNode>
-        handler.handleValidation(node, this)
-        return Success(Unit)
-    }
 
     fun evaluate(node: ASTNode): Type? {
-        processNode(node)
+        node.accept(this)
         return popLiteral()
     }
 
@@ -57,9 +49,6 @@ class Validator(
     fun pushLiteral(value: Type?) = stack.add(value)
     fun popLiteral(): Type? = if (stack.isEmpty()) null else stack.removeAt(stack.size - 1)
 
-    fun returnResult(result: Result) {
-        lastResult = result
-    }
 
     fun lookupSymbol(name: String): Type? {
         return environment[name]
@@ -135,10 +124,11 @@ class Validator(
 
     override fun visitCondition(statement: Condition): ASTNode {
         evaluate(statement.condition)
-        statement.ifBlock.forEach { processNode(it) }
-        statement.elseBlock?.forEach { processNode(it) }
+        statement.ifBlock.forEach { evaluate(it) }
+        statement.elseBlock?.forEach { evaluate(it) }
         return statement
     }
+
 
     override fun visitVariableImmutableDeclarator(statement: VariableImmutableDeclarator): ASTNode {
         val type = when (val opt = statement.value) {
