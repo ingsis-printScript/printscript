@@ -5,6 +5,7 @@ import org.example.cli.util.CliPrinter
 import org.example.integration.Interpreter
 import org.example.interpreter.input.ConsoleInputProvider
 
+
 class ExecutionOperation(private val version: String, private val reader: Iterator<String>) : Operation {
     override fun execute() {
         val handler = CliErrorHandler()

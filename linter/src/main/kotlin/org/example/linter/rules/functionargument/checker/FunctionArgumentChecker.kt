@@ -22,7 +22,6 @@ class FunctionArgumentChecker(
         getRange: (ASTNode) -> Any,
         errorHandler: ErrorHandler
     ): Result {
-
         if (node::class !in supportedNodes) {
             return Error("Node ${node::class.simpleName} is not supported.")
         }
@@ -40,7 +39,7 @@ class FunctionArgumentChecker(
                     return Error("Node ${expression::class.simpleName} is not supported.")
                 }
                 if (expression::class in prohibitedNodes) {
-                    val fn  = getFunctionName()
+                    val fn = getFunctionName()
                     val rng = getRange(node)
                     errorHandler.handleError("Argument $fn cannot have $expression at range $rng")
                 }

@@ -1,13 +1,11 @@
 package org.example.integration
 
-
 import org.example.common.ErrorHandler
 import org.example.lexer.provider.LexerVersionProvider
 import org.example.linter.provider.LinterVersionProvider
 import org.example.parser.TokenBuffer
 import org.example.parser.provider.ParserVersionProvider
 import java.io.InputStream
-
 
 class Linter {
     fun lint(

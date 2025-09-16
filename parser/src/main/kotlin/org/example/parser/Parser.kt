@@ -21,8 +21,9 @@ class Parser(
 
     override fun getNext(): Result {
         return try {
-            if (!hasNext()) Error("No tokens to parse")
-            else {
+            if (!hasNext()) {
+                Error("No tokens to parse")
+            } else {
                 val node: ASTNode = parseStatement(tokenBuffer, parsers)
                 Success(node as Statement)
             }
@@ -34,7 +35,6 @@ class Parser(
             Error(e.message ?: "Unknown error")
         }
     }
-
 
     private fun parseStatement(statementBuffer: TokenBuffer, parsers: List<StatementParser>): ASTNode {
         val outcome = analyzeStatement(statementBuffer, parsers)

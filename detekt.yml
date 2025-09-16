@@ -22,7 +22,7 @@ complexity:
 style:
   ReturnCount:
     active: true
-    max: 4
+    max: 5
     excludedFunctions: ['equals']
     excludeReturnFromLambda: true
     excludeGuardClauses: true

@@ -2,10 +2,10 @@ package org.example.linter.provider
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
-import org.example.ast.expressions.OptionalExpression
-import org.example.ast.expressions.SymbolExpression
 import org.example.ast.expressions.NumberExpression
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.StringExpression
+import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.functions.PrintFunction
@@ -54,7 +54,7 @@ class LinterProvider10() : LinterProvider {
             PrintFunction::class,
             VariableAssigner::class,
             VariableDeclarator::class
-            )
+        )
         return supported
     }
 

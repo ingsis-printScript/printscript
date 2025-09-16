@@ -42,4 +42,3 @@ class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptI
         return from >= buffer.size && !tokens.hasNext()
     }
 }
-

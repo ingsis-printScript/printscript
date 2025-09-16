@@ -10,7 +10,7 @@ class Parser {
     fun validate(
         src: Iterator<String>,
         version: String,
-        errorHandler: ErrorHandler,
+        errorHandler: ErrorHandler
     ) {
         val lexer = LexerVersionProvider().with(version).provide(src)
         val parser = ParserVersionProvider().with(version).provide(TokenBuffer(lexer))

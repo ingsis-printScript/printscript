@@ -1,17 +1,17 @@
 package handlers
 
 import org.example.ast.ASTNode
-import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.OptionalExpression
+import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.StringExpression
-import org.example.common.Range
+import org.example.common.ErrorHandler
 import org.example.common.Position
+import org.example.common.Range
 import org.example.interpreter.Executor
 import org.example.interpreter.asthandlers.ReadInputNodeHandler
 import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
 import org.example.interpreter.output.OutputPrinter
-import org.example.common.ErrorHandler
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -44,7 +44,7 @@ class ReadInputNodeHandlerTest {
         fakeInputProvider.nextInput = "true"
 
         val node = ReadInputExpression(
-            OptionalExpression.HasExpression(StringExpression("Enter a boolean:", Position(0,0))),
+            OptionalExpression.HasExpression(StringExpression("Enter a boolean:", Position(0, 0))),
             fakeRange
         )
 
@@ -61,7 +61,7 @@ class ReadInputNodeHandlerTest {
         fakeInputProvider.nextInput = "hello"
 
         val node = ReadInputExpression(
-            OptionalExpression.HasExpression(StringExpression("Enter a string:", Position(0,0))),
+            OptionalExpression.HasExpression(StringExpression("Enter a string:", Position(0, 0))),
             fakeRange
         )
 
@@ -78,7 +78,7 @@ class ReadInputNodeHandlerTest {
         fakeInputProvider.nextInput = "notABoolean"
 
         val node = ReadInputExpression(
-            OptionalExpression.HasExpression(StringExpression("Enter a boolean:", Position(0,0))),
+            OptionalExpression.HasExpression(StringExpression("Enter a boolean:", Position(0, 0))),
             fakeRange
         )
 
@@ -96,7 +96,7 @@ class ReadInputNodeHandlerTest {
         fakeInputProvider.nextInput = "notANumber"
 
         val node = ReadInputExpression(
-            OptionalExpression.HasExpression(StringExpression("Enter a number:", Position(0,0))),
+            OptionalExpression.HasExpression(StringExpression("Enter a number:", Position(0, 0))),
             fakeRange
         )
 

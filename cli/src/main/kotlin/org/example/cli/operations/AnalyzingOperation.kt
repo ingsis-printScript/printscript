@@ -1,12 +1,8 @@
 package org.example.cli.operations
 
 import org.example.cli.util.CliErrorHandler
-import org.example.cli.util.CliPrinter
-import org.example.integration.Interpreter
 import org.example.integration.Linter
-import org.example.interpreter.input.ConsoleInputProvider
 import java.io.InputStream
-
 
 class AnalyzingOperation(
     private val version: String,

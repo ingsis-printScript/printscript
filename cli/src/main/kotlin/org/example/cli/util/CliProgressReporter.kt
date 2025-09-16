@@ -1,7 +1,6 @@
 package org.example.cli.util
 
 import org.example.common.ProgressObserver
-
 import java.nio.file.Files
 import java.nio.file.Path
 

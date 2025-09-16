@@ -3,7 +3,6 @@ package org.example.ast.visitor
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.NumberExpression
-import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.ReadEnvExpression
 import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.StringExpression

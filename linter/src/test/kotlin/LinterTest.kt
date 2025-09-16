@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
 
 class LinterTest {
 
-    //linter -----------------------------------------
+    // linter -----------------------------------------
     class TestIterator(private val items: List<ASTNode>) : PrintScriptIterator<Result> {
         private var index = 0
         override fun hasNext() = index < items.size
@@ -32,7 +32,7 @@ class LinterTest {
 
     val astFactory = AstFactory()
 
-    private fun createLinter(version: String, nodes: List<ASTNode>, inputStream: InputStream, errorHandler: ErrorHandler) : Linter {
+    private fun createLinter(version: String, nodes: List<ASTNode>, inputStream: InputStream, errorHandler: ErrorHandler): Linter {
         val provider = LinterVersionProvider().with(version)
         return provider.provide(TestIterator(nodes), inputStream, errorHandler)
     }
@@ -56,9 +56,7 @@ class LinterTest {
         return ByteArrayInputStream(json.toByteArray())
     }
 
-
-
-    //astnodes -----------------------------------------
+    // astnodes -----------------------------------------
 
     // let userName: string = "Juan"
     val varDeclCamel: VariableDeclarator =
@@ -118,238 +116,235 @@ class LinterTest {
         astFactory.basicRange
     )
 
-
     val bin = astFactory.createBinaryExpression(
-            astFactory.createNumber("1"),
-            Operator.ADD,
-            astFactory.createNumber("2")
-        )
-    val readInputBinary =ReadInputExpression(
-            OptionalExpression.HasExpression(bin),
-            astFactory.basicRange
-        )
+        astFactory.createNumber("1"),
+        Operator.ADD,
+        astFactory.createNumber("2")
+    )
+    val readInputBinary = ReadInputExpression(
+        OptionalExpression.HasExpression(bin),
+        astFactory.basicRange
+    )
 
 // tests -------------------------------------------------
 
-        @Test
-        fun `regla habilitada - permite literal e identificador, prohíbe binaria`() {
-            val nodes = listOf(printLiteral, printBinary, printBinaryWithIdentifier)
-            val fakeErrorHandler = object : ErrorHandler {
-                val errors = mutableListOf<String>()
-                override fun handleError(message: String) {
-                    errors.add(message)
-                }
+    @Test
+    fun `regla habilitada - permite literal e identificador, prohíbe binaria`() {
+        val nodes = listOf(printLiteral, printBinary, printBinaryWithIdentifier)
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) {
+                errors.add(message)
             }
-            val linter =
-                createLinter("1.0", nodes, configStream(printlnOnlyLiteralsAndIdentifiers = true), fakeErrorHandler)
+        }
+        val linter =
+            createLinter("1.0", nodes, configStream(printlnOnlyLiteralsAndIdentifiers = true), fakeErrorHandler)
 
-            // Casos OK
-            val r1 = linter.getNext()
-            assertTrue(r1 is Success<*>)
-            assertTrue(fakeErrorHandler.errors.isEmpty())
+        // Casos OK
+        val r1 = linter.getNext()
+        assertTrue(r1 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isEmpty())
 
-            // Casos prohibidos
-            val r3 = linter.getNext()
-            assertTrue(linter.hasNext())
-            val r4 = linter.getNext()
-            assertTrue(r3 is Success<*>)
-            assertTrue(r4 is Success<*>)
-            assertTrue(
-                fakeErrorHandler.errors.isNotEmpty()
-            )
+        // Casos prohibidos
+        val r3 = linter.getNext()
+        assertTrue(linter.hasNext())
+        val r4 = linter.getNext()
+        assertTrue(r3 is Success<*>)
+        assertTrue(r4 is Success<*>)
+        assertTrue(
+            fakeErrorHandler.errors.isNotEmpty()
+        )
+    }
+
+    @Test
+    fun `regla deshabilitada - no reporta nada aunque el argumento sea binario`() {
+        val nodes = listOf(printBinary)
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) {
+                errors.add(message)
+            }
+        }
+        val linter =
+            createLinter("1.0", nodes, configStream(printlnOnlyLiteralsAndIdentifiers = false), fakeErrorHandler)
+
+        val r = linter.getNext()
+        assertTrue(r is Success<*>)
+        assertTrue(
+            fakeErrorHandler.errors.isEmpty()
+        )
+    }
+
+    // =============== TESTS SymbolFormatRule =================
+
+    @Test
+    fun `identifier_format=camelCase - camel OK, snake reporta error`() {
+        val nodes = listOf(varDeclCamel, assignCamel, varDeclSnake)
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) {
+                errors.add(message)
+            }
         }
 
-        @Test
-        fun `regla deshabilitada - no reporta nada aunque el argumento sea binario`() {
-            val nodes = listOf(printBinary)
-            val fakeErrorHandler = object : ErrorHandler {
-                val errors = mutableListOf<String>()
-                override fun handleError(message: String) {
-                    errors.add(message)
-                }
-            }
-            val linter =
-                createLinter("1.0", nodes, configStream(printlnOnlyLiteralsAndIdentifiers = false), fakeErrorHandler)
+        val linter = createLinter(
+            "1.0",
+            nodes,
+            configStream(identifierFormat = "camelCase"),
+            fakeErrorHandler
+        )
 
-            val r = linter.getNext()
-            assertTrue(r is Success<*>)
-            assertTrue(
-                fakeErrorHandler.errors.isEmpty(),
-            )
+        val r1 = linter.getNext()
+        val r2 = linter.getNext()
+        assertTrue(r1 is Success<*>)
+        assertTrue(r2 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isEmpty())
+
+        val r3 = linter.getNext()
+        assertTrue(r3 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isNotEmpty())
+    }
+
+    @Test
+    fun `identifier_format=snake_case - snake OK, camel reporta error`() {
+        val nodes = listOf(varDeclSnake, varDeclCamel)
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) {
+                errors.add(message)
+            }
         }
 
+        val linter = createLinter(
+            "1.0",
+            nodes,
+            configStream(identifierFormat = "snake_case"),
+            fakeErrorHandler
+        )
 
-        // =============== TESTS SymbolFormatRule =================
+        // OK (snake)
+        val r1 = linter.getNext()
+        assertTrue(r1 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isEmpty())
 
-        @Test
-        fun `identifier_format=camelCase - camel OK, snake reporta error`() {
-            val nodes = listOf(varDeclCamel, assignCamel, varDeclSnake)
-            val fakeErrorHandler = object : ErrorHandler {
-                val errors = mutableListOf<String>()
-                override fun handleError(message: String) {
-                    errors.add(message)
-                }
+        // Camel => debería reportar
+        val r2 = linter.getNext()
+        assertTrue(r2 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isNotEmpty())
+    }
+
+    @Test
+    fun `identifier_format no seteado - no reporta nada (regla deshabilitada)`() {
+        val nodes = listOf(varDeclCamel, varDeclSnake)
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) {
+                errors.add(message)
             }
-
-            val linter = createLinter(
-                "1.0",
-                nodes,
-                configStream(identifierFormat = "camelCase"),
-                fakeErrorHandler
-            )
-
-            val r1 = linter.getNext()
-            val r2 = linter.getNext()
-            assertTrue(r1 is Success<*>)
-            assertTrue(r2 is Success<*>)
-            assertTrue(fakeErrorHandler.errors.isEmpty())
-
-            val r3 = linter.getNext()
-            assertTrue(r3 is Success<*>)
-            assertTrue(fakeErrorHandler.errors.isNotEmpty())
         }
 
-        @Test
-        fun `identifier_format=snake_case - snake OK, camel reporta error`() {
-            val nodes = listOf(varDeclSnake, varDeclCamel)
-            val fakeErrorHandler = object : ErrorHandler {
-                val errors = mutableListOf<String>()
-                override fun handleError(message: String) {
-                    errors.add(message)
-                }
-            }
+        val linter = createLinter(
+            "1.0",
+            nodes,
+            configStream(printlnOnlyLiteralsAndIdentifiers = true),
+            fakeErrorHandler
+        )
 
-            val linter = createLinter(
-                "1.0",
-                nodes,
-                configStream(identifierFormat = "snake_case"),
-                fakeErrorHandler
+        val r1 = linter.getNext()
+        val r2 = linter.getNext()
+        assertTrue(r1 is Success<*>)
+        assertTrue(r2 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isEmpty())
+    }
+
+    @Test
+    fun `regla habilitada - print con boolean como argumento reporta error`() {
+        // println(true)
+        val booleanArg = BooleanExpression("true", astFactory.basicPosition)
+        val printBooleanFail: PrintFunction =
+            astFactory.createPrintFunction(
+                OptionalExpression.HasExpression(booleanArg)
             )
 
-            // OK (snake)
-            val r1 = linter.getNext()
-            assertTrue(r1 is Success<*>)
-            assertTrue(fakeErrorHandler.errors.isEmpty())
-
-            // Camel => debería reportar
-            val r2 = linter.getNext()
-            assertTrue(r2 is Success<*>)
-            assertTrue(fakeErrorHandler.errors.isNotEmpty())
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) {
+                errors.add(message)
+            }
         }
 
-        @Test
-        fun `identifier_format no seteado - no reporta nada (regla deshabilitada)`() {
-            val nodes = listOf(varDeclCamel, varDeclSnake)
-            val fakeErrorHandler = object : ErrorHandler {
-                val errors = mutableListOf<String>()
-                override fun handleError(message: String) {
-                    errors.add(message)
-                }
-            }
+        val linter = createLinter(
+            "1.0",
+            listOf(printBooleanFail, booleanArg),
+            configStream(printlnOnlyLiteralsAndIdentifiers = true),
+            fakeErrorHandler
+        )
 
-            val linter = createLinter(
-                "1.0",
-                nodes,
-                configStream(printlnOnlyLiteralsAndIdentifiers = true),
-                fakeErrorHandler
+        val r = linter.getNext()
+        assertTrue(r is Error)
+        val r2 = linter.getNext()
+        assertTrue(r2 is Error)
+        assertTrue(fakeErrorHandler.errors.isEmpty())
+    }
+
+    // tests for linter 1.1 -------------------------
+    @Test
+    fun `regla habilitada - print con boolean como argumento no reporta error`() {
+        // println(true)
+        val booleanArg = BooleanExpression("true", astFactory.basicPosition)
+        val printBooleanFail: PrintFunction =
+            astFactory.createPrintFunction(
+                OptionalExpression.HasExpression(booleanArg)
             )
 
-            val r1 = linter.getNext()
-            val r2 = linter.getNext()
-            assertTrue(r1 is Success<*>)
-            assertTrue(r2 is Success<*>)
-            assertTrue(fakeErrorHandler.errors.isEmpty())
-        }
-
-        @Test
-        fun `regla habilitada - print con boolean como argumento reporta error`() {
-            // println(true)
-            val booleanArg = BooleanExpression("true", astFactory.basicPosition)
-            val printBooleanFail: PrintFunction =
-                astFactory.createPrintFunction(
-                    OptionalExpression.HasExpression(booleanArg)
-                )
-
-            val fakeErrorHandler = object : ErrorHandler {
-                val errors = mutableListOf<String>()
-                override fun handleError(message: String) {
-                    errors.add(message)
-                }
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) {
+                errors.add(message)
             }
-
-            val linter = createLinter(
-                "1.0",
-                listOf(printBooleanFail, booleanArg),
-                configStream(printlnOnlyLiteralsAndIdentifiers = true),
-                fakeErrorHandler
-            )
-
-            val r = linter.getNext()
-            assertTrue(r is Error)
-            val r2 = linter.getNext()
-            assertTrue(r2 is Error)
-            assertTrue(fakeErrorHandler.errors.isEmpty())
         }
 
+        val linter = createLinter(
+            "1.1",
+            listOf(printBooleanFail, booleanArg),
+            configStream(printlnOnlyLiteralsAndIdentifiers = true),
+            fakeErrorHandler
+        )
 
-        //tests for linter 1.1 -------------------------
-        @Test
-        fun `regla habilitada - print con boolean como argumento no reporta error`() {
-            // println(true)
-            val booleanArg = BooleanExpression("true", astFactory.basicPosition)
-            val printBooleanFail: PrintFunction =
-                astFactory.createPrintFunction(
-                    OptionalExpression.HasExpression(booleanArg)
-                )
+        val r = linter.getNext()
+        assertTrue(r is Success<*>)
+        val r2 = linter.getNext()
+        assertTrue(r2 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isEmpty())
+    }
 
-            val fakeErrorHandler = object : ErrorHandler {
-                val errors = mutableListOf<String>()
-                override fun handleError(message: String) {
-                    errors.add(message)
-                }
+    @Test
+    fun `readInput habilitada - permite literal e identificador, prohíbe binaria`() {
+        val nodes = listOf(readInputIdentifier, readInputBinary)
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) {
+                errors.add(message)
             }
-
-            val linter = createLinter(
-                "1.1",
-                listOf(printBooleanFail, booleanArg),
-                configStream(printlnOnlyLiteralsAndIdentifiers = true),
-                fakeErrorHandler
-            )
-
-            val r = linter.getNext()
-            assertTrue(r is Success<*>)
-            val r2 = linter.getNext()
-            assertTrue(r2 is Success<*>)
-            assertTrue(fakeErrorHandler.errors.isEmpty())
         }
 
-        @Test
-        fun `readInput habilitada - permite literal e identificador, prohíbe binaria`() {
-            val nodes = listOf(readInputIdentifier, readInputBinary)
-            val fakeErrorHandler = object : ErrorHandler {
-                val errors = mutableListOf<String>()
-                override fun handleError(message: String) {
-                    errors.add(message)
-                }
-            }
+        val linter = createLinter(
+            "1.1",
+            nodes,
+            configStream(readInputOnlyLiteralsAndIdentifiers = true),
+            fakeErrorHandler
+        )
 
-            val linter = createLinter(
-                "1.1",
-                nodes,
-                configStream(readInputOnlyLiteralsAndIdentifiers = true),
-                fakeErrorHandler
-            )
+        // Casos OK
+        val r1 = linter.getNext()
+        assertTrue(r1 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isEmpty())
 
-            // Casos OK
-            val r1 = linter.getNext()
-            assertTrue(r1 is Success<*>)
-            assertTrue(fakeErrorHandler.errors.isEmpty())
-
-            // Caso prohibido
-            val r2 = linter.getNext()
-            assertTrue(r2 is Success<*>)
-            assertTrue(fakeErrorHandler.errors.isNotEmpty())
-        }
+        // Caso prohibido
+        val r2 = linter.getNext()
+        assertTrue(r2 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isNotEmpty())
+    }
 
     private fun readInputBinaryWithRange(range: Range): ReadInputExpression {
         val bin = astFactory.createBinaryExpression(
@@ -427,7 +422,7 @@ class LinterTest {
             // VariableDeclarator(symbol = snake, value = string)
             astFactory.createVariableDeclarator(astFactory.createSymbol(snake), Type.STRING, OptionalExpression.HasExpression(astFactory.createString("x"))),
             // ReadInputExpression(value = SymbolExpression snake)
-            ReadInputExpression(OptionalExpression.HasExpression(astFactory.createSymbol(snake)), astFactory.basicRange),
+            ReadInputExpression(OptionalExpression.HasExpression(astFactory.createSymbol(snake)), astFactory.basicRange)
         )
 
         val eh = object : ErrorHandler {
@@ -462,7 +457,7 @@ class LinterTest {
             astFactory.createPrintFunction(OptionalExpression.HasExpression(astFactory.createSymbol(camel))),
             astFactory.createVariableAssigment(astFactory.createSymbol(camel), OptionalExpression.HasExpression(astFactory.createNumber("10"))),
             astFactory.createVariableDeclarator(astFactory.createSymbol(camel), Type.STRING, OptionalExpression.HasExpression(astFactory.createString("x"))),
-            ReadInputExpression(OptionalExpression.HasExpression(astFactory.createSymbol(camel)), astFactory.basicRange),
+            ReadInputExpression(OptionalExpression.HasExpression(astFactory.createSymbol(camel)), astFactory.basicRange)
         )
 
         val eh = object : ErrorHandler {
@@ -494,7 +489,7 @@ class LinterTest {
             astFactory.createPrintFunction(OptionalExpression.HasExpression(astFactory.createSymbol(camel))),
             astFactory.createVariableAssigment(astFactory.createSymbol(camel), OptionalExpression.HasExpression(astFactory.createNumber("10"))),
             astFactory.createVariableDeclarator(astFactory.createSymbol(camel), Type.STRING, OptionalExpression.HasExpression(astFactory.createString("x"))),
-            ReadInputExpression(OptionalExpression.HasExpression(astFactory.createSymbol(camel)), astFactory.basicRange),
+            ReadInputExpression(OptionalExpression.HasExpression(astFactory.createSymbol(camel)), astFactory.basicRange)
         )
 
         val eh = object : ErrorHandler {
@@ -518,7 +513,7 @@ class LinterTest {
 
     @Test
     fun `1_1 camelCase - BinaryExpression con dos símbolos snake produce dos errores (recorre left y right)`() {
-        val leftSnake  = astFactory.createSymbol("left_bad_name")
+        val leftSnake = astFactory.createSymbol("left_bad_name")
         val rightSnake = astFactory.createSymbol("right_bad_name")
         val binBoth = astFactory.createBinaryExpression(leftSnake, Operator.ADD, rightSnake)
 
@@ -567,5 +562,4 @@ class LinterTest {
         }
         assertTrue(eh.errors.isEmpty(), "Nodos hoja sin símbolos no deberían reportar")
     }
-
-    }
+}

@@ -15,9 +15,9 @@ import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.ast.visitor.ASTVisitor
-import org.example.common.enums.Type
 import org.example.common.ErrorHandler
 import org.example.common.enums.Operator
+import org.example.common.enums.Type
 
 class Validator(
     val errorHandler: ErrorHandler
@@ -39,10 +39,8 @@ class Validator(
         environment[name] = type
     }
 
-
     fun pushLiteral(value: Type?) = stack.add(value)
     fun popLiteral(): Type? = if (stack.isEmpty()) null else stack.removeAt(stack.size - 1)
-
 
     fun lookupSymbol(name: String): Type? {
         return environment[name]
@@ -122,7 +120,6 @@ class Validator(
         return expr
     }
 
-
     override fun visitPrintFunction(statement: PrintFunction): ASTNode {
         when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
@@ -155,5 +152,4 @@ class Validator(
         pushLiteral(resultType)
         return expr
     }
-
 }
