@@ -2,6 +2,7 @@ package org.example.formatter
 
 import org.example.ast.ASTNode
 import org.example.formatter.formatters.ASTFormat
+import java.io.Writer
 
 // context: CompositeASTFormat no sabe nada de tipos concretos (solo delega).
 // Cada ASTFormat implementa canHandle y sabe cuándo aplicarse.
@@ -15,13 +16,13 @@ class CompositeASTFormat(
 
     override fun formatNode(
         node: ASTNode,
-        result: StringBuilder,
+        writer: Writer,
         rules: Map<String, Rule>,
         nestingLevel: Int
     ) {
         val formatter = formats.firstOrNull { it.canHandle(node) }
             ?: throw IllegalArgumentException("No formatter found for node type: ${node::class.simpleName}")
 
-        formatter.formatNode(node, result, rules, nestingLevel)
+        formatter.formatNode(node, writer, rules, nestingLevel)
     }
 }
