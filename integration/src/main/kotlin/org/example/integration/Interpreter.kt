@@ -26,7 +26,7 @@ class Interpreter {
                 handler
             )
         while (interpreter.hasNext()) {
-            interpreter.getNext() // todo: duda con que sea un Iterator<Result> teniendo emitter y handler
+            interpreter.getNext()
         }
     }
 }

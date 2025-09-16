@@ -1,16 +1,15 @@
 package org.example.cli.operations
 
-import org.example.common.results.Error
-import org.example.common.results.Result
-import org.example.lexer.Lexer
-import org.example.parser.Parser
+import org.example.cli.util.CliErrorHandler
+import org.example.integration.Parser
 
-class ValidationOperation(lexer: Lexer, parser: Parser) : Operation {
-    override fun execute(): Result {
-        // lexer
-        // buffer
-        // parser
-        // result
-        return Error("Not implemented yet")
+class ValidationOperation(private val version: String, private val reader: Iterator<String>) : Operation {
+    override fun execute() {
+        val handler = CliErrorHandler()
+        try {
+            Parser().validate(reader, version, handler)
+        } catch (e: Exception) {
+            handler.handleError(e.message ?: e.toString())
+        }
     }
 }

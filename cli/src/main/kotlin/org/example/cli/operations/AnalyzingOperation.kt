@@ -1,9 +1,24 @@
 package org.example.cli.operations
 
-import org.example.common.results.Result
+import org.example.cli.util.CliErrorHandler
+import org.example.cli.util.CliPrinter
+import org.example.integration.Interpreter
+import org.example.integration.Linter
+import org.example.interpreter.input.ConsoleInputProvider
+import java.io.InputStream
 
-class AnalyzingOperation : Operation {
-    override fun execute(): Result {
-        TODO("Not yet implemented")
+
+class AnalyzingOperation(
+    private val version: String,
+    private val reader: Iterator<String>,
+    private val config: InputStream
+) : Operation {
+    override fun execute() {
+        val handler = CliErrorHandler()
+        try {
+            Linter().lint(reader, version, config, handler)
+        } catch (e: Exception) {
+            handler.handleError(e.message ?: e.toString())
+        }
     }
 }

@@ -4,6 +4,7 @@ import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.interpreter.Executor
 import org.example.interpreter.Validator
+import org.example.interpreter.Variable
 import org.example.interpreter.handlers.ASTNodeHandler
 
 class VariableDeclaratorHandler : ASTNodeHandler<VariableDeclarator> {
@@ -14,7 +15,7 @@ class VariableDeclaratorHandler : ASTNodeHandler<VariableDeclarator> {
             is OptionalExpression.HasExpression -> executor.evaluate(opt.expression)
         }
 
-        executor.declareVariable(node.symbol.value, value)
+        executor.declareVariable(Variable(node.symbol.value, value, immutable = false))
     }
 
     override fun handleValidation(node: VariableDeclarator, validator: Validator) {

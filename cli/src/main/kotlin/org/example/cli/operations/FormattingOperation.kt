@@ -1,9 +1,8 @@
 package org.example.cli.operations
 
-import org.example.common.results.Result
 
 class FormattingOperation : Operation {
-    override fun execute(): Result {
+    override fun execute() {
         TODO("Not yet implemented")
     }
 }

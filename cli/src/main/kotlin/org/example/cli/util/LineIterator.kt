@@ -1,4 +1,4 @@
-package org.example.cli
+package org.example.cli.util
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -19,7 +19,6 @@ class LineIterator(filePath: Path) : Iterator<String> {
         }
         return true
     }
-
     override fun next(): String {
         if (!hasNext()) throw NoSuchElementException()
         val out = nextLine!!

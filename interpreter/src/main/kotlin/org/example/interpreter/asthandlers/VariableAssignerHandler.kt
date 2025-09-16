@@ -16,11 +16,6 @@ class VariableAssignerHandler : ASTNodeHandler<VariableAssigner> {
                 val exprNode = opt.expression
                 val value = executor.evaluate(exprNode)
 
-                if (!executor.isVariableDeclared(node.symbol.value)) {
-                    executor.reportError("Variable ${node.symbol.value} not declared")
-                    return
-                }
-
                 executor.assignVariable(node.symbol.value, value)
                 executor.pushLiteral(value)
             }

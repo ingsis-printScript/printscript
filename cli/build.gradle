@@ -5,8 +5,10 @@ plugins {
 dependencies {
     implementation project(':common')
     implementation project(':ast')
+    implementation project(':token')
     implementation project(':lexer')
     implementation project(':parser')
-    implementation project(':interpreter')
+    implementation project(':linter')
+    implementation project(':integration')
     implementation("com.github.ajalt.clikt:clikt:5.0.1")
 }
