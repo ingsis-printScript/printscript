@@ -44,13 +44,13 @@ class LinterTest {
     ): InputStream {
         val parts = mutableListOf<String>()
         if (printlnOnlyLiteralsAndIdentifiers != null) {
-            parts += "\"println_only_literals_and_identifiers\": $printlnOnlyLiteralsAndIdentifiers"
+            parts += "\"mandatory-variable-or-literal-in-println\": $printlnOnlyLiteralsAndIdentifiers"
         }
         if (identifierFormat != null) {
             parts += "\"identifier_format\": \"$identifierFormat\""
         }
         if (readInputOnlyLiteralsAndIdentifiers != null) {
-            parts += "\"readInput_only_literals_and_identifiers\": $readInputOnlyLiteralsAndIdentifiers"
+            parts += "\"mandatory-variable-or-literal-in-readInput\": $readInputOnlyLiteralsAndIdentifiers"
         }
         val json = "{${parts.joinToString(",")}}"
         return ByteArrayInputStream(json.toByteArray())

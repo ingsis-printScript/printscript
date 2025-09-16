@@ -1,6 +1,8 @@
 package org.example.parser.parsers.function
 
 import org.example.ast.ASTNode
+import org.example.ast.expressions.Expression
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.Position
 import org.example.common.Range
@@ -14,7 +16,9 @@ import org.example.parser.validators.TokenValidator
 import org.example.token.Token
 
 class PrintParser(
-    expressionValidators: List<TokenValidator>
+    expressionValidators: List<TokenValidator>,
+    private val keywordMap: Map<String, (OptionalExpression, Range) -> Expression>
+
 ) : StatementParser {
     private val patterns = listOf(
         StatementPattern(
@@ -35,7 +39,7 @@ class PrintParser(
             Position(statements[statements.size - 1].position.line, statements[statements.size - 1].position.column)
         )
 
-        val expressionBuilder = ExpressionBuilder()
+        val expressionBuilder = ExpressionBuilder(keywordMap)
         val expression = expressionBuilder.buildExpression(statements, leftParenPos + 1, statements.size - 2)
 
         return PrintFunction(expression, range)

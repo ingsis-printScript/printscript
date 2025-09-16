@@ -30,7 +30,7 @@ class ParserProvider10 : ParserProvider {
         val parsers = listOf<StatementParser>(
             VariableAssignationParser(expressions, keywordMap),
             VariableDeclarationParser(keywordFactoryMap, keywords, types, expressions, keywordMap),
-            PrintParser(expressions)
+            PrintParser(expressions, keywordMap)
         )
 
         val parser = Parser(parsers, tokenBuffer)

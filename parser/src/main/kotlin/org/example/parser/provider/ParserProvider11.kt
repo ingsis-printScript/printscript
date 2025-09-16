@@ -42,7 +42,7 @@ class ParserProvider11 : ParserProvider {
         val commonParsers = listOf<StatementParser>(
             VariableAssignationParser(expressions, keywordMap),
             VariableDeclarationParser(keywordFactoryMap, declarators, types, expressions, keywordMap),
-            PrintParser(expressions)
+            PrintParser(expressions, keywordMap)
         )
 
         val conditionParser = ConditionParser(commonParsers)
