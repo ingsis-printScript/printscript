@@ -11,7 +11,7 @@ import org.example.common.ErrorHandler
 class Validator(
     private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>,
     val errorHandler: ErrorHandler
-) {
+) : AS{
 
     private val stack = mutableListOf<Type?>()
     private val environment = mutableMapOf<String, Type>() // ahora guarda Type
