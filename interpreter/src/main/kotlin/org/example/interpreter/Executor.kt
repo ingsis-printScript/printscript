@@ -223,5 +223,4 @@ class Executor(
         pushLiteral(lastValue)
         return statement
     }
-
 }

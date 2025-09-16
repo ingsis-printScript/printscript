@@ -36,7 +36,6 @@ class Interpreter {
                 val n = node.value as Condition
                 System.err.println("[DEBUG] - Condition with ${n.ifBlock.size} if statements and ${n.elseBlock?.size ?: 0} else statements")
             }
-
         }
     }
 }

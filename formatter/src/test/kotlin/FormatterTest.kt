@@ -139,7 +139,9 @@ class FormatterTest {
     @Test
     fun `BinaryExpression con 1 espacio alrededor del operador`() {
         val expr = astFactory.createBinaryExpression(
-            astFactory.createNumber("1"), Operator.MUL, astFactory.createNumber("3")
+            astFactory.createNumber("1"),
+            Operator.MUL,
+            astFactory.createNumber("3")
         )
         val (formatter, out) = createFormatter(
             listOf(expr),

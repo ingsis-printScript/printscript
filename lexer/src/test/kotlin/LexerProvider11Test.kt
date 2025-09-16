@@ -1,9 +1,9 @@
 package org.example.lexer.provider
 
-import org.example.lexer.Lexer
-import org.example.token.Token
 import org.example.common.enums.TokenType
-import org.junit.jupiter.api.Assertions.*
+import org.example.lexer.Lexer
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class LexerProvider11Test {
@@ -76,10 +76,18 @@ class LexerProvider11Test {
             values.add(token.value)
         }
 
-        assertEquals(listOf(
-            TokenType.KEYWORD, TokenType.SYMBOL, TokenType.PUNCTUATION,
-            TokenType.NUMBER, TokenType.OPERATOR, TokenType.NUMBER, TokenType.PUNCTUATION
-        ), types)
+        assertEquals(
+            listOf(
+                TokenType.KEYWORD,
+                TokenType.SYMBOL,
+                TokenType.PUNCTUATION,
+                TokenType.NUMBER,
+                TokenType.OPERATOR,
+                TokenType.NUMBER,
+                TokenType.PUNCTUATION
+            ),
+            types
+        )
 
         assertEquals(listOf("let", "x", "=", "42", "+", "10", ";"), values)
     }
