@@ -14,7 +14,7 @@ class ExpressionFormatterHelper {
     fun formatExpression(node: Expression, writer: Writer, rules: Map<String, Rule>, nestingLevel: Int) {
         when (node) {
             is BinaryExpression -> {
-                formatNode(node, writer, rules, nestingLevel)
+                BinaryExpressionFormat().formatNode(node, writer, rules, nestingLevel)
             }
             is BooleanExpression -> {
                 BooleanExpressionFormat().formatNode(node, writer, rules, nestingLevel)

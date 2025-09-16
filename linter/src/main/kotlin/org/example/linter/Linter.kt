@@ -32,7 +32,6 @@ class Linter(
 
     override fun getNext(): Result {
         val result = iterator.getNext()
-        println("getNext:$result")
         if (result is Error) {
             errorHandler.handleError(result.message)
             return result
