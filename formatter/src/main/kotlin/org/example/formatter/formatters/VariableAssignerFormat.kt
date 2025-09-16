@@ -38,5 +38,4 @@ class VariableAssignerFormat : ASTFormat {
 
         writer.write("\n")
     }
-
 }

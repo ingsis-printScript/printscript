@@ -3,7 +3,6 @@ import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.NumberExpression
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.ast.statements.Statement
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.ErrorHandler
@@ -71,7 +70,8 @@ class InterpreterTest {
                         NumberExpression("20", dummyPos),
                         dummyRange
                     )
-                ), dummyRange
+                ),
+                dummyRange
             )
         )
 
@@ -84,7 +84,7 @@ class InterpreterTest {
         val interpreter = createInterpreter(astNodes, printed, errors, supportedNodes)
         val results = interpreter.run()
 
-        assertEquals(listOf("10.2", "20", "50.0"), printed)
+        assertEquals(listOf("10.2", "20", "50"), printed)
         assertTrue(errors.isEmpty())
         assertEquals(3, results.size)
     }

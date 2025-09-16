@@ -1,16 +1,29 @@
-import org.example.ast.expressions.*
-import org.example.ast.statements.*
+import org.example.ast.expressions.BinaryExpression
+import org.example.ast.expressions.BooleanExpression
+import org.example.ast.expressions.NumberExpression
+import org.example.ast.expressions.OptionalExpression
+import org.example.ast.expressions.ReadEnvExpression
+import org.example.ast.expressions.ReadInputExpression
+import org.example.ast.expressions.StringExpression
+import org.example.ast.expressions.SymbolExpression
+import org.example.ast.statements.Condition
+import org.example.ast.statements.VariableAssigner
+import org.example.ast.statements.VariableDeclarator
+import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.ast.statements.functions.PrintFunction
+import org.example.common.ErrorHandler
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
-import org.example.common.ErrorHandler
 import org.example.interpreter.Executor
 import org.example.interpreter.Variable
 import org.example.interpreter.input.InputProvider
 import org.example.interpreter.output.OutputPrinter
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ExecutorTest {
@@ -64,7 +77,7 @@ class ExecutorTest {
             dummyRange
         )
         val result = executor.evaluate(expr)
-        assertEquals(5.0, result)
+        assertEquals(5, result)
     }
 
     @Test
@@ -170,11 +183,11 @@ class ExecutorTest {
         }
     }
 
-
     @Test
     fun `visitVariableImmutableDeclarator declares immutable variable`() {
         val node = VariableImmutableDeclarator(
-            symbol = SymbolExpression("z", dummyPos), Type.NUMBER,
+            symbol = SymbolExpression("z", dummyPos),
+            Type.NUMBER,
             value = OptionalExpression.HasExpression(NumberExpression("10", dummyPos)),
             range = dummyRange
         )
@@ -260,7 +273,6 @@ class ExecutorTest {
         assertEquals("", result)
     }
 
-
     @Test
     fun `visitReadInput handles prompt expression`() {
         val promptProvider = object : InputProvider {
@@ -287,9 +299,4 @@ class ExecutorTest {
         val result = executor.popLiteral()
         assertNull(result)
     }
-
-
-
-
-
 }

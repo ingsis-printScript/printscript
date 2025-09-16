@@ -21,8 +21,9 @@ class Interpreter(
         val result = iterator.getNext()
 
         val node: ASTNode = when (result) {
-            is Success<*> -> result.value as? ASTNode
-                ?: return Error("The result is not an AST node")
+            is Success<*> ->
+                result.value as? ASTNode
+                    ?: return Error("The result is not an AST node")
             else -> return result
         }
 
