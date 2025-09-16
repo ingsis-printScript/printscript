@@ -13,14 +13,6 @@ import org.example.common.results.Result
 import org.example.interpreter.Executor
 import org.example.interpreter.Interpreter
 import org.example.interpreter.Validator
-import org.example.interpreter.asthandlers.BinaryExpressionHandler
-import org.example.interpreter.asthandlers.NumberExpressionHandler
-import org.example.interpreter.asthandlers.PrintFunctionHandler
-import org.example.interpreter.asthandlers.StringExpressionHandler
-import org.example.interpreter.asthandlers.SymbolExpressionHandler
-import org.example.interpreter.asthandlers.VariableAssignerHandler
-import org.example.interpreter.asthandlers.VariableDeclaratorHandler
-import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
 import org.example.common.ErrorHandler
 import org.example.interpreter.output.OutputPrinter
@@ -32,25 +24,23 @@ class InterpreterProvider10 : InterpreterProvider {
         outputPrinter: OutputPrinter,
         errorHandler: ErrorHandler
     ): Interpreter {
-        val handlers = createHandlers()
+        val supportedNodes = supportedNodes()
 
-        val validator = Validator(handlers, errorHandler)
-        val executor = Executor(handlers, inputProvider, outputPrinter, errorHandler)
+        val validator = Validator(errorHandler)
+        val executor = Executor(inputProvider, outputPrinter, errorHandler)
 
-        val interpreter = Interpreter(iterator, validator, executor)
-        return interpreter
+        return Interpreter(iterator, validator, executor, supportedNodes)
     }
 
-    private fun createHandlers(): Map<Class<out ASTNode>, ASTNodeHandler<*>> {
-        val handlers = mapOf(
-            BinaryExpression::class.java to BinaryExpressionHandler(),
-            NumberExpression::class.java to NumberExpressionHandler(),
-            PrintFunction::class.java to PrintFunctionHandler(),
-            StringExpression::class.java to StringExpressionHandler(),
-            SymbolExpression::class.java to SymbolExpressionHandler(),
-            VariableDeclarator::class.java to VariableDeclaratorHandler(),
-            VariableAssigner::class.java to VariableAssignerHandler()
+    private fun supportedNodes(): Set<Class<out ASTNode>> {
+        return setOf(
+            BinaryExpression::class.java,
+            NumberExpression::class.java,
+            StringExpression::class.java,
+            PrintFunction::class.java,
+            SymbolExpression::class.java,
+            VariableDeclarator::class.java,
+            VariableAssigner::class.java
         )
-        return handlers as Map<Class<out ASTNode>, ASTNodeHandler<*>>
     }
 }

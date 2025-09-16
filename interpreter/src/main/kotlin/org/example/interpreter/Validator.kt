@@ -16,18 +16,14 @@ import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.ast.visitor.ASTVisitor
 import org.example.common.enums.Type
-import org.example.common.results.Result
-import org.example.common.results.Success
-import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.common.ErrorHandler
 
 class Validator(
-    private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>,
     val errorHandler: ErrorHandler
 ) : ASTVisitor<ASTNode> {
 
     private val stack = mutableListOf<Type?>()
-    private val environment = mutableMapOf<String, Type>() // ahora guarda Type
+    private val environment = mutableMapOf<String, Type>()
 
     fun evaluate(node: ASTNode): Type? {
         node.accept(this)
@@ -42,9 +38,6 @@ class Validator(
         environment[name] = type
     }
 
-    fun lookupVariable(name: String): Type? {
-        return environment[name]
-    }
 
     fun pushLiteral(value: Type?) = stack.add(value)
     fun popLiteral(): Type? = if (stack.isEmpty()) null else stack.removeAt(stack.size - 1)
@@ -118,10 +111,16 @@ class Validator(
     }
 
     override fun visitReadEnv(expr: ReadEnvExpression): ASTNode {
-        val type = lookupSymbol(expr.varName)
-        pushLiteral(type)
+        val type = when (val opt = expr.value) {
+            is OptionalExpression.HasExpression -> evaluate(opt.expression)
+            is OptionalExpression.NoExpression -> null
+        }
+
+        pushLiteral(type ?: Type.STRING)
+
         return expr
     }
+
 
     override fun visitPrintFunction(statement: PrintFunction): ASTNode {
         when (val opt = statement.value) {

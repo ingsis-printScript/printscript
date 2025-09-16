@@ -9,7 +9,8 @@ import org.example.common.results.Success
 class Interpreter(
     private val iterator: PrintScriptIterator<Result>,
     private val validator: Validator,
-    private val executor: Executor
+    private val executor: Executor,
+    private val supportedNodes: Set<Class<out ASTNode>>
 ) : PrintScriptIterator<Result> {
 
     override fun hasNext(): Boolean {
@@ -19,19 +20,16 @@ class Interpreter(
     override fun getNext(): Result {
         val result = iterator.getNext()
 
-        if (result is Error) {
-            executor.errorHandler.handleError(result.message)
-            return result
-        } else {
-            val node = (result as? Success<ASTNode>)?.value
-                ?: return result
+        val node = (result as? Success<ASTNode>)?.value ?: return result
 
-            // Primero validamos
-            node.accept(validator)
-
-            // Luego ejecutamos
-            return node.accept(executor).let { Success(node) }
+        if (!supportedNodes.contains(node::class.java)) {
+            return Error("Nodo ${node::class.simpleName} no soportado en esta versión")
         }
+
+        node.accept(validator)
+        node.accept(executor)
+
+        return Success(node)
     }
 
 

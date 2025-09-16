@@ -17,15 +17,10 @@ import org.example.ast.statements.functions.PrintFunction
 import org.example.ast.visitor.ASTVisitor
 import org.example.common.ErrorHandler
 import org.example.common.enums.Operator
-import org.example.common.enums.Type
-import org.example.common.results.Result
-import org.example.common.results.Success
-import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
 import org.example.interpreter.output.OutputPrinter
 
 class Executor(
-    private val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>>,
     val inputProvider: InputProvider,
     val outputPrinter: OutputPrinter,
     val errorHandler: ErrorHandler
@@ -78,10 +73,6 @@ class Executor(
             return
         }
         environment[name] = Variable(variable.name, value, variable.immutable)
-    }
-
-    fun isVariableDeclared(name: String): Boolean {
-        return environment.containsKey(name)
     }
 
     fun getEnvVar(name: String): Any? = environment[name]
@@ -143,10 +134,21 @@ class Executor(
     }
 
     override fun visitReadEnv(expr: ReadEnvExpression): ASTNode {
-        val value = getEnvVar(expr.varName)
-        pushLiteral(value)
+        val varName = when (val opt = expr.value) {
+            is OptionalExpression.HasExpression -> evaluate(opt.expression) as? String ?: ""
+            is OptionalExpression.NoExpression -> ""
+        }
+
+        val value = System.getenv(varName)
+        if (value == null) {
+            reportError("Environment variable '$varName' not found")
+            pushLiteral(null)
+        } else {
+            pushLiteral(value)
+        }
         return expr
     }
+
 
     override fun visitSymbol(expr: SymbolExpression): ASTNode {
         val value = getEnvVar(expr.value)
