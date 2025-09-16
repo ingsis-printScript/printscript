@@ -1,6 +1,7 @@
 package org.example.formatter.formatters
 
 import org.example.ast.ASTNode
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.formatter.Rule
 import java.io.Writer
@@ -16,25 +17,23 @@ class VariableDeclaratorFormat : ASTFormat {
         nestingLevel: Int
     ) {
         val declarator = node as VariableDeclarator
-        val result = StringBuilder()
 
         // Indentación según nesting level
         val indentQty = rules["indentation"]?.quantity ?: 0
-        repeat(nestingLevel * indentQty) { result.append(" ") }
+        repeat(nestingLevel * indentQty) { writer.write(" ") }
 
         // Escribir tipo y nombre
-        result.append(declarator.type.name) // asumiendo que Type tiene .name
-        result.append(" ")
-        result.append(declarator.symbol.value)
+        writer.write(declarator.type.name) // asumiendo que Type tiene .name
+        writer.write(" ")
+        writer.write(declarator.symbol.value)
 
         // Si hay valor, agregar '=' y formatearlo
         declarator.value.let { expr ->
-            val space = if (rules["spacesAroundAssign"]?.rule == true) " " else ""
-            result.append("$space=$space")
-            result.append(expr.toString())
+            if (expr is OptionalExpression.HasExpression){
+                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
+            }
         }
 
-        result.append("\n")
-        writer.write(result.toString())
+        writer.write("\n")
     }
 }

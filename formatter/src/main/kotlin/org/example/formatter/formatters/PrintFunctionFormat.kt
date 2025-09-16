@@ -1,6 +1,7 @@
 package org.example.formatter.formatters
 
 import org.example.ast.ASTNode
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.functions.PrintFunction
 import org.example.formatter.Rule
 import java.io.Writer
@@ -16,14 +17,14 @@ class PrintFunctionFormat : ASTFormat {
         nestingLevel: Int
     ) {
         val printFunc = node as PrintFunction
-        val result = StringBuilder()
-        result.append("println(")
+        writer.write("println(")
 
         printFunc.value.let { expr ->
-            result.append(expr.toString())
+            if (expr is OptionalExpression.HasExpression){
+                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
+            }
         }
 
-        result.append(")")
-        writer.write(result.toString())
+        writer.write(")")
     }
 }

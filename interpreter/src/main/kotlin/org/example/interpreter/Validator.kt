@@ -31,14 +31,6 @@ class Validator(
         return popLiteral()
     }
 
-    fun declareVariable(name: String, type: Type) {
-        if (environment.containsKey(name)) {
-            errorHandler.handleError("Variable $name already declared")
-            return
-        }
-        environment[name] = type
-    }
-
     fun pushLiteral(value: Type?) = stack.add(value)
     fun popLiteral(): Type? = if (stack.isEmpty()) null else stack.removeAt(stack.size - 1)
 
@@ -55,7 +47,8 @@ class Validator(
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        declareVariable(statement.symbol.value, type ?: statement.type)
+
+        environment[statement.symbol.value] = type ?: statement.type
         return statement
     }
 
@@ -64,9 +57,16 @@ class Validator(
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        declareVariable(statement.symbol.value, type ?: statement.type)
+
+        if (environment.containsKey(statement.symbol.value)) {
+            reportError("Immutable variable ${statement.symbol.value} already declared")
+        } else {
+            environment[statement.symbol.value] = type ?: statement.type
+        }
+
         return statement
     }
+
 
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val type = when (val opt = statement.value) {
