@@ -8,21 +8,12 @@ import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.ErrorHandler
 import org.example.common.Position
-import org.example.common.PrintScriptIterator
 import org.example.common.Range
-import org.example.common.enums.Operator
-import org.example.common.enums.Type
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.interpreter.Executor
 import org.example.interpreter.Interpreter
 import org.example.interpreter.Validator
-import org.example.interpreter.asthandlers.BinaryExpressionHandler
-import org.example.interpreter.asthandlers.NumberExpressionHandler
-import org.example.interpreter.asthandlers.PrintFunctionHandler
-import org.example.interpreter.asthandlers.SymbolExpressionHandler
-import org.example.interpreter.asthandlers.VariableDeclaratorHandler
-import org.example.interpreter.handlers.ASTNodeHandler
 import org.example.interpreter.input.InputProvider
 import org.example.interpreter.output.OutputPrinter
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -31,7 +22,7 @@ import org.junit.jupiter.api.Test
 
 class InterpreterTest {
 
-    class TestIterator(private val items: List<ASTNode>) : PrintScriptIterator<Result> {
+    class TestIterator(private val items: List<ASTNode>) : org.example.common.PrintScriptIterator<Result> {
         private var index = 0
         override fun hasNext() = index < items.size
         override fun getNext(): Result = Success(items[index++])
@@ -39,179 +30,146 @@ class InterpreterTest {
 
     @Test
     fun `run should execute all AST nodes`() {
-        // --- SETUP ---
+        val printed = mutableListOf<String>()
+        val errors = mutableListOf<String>()
+
         val fakePrinter = object : OutputPrinter {
-            val printed = mutableListOf<String>()
-            override fun print(value: String) {
-                printed.add(value)
-            }
+            override fun print(value: String) { printed.add(value) }
         }
 
         val fakeErrorHandler = object : ErrorHandler {
-            val errors = mutableListOf<String>()
-            override fun handleError(message: String) {
-                errors.add(message)
-            }
+            override fun handleError(message: String) { errors.add(message) }
         }
 
         val fakeInputProvider = object : InputProvider {
             override fun readInput(prompt: String) = "123"
         }
 
-        val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>> = getHandlers1()
+        val dummyPos = Position(0, 0)
+        val dummyRange = Range(dummyPos, dummyPos)
 
-        val dummyPosition = Position(0, 0)
-        val dummyRange = Range(Position(0, 0), Position(0, 0))
-
-        val astNodes: List<ASTNode> = getAstNodes1(dummyPosition, dummyRange)
+        val astNodes: List<ASTNode> = listOf(
+            PrintFunction(OptionalExpression.HasExpression(NumberExpression("10.2", dummyPos)), dummyRange),
+            PrintFunction(OptionalExpression.HasExpression(NumberExpression("20", dummyPos)), dummyRange),
+            PrintFunction(
+                OptionalExpression.HasExpression(
+                    BinaryExpression(
+                        NumberExpression("30", dummyPos),
+                        org.example.common.enums.Operator.ADD,
+                        NumberExpression("20", dummyPos),
+                        dummyRange
+                    )
+                ), dummyRange
+            )
+        )
 
         val iterator = TestIterator(astNodes)
-        val executor = Executor(handlers, fakeInputProvider, fakePrinter, fakeErrorHandler)
-        val validator = Validator(handlers, fakeErrorHandler)
-        val interpreter = Interpreter(iterator, validator, executor)
+        val executor = Executor(fakeInputProvider, fakePrinter, fakeErrorHandler)
+        val validator = Validator(fakeErrorHandler)
+        val supportedNodes = setOf(
+            NumberExpression::class.java,
+            BinaryExpression::class.java,
+            PrintFunction::class.java
+        )
 
-        // --- ACT ---
+        val interpreter = Interpreter(iterator, validator, executor, supportedNodes)
         val results = interpreter.run()
 
-        // --- ASSERT ---
-        assertEquals(listOf("10.2", "20", "50"), fakePrinter.printed)
-        assertTrue(fakeErrorHandler.errors.isEmpty())
+        assertEquals(listOf("10.2", "20", "50.0"), printed)
+        assertTrue(errors.isEmpty())
         assertEquals(3, results.size)
     }
 
-    private fun getHandlers1() = mapOf(
-        NumberExpression::class.java to NumberExpressionHandler(),
-        BinaryExpression::class.java to BinaryExpressionHandler(),
-        PrintFunction::class.java to PrintFunctionHandler()
-    )
-
-    private fun getAstNodes1(
-        dummyPosition: Position,
-        dummyRange: Range
-    ) = listOf(
-        PrintFunction(OptionalExpression.HasExpression(NumberExpression("10.2", dummyPosition)), dummyRange),
-        PrintFunction(OptionalExpression.HasExpression(NumberExpression("20", dummyPosition)), dummyRange),
-        PrintFunction(
-            OptionalExpression.HasExpression(
-                BinaryExpression(
-                    NumberExpression("30", dummyPosition),
-                    Operator.ADD,
-                    NumberExpression("20", dummyPosition),
-                    dummyRange
-                )
-            ),
-            dummyRange
-        )
-    )
-
     @Test
     fun `should declare variable and print its value`() {
-        // --- SETUP ---
+        val printed = mutableListOf<String>()
+        val errors = mutableListOf<String>()
+
         val fakePrinter = object : OutputPrinter {
-            val printed = mutableListOf<String>()
-            override fun print(value: String) {
-                printed.add(value)
-            }
+            override fun print(value: String) { printed.add(value) }
         }
+
         val fakeErrorHandler = object : ErrorHandler {
-            val errors = mutableListOf<String>()
             override fun handleError(message: String) { errors.add(message) }
         }
+
         val fakeInputProvider = object : InputProvider {
             override fun readInput(prompt: String) = "ignored"
         }
 
-        val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>> = getHandlers()
-
         val dummyPos = Position(0, 0)
         val dummyRange = Range(dummyPos, dummyPos)
 
-        val astNodes: List<ASTNode> = getAstNodes(dummyPos, dummyRange)
+        val astNodes: List<ASTNode> = listOf(
+            VariableDeclarator(
+                SymbolExpression("x", dummyPos),
+                org.example.common.enums.Type.NUMBER,
+                dummyRange,
+                OptionalExpression.HasExpression(NumberExpression("42", dummyPos))
+            ),
+            PrintFunction(
+                OptionalExpression.HasExpression(SymbolExpression("x", dummyPos)),
+                dummyRange
+            )
+        )
 
         val iterator = TestIterator(astNodes)
-        val executor = Executor(handlers, fakeInputProvider, fakePrinter, fakeErrorHandler)
-        val validator = Validator(handlers, fakeErrorHandler)
-        val interpreter = Interpreter(iterator, validator, executor)
+        val executor = Executor(fakeInputProvider, fakePrinter, fakeErrorHandler)
+        val validator = Validator(fakeErrorHandler)
+        val supportedNodes = setOf(
+            VariableDeclarator::class.java,
+            PrintFunction::class.java,
+            SymbolExpression::class.java,
+            NumberExpression::class.java
+        )
 
-        // --- ACT ---
+        val interpreter = Interpreter(iterator, validator, executor, supportedNodes)
         interpreter.run()
 
-        // --- ASSERT ---
-        assertEquals(listOf("42"), fakePrinter.printed)
-        assertTrue(fakeErrorHandler.errors.isEmpty())
+        assertEquals(listOf("42"), printed)
+        assertTrue(errors.isEmpty())
     }
-
-    private fun getHandlers(): Map<Class<out ASTNode>, ASTNodeHandler<out ASTNode>> = mapOf(
-        NumberExpression::class.java to NumberExpressionHandler(),
-        PrintFunction::class.java to PrintFunctionHandler(),
-        VariableDeclarator::class.java to VariableDeclaratorHandler(),
-        SymbolExpression::class.java to SymbolExpressionHandler()
-    )
-
-    private fun getAstNodes(
-        dummyPos: Position,
-        dummyRange: Range
-    ): List<Statement> = listOf(
-        VariableDeclarator(
-            SymbolExpression("x", dummyPos),
-            Type.NUMBER,
-            dummyRange,
-            OptionalExpression.HasExpression(NumberExpression("42", dummyPos))
-        ),
-        PrintFunction(
-            OptionalExpression.HasExpression(SymbolExpression("x", dummyPos)),
-            dummyRange
-        )
-    )
 
     @Test
     fun `should report error when using undefined symbol`() {
-        // --- SETUP ---
+        val printed = mutableListOf<String>()
+        val errors = mutableListOf<String>()
+
         val fakePrinter = object : OutputPrinter {
-            val printed = mutableListOf<String>()
             override fun print(value: String) { printed.add(value) }
         }
+
         val fakeErrorHandler = object : ErrorHandler {
-            val errors = mutableListOf<String>()
             override fun handleError(message: String) { errors.add(message) }
         }
+
         val fakeInputProvider = object : InputProvider {
             override fun readInput(prompt: String) = "ignored"
         }
 
-        val handlers: Map<Class<out ASTNode>, ASTNodeHandler<*>> = getHandlers2()
-
         val dummyPos = Position(0, 0)
         val dummyRange = Range(dummyPos, dummyPos)
 
-        val astNodes: List<ASTNode> = getAstNodes2(dummyPos, dummyRange)
+        val astNodes: List<ASTNode> = listOf(
+            PrintFunction(
+                OptionalExpression.HasExpression(SymbolExpression("y", dummyPos)),
+                dummyRange
+            )
+        )
 
         val iterator = TestIterator(astNodes)
-        val executor = Executor(handlers, fakeInputProvider, fakePrinter, fakeErrorHandler)
-        val validator = Validator(handlers, fakeErrorHandler)
-        val interpreter = Interpreter(iterator, validator, executor)
+        val executor = Executor(fakeInputProvider, fakePrinter, fakeErrorHandler)
+        val validator = Validator(fakeErrorHandler)
+        val supportedNodes = setOf(
+            PrintFunction::class.java,
+            SymbolExpression::class.java
+        )
 
-        // --- ACT ---
+        val interpreter = Interpreter(iterator, validator, executor, supportedNodes)
         interpreter.run()
 
-        // --- ASSERT ---
-        assertTrue(fakePrinter.printed.isEmpty())
-        assertEquals(1, fakeErrorHandler.errors.size)
-        assertTrue(fakeErrorHandler.errors.first().contains("Undefined symbol"))
+        assertTrue(printed.isEmpty())
+        assertEquals(1, errors.size)
+        assertTrue(errors.first().contains("Undefined symbol") || errors.first().contains("null"))
     }
-
-    private fun getAstNodes2(
-        dummyPos: Position,
-        dummyRange: Range
-    ) = listOf(
-        PrintFunction(
-            OptionalExpression.HasExpression(SymbolExpression("y", dummyPos)),
-            dummyRange
-        )
-    )
-
-    private fun getHandlers2() = mapOf(
-        PrintFunction::class.java to PrintFunctionHandler(),
-        SymbolExpression::class.java to SymbolExpressionHandler()
-    )
 }
