@@ -184,22 +184,6 @@ class Executor(
         return statement
     }
 
-    override fun visitCondition(statement: Condition): ASTNode {
-        val conditionResult = evaluate(statement.condition)
-        val cond = (conditionResult as? Boolean) ?: false
-        stack.clear()
-
-        val blockToExecute = if (cond) statement.ifBlock else statement.elseBlock.orEmpty()
-
-        var lastValue: Any? = null
-        for (stmt in blockToExecute) {
-            stmt.accept(this)
-            lastValue = popLiteral()
-        }
-
-        pushLiteral(lastValue)
-        return statement
-    }
 
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val value = when (val opt = statement.value) {
@@ -227,4 +211,22 @@ class Executor(
         declareVariable(Variable(statement.symbol.value, value, immutable = true))
         return statement
     }
+
+    override fun visitCondition(statement: Condition): ASTNode {
+        val conditionResult = evaluate(statement.condition)
+        val cond = (conditionResult as? Boolean) ?: false
+        stack.clear()
+
+        val blockToExecute = if (cond) statement.ifBlock else statement.elseBlock.orEmpty()
+
+        var lastValue: Any? = null
+        for (stmt in blockToExecute) {
+            stmt.accept(this)
+            lastValue = popLiteral()
+        }
+
+        pushLiteral(lastValue)
+        return statement
+    }
+
 }
