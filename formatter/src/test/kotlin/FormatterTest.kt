@@ -8,7 +8,6 @@ import org.example.common.enums.Type
 import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.formatter.Formatter
-import org.example.formatter.providers.FormatterProvider10
 import org.example.formatter.providers.FormatterVersionProvider
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -364,7 +363,6 @@ class FormatterTest {
         assertFalse(out.toString().contains("  "), "No debe haber dobles espacios")
     }
 
-
     @Test
     fun `immutable declarators con around en colon y equals, y boolean+symbol como valores`() {
         // const status : boolean = true;
@@ -486,9 +484,13 @@ class FormatterTest {
     fun `readInput con binaria - spacesAroundOperators=false`() {
         // readInput(1+2)
         val bin = astFactory.createBinaryExpression(
-            astFactory.createNumber("1"), Operator.ADD, astFactory.createNumber("2")
+            astFactory.createNumber("1"),
+            Operator.ADD,
+            astFactory.createNumber("2")
         )
-        val readInput = astFactory.createReadInput(OptionalExpression.HasExpression(bin))
+        val readInput = astFactory.createReadInput(
+            OptionalExpression.HasExpression(bin)
+        )
 
         val (fmt, out) = createFormatter(
             "1.1",
@@ -505,7 +507,9 @@ class FormatterTest {
     fun `readInput con binaria - spacesAroundOperators=true`() {
         // readInput(1 + 2)
         val bin = astFactory.createBinaryExpression(
-            astFactory.createNumber("1"), Operator.ADD, astFactory.createNumber("2")
+            astFactory.createNumber("1"),
+            Operator.ADD,
+            astFactory.createNumber("2")
         )
         val readInput = astFactory.createReadInput(OptionalExpression.HasExpression(bin))
 
