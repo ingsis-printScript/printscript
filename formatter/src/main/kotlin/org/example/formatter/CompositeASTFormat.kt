@@ -18,11 +18,12 @@ class CompositeASTFormat(
         node: ASTNode,
         writer: Writer,
         rules: Map<String, Rule>,
-        nestingLevel: Int
+        nestingLevel: Int,
+        context: PrivateIterator
     ) {
         val formatter = formats.firstOrNull { it.canHandle(node) }
             ?: throw IllegalArgumentException("No formatter found for node type: ${node::class.simpleName}")
 
-        formatter.formatNode(node, writer, rules, nestingLevel)
+        formatter.formatNode(node, writer, rules, nestingLevel, context)
     }
 }

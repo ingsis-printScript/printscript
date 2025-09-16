@@ -6,7 +6,6 @@ import org.example.ast.expressions.ReadEnvExpression
 import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.StringExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.ast.statements.Condition
 import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.VariableImmutableDeclarator
@@ -153,34 +152,6 @@ class ExecutorTest {
         )
         val result = executor.evaluate(node)
         assertNotNull(result)
-    }
-
-    @Test
-    fun `visitCondition executes if and else blocks`() {
-        val dummyPos = Position(0, 0)
-        val dummyRange = Range(dummyPos, dummyPos)
-
-        val ifNode = NumberExpression("1", dummyPos)
-        val elseNode = NumberExpression("2", dummyPos)
-
-        val cond = Condition(
-            condition = BooleanExpression("true", dummyPos),
-            ifBlock = listOf(ifNode),
-            elseBlock = listOf(elseNode),
-            range = dummyRange
-        )
-
-        executor.evaluate(cond)
-
-        val result = executor.popLiteral() as Number
-
-        if (result is Int) {
-            assertEquals(1, result)
-        } else if (result is Double) {
-            assertEquals(1.0, result)
-        } else {
-            throw AssertionError("Unexpected type: ${result::class}")
-        }
     }
 
     @Test

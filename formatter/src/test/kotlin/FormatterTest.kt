@@ -1,7 +1,6 @@
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableAssigner
-import org.example.ast.statements.functions.PrintFunction
 import org.example.common.PrintScriptIterator
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
@@ -14,6 +13,7 @@ import java.io.InputStream
 import java.io.StringWriter
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FormatterTest {
@@ -28,15 +28,50 @@ class FormatterTest {
 
     private fun configStream(
         spacesAroundOperators: Boolean? = null,
-        indentationQty: Int? = null
+
+        // colon en declaraciones: let x : string
+        spaceBeforeColonInDecl: Boolean? = null,
+        spaceAfterColonInDecl: Boolean? = null,
+        spaceAroundColon: Boolean? = null,
+
+        // equals en declaraciones: let x: string = 1
+        spaceBeforeEqualsInDecl: Boolean? = null,
+        spaceAfterEqualsInDecl: Boolean? = null,
+        spaceAroundEquals: Boolean? = null, // general (asignaciones/otros)
+
+        // println: cantidad de saltos de línea luego del paréntesis
+        lineBreaksAfterPrintln: Int? = null
     ): InputStream {
         val parts = mutableListOf<String>()
+
         if (spacesAroundOperators != null) {
             parts += "\"spacesAroundOperators\": { \"rule\": $spacesAroundOperators }"
         }
-        if (indentationQty != null) {
-            parts += "\"indentation\": { \"rule\": true, \"quantity\": $indentationQty }"
+
+        if (spaceBeforeColonInDecl != null) {
+            parts += "\"enforce-spacing-before-colon-in-declaration\": { \"rule\": $spaceBeforeColonInDecl }"
         }
+        if (spaceAfterColonInDecl != null) {
+            parts += "\"enforce-spacing-after-colon-in-declaration\": { \"rule\": $spaceAfterColonInDecl }"
+        }
+        if (spaceAroundColon != null) {
+            parts += "\"enforce-spacing-around-colon\": { \"rule\": $spaceAroundColon }"
+        }
+
+        if (spaceBeforeEqualsInDecl != null) {
+            parts += "\"enforce-spacing-before-equals-in-declaration\": { \"rule\": $spaceBeforeEqualsInDecl }"
+        }
+        if (spaceAfterEqualsInDecl != null) {
+            parts += "\"enforce-spacing-after-equals-in-declaration\": { \"rule\": $spaceAfterEqualsInDecl }"
+        }
+        if (spaceAroundEquals != null) {
+            parts += "\"enforce-spacing-around-equals\": { \"rule\": $spaceAroundEquals }"
+        }
+
+        if (lineBreaksAfterPrintln != null) {
+            parts += "\"line-breaks-after-println\": { \"rule\": true, \"quantity\": $lineBreaksAfterPrintln }"
+        }
+
         val json = "{${parts.joinToString(",")}}"
         return ByteArrayInputStream(json.toByteArray(Charsets.UTF_8))
     }
@@ -53,9 +88,11 @@ class FormatterTest {
 
     // ===== tests =====
 
+    // --- PRINTLN ---
+
     @Test
-    fun `println con string literal - reglas por defecto`() {
-        val print: PrintFunction = astFactory.createPrintFunction(
+    fun `println por defecto - sin saltos y sin punto y coma`() {
+        val print = astFactory.createPrintFunction(
             OptionalExpression.HasExpression(astFactory.createString("\"hola\""))
         )
 
@@ -64,122 +101,252 @@ class FormatterTest {
         assertTrue(formatter.hasNext())
         formatter.getNext()
 
-        assertEquals("println(\"hola\");\n", out.toString())
+        assertEquals("println(\"hola\");", out.toString())
     }
 
     @Test
-    fun `BinaryExpression con spacesAroundOperators=false`() {
-        val expr = astFactory.createBinaryExpression(
-            astFactory.createNumber("1"),
-            Operator.ADD,
-            astFactory.createNumber("2")
+    fun `println con 2 saltos - solo si hay siguiente nodo`() {
+        val p1 = astFactory.createPrintFunction(
+            OptionalExpression.HasExpression(astFactory.createString("\"hola\""))
         )
 
-        val (formatter, out) = createFormatter(
-            listOf(expr),
-            configStream(spacesAroundOperators = false)
-        )
+        // caso 1: un solo nodo -> no hay siguiente, NO agrega \n
+        run {
+            val (formatter, out) = createFormatter(
+                listOf(p1),
+                configStream(lineBreaksAfterPrintln = 2)
+            )
+            while (formatter.hasNext()) formatter.getNext()
+            assertEquals("println(\"hola\");", out.toString())
+        }
 
-        assertTrue(formatter.hasNext())
-        formatter.getNext()
-
-        assertEquals("1+2;\n", out.toString())
+        // caso 2: dos nodos -> el primero agrega 2 \n, el segundo no
+        run {
+            val p2 = astFactory.createPrintFunction(
+                OptionalExpression.HasExpression(astFactory.createString("\"chau\""))
+            )
+            val (formatter, out) = createFormatter(
+                listOf(p1, p2),
+                configStream(lineBreaksAfterPrintln = 2)
+            )
+            while (formatter.hasNext()) formatter.getNext()
+            assertEquals("println(\"hola\");\n\nprintln(\"chau\");", out.toString())
+        }
     }
 
-    @Test
-    fun `BinaryExpression con spacesAroundOperators=true (explícito)`() {
-        val expr = astFactory.createBinaryExpression(
-            astFactory.createNumber("1"),
-            Operator.ADD,
-            astFactory.createNumber("2")
-        )
+    // --- BINARIOS (espacios alrededor de operadores) ---
 
+    @Test
+    fun `BinaryExpression con 1 espacio alrededor del operador`() {
+        val expr = astFactory.createBinaryExpression(
+            astFactory.createNumber("1"), Operator.MUL, astFactory.createNumber("3")
+        )
         val (formatter, out) = createFormatter(
             listOf(expr),
             configStream(spacesAroundOperators = true)
         )
-
-        assertTrue(formatter.hasNext())
         formatter.getNext()
 
-        assertEquals("1 + 2;\n", out.toString())
+        assertEquals("1 * 3", out.toString())
+        // además validamos que no haya dobles espacios
+        assertFalse(out.toString().contains("  "))
     }
 
+    // --- DECLARACIONES (espacios alrededor de ':', '=' en declaraciones) ---
+
     @Test
-    fun `VariableDeclarator con asignación string`() {
+    fun `declaracion con spaces around colon y equals - ambos activados`() {
         val decl = astFactory.createVariableDeclarator(
-            astFactory.createSymbol("userName"),
+            astFactory.createSymbol("x"),
             Type.STRING,
-            OptionalExpression.HasExpression(astFactory.createString("\"Juan\""))
+            OptionalExpression.HasExpression(astFactory.createString("\"a\""))
         )
 
-        val (formatter, out) = createFormatter(listOf(decl), configStream())
+        val (formatter, out) = createFormatter(
+            listOf(decl),
+            configStream(
+                spaceAroundColon = true,
+                spaceAroundEquals = true
+            )
+        )
 
-        assertTrue(formatter.hasNext())
         formatter.getNext()
 
-        assertEquals("let userName: string = \"Juan\";\n", out.toString())
+        assertEquals("let x : string = \"a\";", out.toString())
     }
 
     @Test
-    fun `VariableAssigner simple - respeta espacios alrededor del '=' (si aplica)`() {
-        val assign: VariableAssigner = astFactory.createVariableAssigment(
-            astFactory.createSymbol("userName"),
-            OptionalExpression.HasExpression(astFactory.createNumber("1"))
+    fun `declaracion con solo espacio antes de '2puntos'`() {
+        val decl = astFactory.createVariableDeclarator(
+            astFactory.createSymbol("y"),
+            Type.NUMBER,
+            OptionalExpression.NoExpression
         )
 
-        val (formatter, out) = createFormatter(listOf(assign), configStream())
+        val (formatter, out) = createFormatter(
+            listOf(decl),
+            configStream(
+                spaceBeforeColonInDecl = true,
+                spaceAfterColonInDecl = false,
+                spaceAroundColon = false
+            )
+        )
 
-        assertTrue(formatter.hasNext())
         formatter.getNext()
-
-        // Si tu VariableAssignerFormat no agrega espacios, cambiá a "userName=1;\n"
-        assertEquals("userName = 1;\n", out.toString())
+        assertEquals("let y :number;", out.toString())
     }
 
     @Test
-    fun `múltiples nodos - preserva orden y aplica mismas reglas`() {
+    fun `declaracion con solo espacio despues de '2puntos'`() {
+        val decl = astFactory.createVariableDeclarator(
+            astFactory.createSymbol("z"),
+            Type.BOOLEAN,
+            OptionalExpression.NoExpression
+        )
+
+        val (formatter, out) = createFormatter(
+            listOf(decl),
+            configStream(
+                spaceBeforeColonInDecl = false,
+                spaceAfterColonInDecl = true,
+                spaceAroundColon = false
+            )
+        )
+
+        formatter.getNext()
+        assertEquals("let z: boolean;", out.toString())
+    }
+
+    @Test
+    fun `declaracion con '=' sin espacios (around=false, before=false, after=false)`() {
         val decl = astFactory.createVariableDeclarator(
             astFactory.createSymbol("a"),
             Type.NUMBER,
             OptionalExpression.HasExpression(astFactory.createNumber("1"))
         )
-        val expr = astFactory.createBinaryExpression(
-            astFactory.createNumber("1"),
-            Operator.ADD,
-            astFactory.createNumber("2")
-        )
-        val print = astFactory.createPrintFunction(
-            OptionalExpression.HasExpression(expr)
+
+        val (formatter, out) = createFormatter(
+            listOf(decl),
+            configStream(
+                spaceAroundColon = true, // para que quede 'a : number'
+                spaceAroundEquals = false,
+                spaceBeforeEqualsInDecl = false,
+                spaceAfterEqualsInDecl = false
+            )
         )
 
-        val nodes = listOf(decl, expr, print)
+        formatter.getNext()
+        assertEquals("let a : number=1;", out.toString())
+    }
+
+    @Test
+    fun `declaracion con '=' solo antes (before=true)`() {
+        val decl = astFactory.createVariableDeclarator(
+            astFactory.createSymbol("b"),
+            Type.STRING,
+            OptionalExpression.HasExpression(astFactory.createString("\"x\""))
+        )
+
+        val (formatter, out) = createFormatter(
+            listOf(decl),
+            configStream(
+                spaceAroundColon = false, // sin espacios alrededor del ':'
+                spaceBeforeEqualsInDecl = true,
+                spaceAfterEqualsInDecl = false,
+                spaceAroundEquals = false
+            )
+        )
+
+        formatter.getNext()
+        assertEquals("let b:string =\"x\";", out.toString())
+    }
+
+    @Test
+    fun `declaracion con '=' solo despues (after=true)`() {
+        val decl = astFactory.createVariableDeclarator(
+            astFactory.createSymbol("c"),
+            Type.NUMBER,
+            OptionalExpression.HasExpression(astFactory.createNumber("10"))
+        )
+
+        val (formatter, out) = createFormatter(
+            listOf(decl),
+            configStream(
+                spaceAroundColon = false,
+                spaceBeforeEqualsInDecl = false,
+                spaceAfterEqualsInDecl = true,
+                spaceAroundEquals = false
+            )
+        )
+
+        formatter.getNext()
+        assertEquals("let c:number= 10;", out.toString())
+    }
+    // --- ASIGNACIONES (usa 'enforce-spacing-around-equals') ---
+
+    @Test
+    fun `assignment con espacios alrededor de '=' (around=true)`() {
+        val assign: VariableAssigner = astFactory.createVariableAssigment(
+            astFactory.createSymbol("userName"),
+            OptionalExpression.HasExpression(astFactory.createNumber("1"))
+        )
+
+        val (formatter, out) = createFormatter(
+            listOf(assign),
+            configStream(spaceAroundEquals = true)
+        )
+
+        formatter.getNext()
+        assertEquals("userName = 1;", out.toString())
+    }
+
+    @Test
+    fun `assignment sin espacios alrededor de '=' (around=false)`() {
+        val assign: VariableAssigner = astFactory.createVariableAssigment(
+            astFactory.createSymbol("userName"),
+            OptionalExpression.HasExpression(astFactory.createNumber("1"))
+        )
+
+        val (formatter, out) = createFormatter(
+            listOf(assign),
+            configStream(spaceAroundEquals = false)
+        )
+
+        formatter.getNext()
+        assertEquals("userName=1;", out.toString())
+    }
+
+    // --- MULTI-NODOS + reglas mixtas y chequeo de 1 solo espacio entre tokens ---
+
+    @Test
+    fun `pipeline - declara con colon around y equals around, binario con espacios, y asignacion sin espacios`() {
+        val decl = astFactory.createVariableDeclarator(
+            astFactory.createSymbol("answer"),
+            Type.NUMBER,
+            OptionalExpression.HasExpression(astFactory.createNumber("42"))
+        )
+        val assign = astFactory.createVariableAssigment(
+            astFactory.createSymbol("x"),
+            OptionalExpression.HasExpression(astFactory.createNumber("3"))
+        )
+
+        val nodes = listOf(decl, assign)
+
         val (formatter, out) = createFormatter(
             nodes,
-            configStream(spacesAroundOperators = true)
+            configStream(
+                spaceAroundColon = true,
+                spaceAroundEquals = false
+            )
         )
 
         while (formatter.hasNext()) formatter.getNext()
 
-        val expected = listOf(
-            "let a: number = 1;",
-            "1 + 2;",
-            "println(1 + 2);"
-        ).joinToString(separator = "\n", postfix = "\n")
-
+        val expected = buildString {
+            append("let answer : number=42;\n")
+            append("x=3;")
+        }
         assertEquals(expected, out.toString())
-    }
-
-    @Test
-    fun `SymbolExpression aislado (línea simple)`() {
-        val sym = astFactory.createSymbol("x")
-
-        val (formatter, out) = createFormatter(listOf(sym), configStream())
-
-        assertTrue(formatter.hasNext())
-        formatter.getNext()
-
-        // Ajustá si tu SymbolExpressionFormat imprime distinto
-        assertEquals("x;\n", out.toString())
+        assertFalse(out.toString().contains("  "), "No debe haber dobles espacios")
     }
 }
