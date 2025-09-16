@@ -1,6 +1,7 @@
 package org.example.formatter.formatters
 
 import org.example.ast.ASTNode
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableAssigner
 import org.example.formatter.Rule
 import java.io.Writer
@@ -16,25 +17,27 @@ class VariableAssignerFormat : ASTFormat {
         nestingLevel: Int
     ) {
         val assigner = node as VariableAssigner
-        val result = StringBuilder()
 
         // Indentación según nesting level
         val indentQty = rules["indentation"]?.quantity ?: 0
-        repeat(nestingLevel * indentQty) { result.append(" ") }
+        repeat(nestingLevel * indentQty) { writer.write(" ") }
 
         // Formateo del símbolo
-        result.append(assigner.symbol.value)
+        writer.write(assigner.symbol.value)
 
         // Espacio + operador + espacio
         val space = if (rules["spacesAroundAssign"]?.rule == true) " " else ""
-        result.append("$space=$space")
+        writer.write("$space=$space")
 
         // Formateo del valor si existe
         assigner.value.let { expr ->
-            result.append(expr.toString())
+            if (expr is OptionalExpression.HasExpression){
+                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
+            }
         }
 
-        result.append("\n")
-        writer.write(result.toString())
+        writer.write("\n")
     }
+
+
 }
