@@ -26,10 +26,10 @@ class Interpreter(
             val node = (result as? Success<ASTNode>)?.value
                 ?: return result
 
-            // Primero validamos usando Visitor
+            // Primero validamos
             node.accept(validator)
 
-            // Luego ejecutamos usando Visitor
+            // Luego ejecutamos
             return node.accept(executor).let { Success(node) }
         }
     }
