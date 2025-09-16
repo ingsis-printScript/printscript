@@ -24,5 +24,8 @@ class ReadInputExpressionFormat : ASTFormat {
         if (node.value is OptionalExpression.HasExpression) {
             ExpressionFormatterHelper().formatExpression((node.value as OptionalExpression.HasExpression).expression, writer, rules, nestingLevel, context)
         }
+
+        writer.append(")")
+
     }
 }
