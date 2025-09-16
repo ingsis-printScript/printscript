@@ -3,6 +3,7 @@ package org.example.formatter.formatters
 import org.example.ast.ASTNode
 import org.example.ast.statements.VariableDeclarator
 import org.example.formatter.Rule
+import java.io.Writer
 
 class VariableDeclaratorFormat : ASTFormat {
 
@@ -10,11 +11,12 @@ class VariableDeclaratorFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,
-        result: StringBuilder,
+        writer: Writer,
         rules: Map<String, Rule>,
         nestingLevel: Int
     ) {
         val declarator = node as VariableDeclarator
+        val result = StringBuilder()
 
         // Indentación según nesting level
         val indentQty = rules["indentation"]?.quantity ?: 0
@@ -33,5 +35,6 @@ class VariableDeclaratorFormat : ASTFormat {
         }
 
         result.append("\n")
+        writer.write(result.toString())
     }
 }

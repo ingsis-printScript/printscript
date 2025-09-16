@@ -3,6 +3,7 @@ package org.example.formatter.formatters
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
 import org.example.formatter.Rule
+import java.io.Writer
 
 class BinaryExpressionFormat : ASTFormat {
 
@@ -10,11 +11,12 @@ class BinaryExpressionFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,
-        result: StringBuilder,
+        writer: Writer,
         rules: Map<String, Rule>,
         nestingLevel: Int
     ) {
         val expr = node as BinaryExpression
+        val result = StringBuilder()
 
         // chequeo de espacios configurables
         val spaceRule = rules["spacesAroundOperators"]?.rule ?: true
@@ -28,5 +30,6 @@ class BinaryExpressionFormat : ASTFormat {
 
         // formateo right expr
         result.append(expr.right.toString())
+        writer.write(result.toString())
     }
 }

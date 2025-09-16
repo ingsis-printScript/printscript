@@ -4,6 +4,7 @@ import org.example.ast.ASTNode
 import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.StringExpression
 import org.example.formatter.Rule
+import java.io.Writer
 
 class BooleanExpressionFormat : ASTFormat {
 
@@ -11,12 +12,12 @@ class BooleanExpressionFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,
-        result: StringBuilder,
+        writer: Writer,
         rules: Map<String, Rule>,
         nestingLevel: Int
     ) {
         val boolExpr = node as BooleanExpression
 
-        result.append(boolExpr.value)
+        writer.write(boolExpr.value)
     }
 }

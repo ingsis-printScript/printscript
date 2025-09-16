@@ -20,7 +20,7 @@ class Formatter {
                 parser
             )
         while (formatter.hasNext()) {
-            formatter.getNext() // todo: duda con que sea un Iterator<Result> teniendo emitter y handler
+            formatter.getNext()
         }
     }
 }

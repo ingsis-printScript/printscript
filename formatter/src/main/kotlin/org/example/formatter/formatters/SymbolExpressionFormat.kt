@@ -3,6 +3,7 @@ package org.example.formatter.formatters
 import org.example.ast.ASTNode
 import org.example.ast.expressions.SymbolExpression
 import org.example.formatter.Rule
+import java.io.Writer
 
 class SymbolExpressionFormat : ASTFormat {
 
@@ -10,11 +11,11 @@ class SymbolExpressionFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,
-        result: StringBuilder,
+        writer: Writer,
         rules: Map<String, Rule>,
         nestingLevel: Int
     ) {
         val symbolExpr = node as SymbolExpression
-        result.append(symbolExpr.value)
+        writer.write(symbolExpr.value)
     }
 }
