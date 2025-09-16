@@ -12,4 +12,7 @@ enum class Operator(val symbol: String) {
             return Operator.entries.find { it.symbol == symbol }
         }
     }
+    override fun toString(): String {
+        return symbol
+    }
 }

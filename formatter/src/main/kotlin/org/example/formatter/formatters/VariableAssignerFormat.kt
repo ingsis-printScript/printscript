@@ -18,16 +18,16 @@ class VariableAssignerFormat : ASTFormat {
     ) {
         val assigner = node as VariableAssigner
 
-        // Indentación según nesting level
-        val indentQty = rules["indentation"]?.quantity ?: 0
-        repeat(nestingLevel * indentQty) { writer.write(" ") }
+        // Indentación según rule
+        val leftEqualSpace = if (rules["enforce-spacing-before-equals-in-declaration"]?.rule == true) " " else ""
+        val rightEqualSpace = if (rules["enforce-spacing-after-equals-in-declaration"]?.rule == true) " " else ""
+        val arroundEqualSpace = if (rules["enforce-spacing-around-equals"]?.rule == true) " " else ""
 
         // Formateo del símbolo
         writer.write(assigner.symbol.value)
-
-        // Espacio + operador + espacio
-        val space = if (rules["spacesAroundAssign"]?.rule == true) " " else ""
-        writer.write("$space=$space")
+        writer.write(leftEqualSpace + arroundEqualSpace)
+        writer.write("=")
+        writer.write(rightEqualSpace + arroundEqualSpace)
 
         // Formateo del valor si existe
         assigner.value.let { expr ->
@@ -35,7 +35,5 @@ class VariableAssignerFormat : ASTFormat {
                 ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
             }
         }
-
-        writer.write("\n")
     }
 }

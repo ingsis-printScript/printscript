@@ -17,15 +17,11 @@ class BinaryExpressionFormat : ASTFormat {
     ) {
         val expr = node as BinaryExpression
 
-        // chequeo de espacios configurables
-        val spaceRule = rules["spacesAroundOperators"]?.rule ?: true
-        val space = if (spaceRule) " " else ""
-
         // formateo left expr
         ExpressionFormatterHelper().formatExpression(expr.left, writer, rules, nestingLevel)
 
-        // operador con o sin espacio
-        writer.write("$space${expr.operator}$space")
+        // operador con espacio
+        writer.write(" ${expr.operator} ")
 
         // formateo right expr
         ExpressionFormatterHelper().formatExpression(expr.right, writer, rules, nestingLevel)
