@@ -3,7 +3,7 @@ package org.example.formatter
 import org.example.ast.ASTNode
 import org.example.formatter.formatters.ASTFormat
 
-// context: org.example.formatter.CompositeASTFormat no sabe nada de tipos concretos (solo delega).
+// context: CompositeASTFormat no sabe nada de tipos concretos (solo delega).
 // Cada ASTFormat implementa canHandle y sabe cuándo aplicarse.
 class CompositeASTFormat(
     private val formats: List<ASTFormat>

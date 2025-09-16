@@ -16,7 +16,6 @@ class StringExpressionFormat : ASTFormat {
     ) {
         val stringExpr = node as StringExpression
 
-        // Para incluir las comillas en la salida formateada
-        result.append("\"${stringExpr.value}\"")
+        result.append(stringExpr.value)
     }
 }

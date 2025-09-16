@@ -2,6 +2,7 @@ package org.example.formatter.formatters
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BooleanExpression
+import org.example.ast.expressions.StringExpression
 import org.example.formatter.Rule
 
 class BooleanExpressionFormat : ASTFormat {
@@ -14,6 +15,8 @@ class BooleanExpressionFormat : ASTFormat {
         rules: Map<String, Rule>,
         nestingLevel: Int
     ) {
-        TODO("Not yet implemented")
+        val boolExpr = node as BooleanExpression
+
+        result.append(boolExpr.value)
     }
 }

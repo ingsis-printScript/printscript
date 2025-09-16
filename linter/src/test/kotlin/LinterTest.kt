@@ -179,7 +179,6 @@ class LinterTest {
         }
 
 
-        // =============== TESTS SymbolFormatRule =================
 
         @Test
         fun `identifier_format=camelCase - camel OK, snake reporta error`() {
