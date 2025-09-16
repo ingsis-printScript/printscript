@@ -26,6 +26,5 @@ class ReadInputExpressionFormat : ASTFormat {
         }
 
         writer.append(")")
-
     }
 }
