@@ -7,8 +7,11 @@ import org.example.formatter.Formatter
 import org.example.formatter.Ruler
 import org.example.formatter.formatters.BinaryExpressionFormat
 import org.example.formatter.formatters.BooleanExpressionFormat
+import org.example.formatter.formatters.ConditionFormat
 import org.example.formatter.formatters.NumberExpressionFormat
 import org.example.formatter.formatters.PrintFunctionFormat
+import org.example.formatter.formatters.ReadEnvExpressionFormat
+import org.example.formatter.formatters.ReadInputExpressionFormat
 import org.example.formatter.formatters.StringExpressionFormat
 import org.example.formatter.formatters.SymbolExpressionFormat
 import org.example.formatter.formatters.VariableAssignerFormat
@@ -27,7 +30,10 @@ class FormatterProvider11(private val ruler: Ruler) : FormatterProvider {
             VariableDeclaratorFormat(),
             VariableDeclaratorFormat(),
             SymbolExpressionFormat(),
-            VariableAssignerFormat()
+            VariableAssignerFormat(),
+            ConditionFormat(),
+            ReadEnvExpressionFormat(),
+            ReadInputExpressionFormat()
         )
         return Formatter(rules, nodes, writer, CompositeASTFormat(formats))
     }
