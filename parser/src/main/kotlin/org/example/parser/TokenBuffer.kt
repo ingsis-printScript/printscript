@@ -7,6 +7,7 @@ import org.example.token.Token
 class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptIterator<Token> {
     private val buffer = mutableListOf<Token>()
     private var index = 0
+    private var baseOffset = 0
 
     private fun fillBuffer(n: Int = 1) {
         while (buffer.size < index + n && tokens.hasNext()) {
@@ -14,17 +15,12 @@ class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptI
         }
     }
 
-    override fun hasNext(): Boolean {
-        fillBuffer()
-        return index < buffer.size
-    }
-
+    override fun hasNext(): Boolean { fillBuffer(); return index < buffer.size }
     override fun getNext(): Token {
         fillBuffer()
         if (index >= buffer.size) throw NoMoreTokensAvailableException()
         return buffer[index++]
     }
-
     fun lookahead(n: Int): Token {
         fillBuffer(n)
         if (index + n - 1 >= buffer.size) throw NoMoreTokensAvailableException()
@@ -32,19 +28,18 @@ class TokenBuffer(private val tokens: PrintScriptIterator<Token>) : PrintScriptI
     }
 
     fun commit(consumed: Int) {
-        println("Committing $consumed tokens from buffer of size ${buffer.size} at index $index")
-        if (consumed > 0) {
-            buffer.subList(0, consumed).clear()
-            index = 0
-            println("Buffer after commit: $buffer")
+        require(consumed >= 0) { "negative 'consumed'" }
+        val k = minOf(consumed, buffer.size)
+        if (k > 0) {
+            baseOffset += k
+            buffer.subList(0, k).clear()
+            index = maxOf(0, index - k)
         }
-        println("New buffer index: $index")
     }
 
     fun isAtEnd(from: Int = index): Boolean {
         fillBuffer()
         return from >= buffer.size && !tokens.hasNext()
     }
-
-    fun index(): Int = index
 }
+

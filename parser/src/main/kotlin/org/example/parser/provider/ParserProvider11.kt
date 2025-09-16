@@ -20,7 +20,7 @@ class ParserProvider11 : ParserProvider {
     override fun provide(tokenBuffer: TokenBuffer): Parser {
         val keywordFactoryMap = createKeywordFactoryMap()
 
-        val keywords = setOf("let", "const")
+        val declarators = setOf("let", "const")
         val types = setOf("number", "string")
         val expressions = listOf(
             NumberValidator(),
@@ -31,7 +31,7 @@ class ParserProvider11 : ParserProvider {
 
         val commonParsers = listOf<StatementParser>(
             VariableAssignationParser(expressions),
-            VariableDeclarationParser(keywordFactoryMap, keywords, types, expressions),
+            VariableDeclarationParser(keywordFactoryMap, declarators, types, expressions),
             PrintParser(expressions)
         )
 

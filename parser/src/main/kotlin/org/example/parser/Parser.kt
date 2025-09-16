@@ -3,6 +3,7 @@ package org.example.parser
 import org.example.ast.ASTNode
 import org.example.ast.statements.Statement
 import org.example.common.PrintScriptIterator
+import org.example.common.exceptions.UnsupportedCharacterException
 import org.example.common.results.Error
 import org.example.common.results.Result
 import org.example.common.results.Success
@@ -21,16 +22,21 @@ class Parser(
     }
 
     override fun getNext(): Result {
-        if (!hasNext()) { return Error("No tokens to parse") }
-        try {
-            val node: ASTNode = parseStatement(tokenBuffer, parsers)
-            return Success(node as Statement)
+        return try {
+            if (!hasNext()) Error("No tokens to parse")
+            else {
+                val node: ASTNode = parseStatement(tokenBuffer, parsers)
+                Success(node as Statement)
+            }
+        } catch (e: UnsupportedCharacterException) {
+            Error(e.message ?: "Unsupported character")
         } catch (e: SyntaxException) {
-            return Error(e.message ?: "Unknown error")
+            Error(e.message ?: "Unknown syntax error")
         } catch (e: Exception) {
-            return Error(e.message ?: "Unknown error")
+            Error(e.message ?: "Unknown error")
         }
     }
+
 
     private fun parseStatement(statementBuffer: TokenBuffer, parsers: List<StatementParser>): ASTNode {
         val outcome = analyzeStatement(statementBuffer, parsers)
@@ -85,8 +91,6 @@ class Parser(
             is AnalysisOutcome.Success -> buffer.commit(outcome.result.consumed.size)
             is AnalysisOutcome.Error -> buffer.commit(outcome.result.position)
         }
-        println("Outcome is $outcome")
-        println("Committed tokens, new buffer index: ${buffer.index()}")
     }
 
     private fun successOrThrowBest(outcome: AnalysisOutcome): AnalysisOutcome.Success {
