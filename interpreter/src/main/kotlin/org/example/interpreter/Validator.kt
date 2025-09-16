@@ -155,5 +155,4 @@ class Validator(
         pushLiteral(Type.NUMBER)
         return expr
     }
-
 }

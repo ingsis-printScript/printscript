@@ -199,6 +199,4 @@ class Executor(
         declareVariable(statement.symbol.value, value)
         return statement
     }
-
-
 }
