@@ -26,7 +26,7 @@ class ParserProvider11 : ParserProvider {
         val keywordFactoryMap = createKeywordFactoryMap()
 
         val declarators = setOf("let", "const")
-        val types = setOf("number", "string")
+        val types = setOf("number", "string", "boolean")
         val expressions = listOf(
             NumberValidator(),
             SymbolValidator(),
@@ -35,8 +35,8 @@ class ParserProvider11 : ParserProvider {
         )
 
         val keywordMap: Map<String, (OptionalExpression, Range) -> Expression> = mapOf(
-            "readinput" to { opt, range -> ReadInputExpression(opt, range) },
-            "readenv" to { opt, range -> ReadEnvExpression(opt, range) }
+            "readInput" to { opt, range -> ReadInputExpression(opt, range) },
+            "readEnv" to { opt, range -> ReadEnvExpression(opt, range) }
         )
 
         val commonParsers = listOf<StatementParser>(
