@@ -33,6 +33,6 @@ class PrintArgumentRule(
     }
 
     override fun isEnabled(configuration: LinterConfiguration): Boolean {
-        return configuration.getBoolean("println_only_literals_and_identifiers")
+        return configuration.getBoolean("mandatory-variable-or-literal-in-println")
     }
 }

@@ -67,6 +67,15 @@ class Validator(
         return statement
     }
 
+    override fun visitVariableImmutableDeclarator(statement: VariableImmutableDeclarator): ASTNode {
+        val type = when (val opt = statement.value) {
+            is OptionalExpression.HasExpression -> evaluate(opt.expression)
+            is OptionalExpression.NoExpression -> null
+        }
+        declareVariable(statement.symbol.value, type ?: statement.type)
+        return statement
+    }
+
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val type = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
@@ -126,16 +135,6 @@ class Validator(
         evaluate(statement.condition)
         statement.ifBlock.forEach { evaluate(it) }
         statement.elseBlock?.forEach { evaluate(it) }
-        return statement
-    }
-
-
-    override fun visitVariableImmutableDeclarator(statement: VariableImmutableDeclarator): ASTNode {
-        val type = when (val opt = statement.value) {
-            is OptionalExpression.HasExpression -> evaluate(opt.expression)
-            is OptionalExpression.NoExpression -> null
-        }
-        declareVariable(statement.symbol.value, type ?: statement.type)
         return statement
     }
 

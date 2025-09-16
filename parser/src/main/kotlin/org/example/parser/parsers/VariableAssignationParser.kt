@@ -1,6 +1,8 @@
 package org.example.parser.parsers
 
 import org.example.ast.ASTNode
+import org.example.ast.expressions.Expression
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.VariableAssigner
 import org.example.common.Position
@@ -13,7 +15,8 @@ import org.example.parser.validators.TokenValidator
 import org.example.token.Token
 
 class VariableAssignationParser(
-    expressionValidators: List<TokenValidator>
+    expressionValidators: List<TokenValidator>,
+    private val keywordMap: Map<String, (OptionalExpression, Range) -> Expression>
 ) : StatementParser {
 
     private val idPos = 0
@@ -40,7 +43,7 @@ class VariableAssignationParser(
             Position(statements[statements.size - 1].position.line, statements[statements.size - 1].position.column)
         )
 
-        val expressionBuilder = ExpressionBuilder()
+        val expressionBuilder = ExpressionBuilder(keywordMap)
         val expression = expressionBuilder.buildExpression(statements, equalsPos + 1, statements.size - 1)
 
         return VariableAssigner(symbol, expression, range)

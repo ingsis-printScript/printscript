@@ -8,8 +8,4 @@ data class LinterConfiguration(private val data: Map<String, Any>) {
     fun getBoolean(key: String): Boolean {
         return data[key] as? Boolean ?: false
     }
-
-    fun getInt(key: String): Int? {
-        return data[key] as? Int
-    }
 }

@@ -31,7 +31,7 @@ class Executor(
     val errorHandler: ErrorHandler
 ) : ASTVisitor<ASTNode>{
 
-    private val environment = mutableMapOf<String, Any?>()
+    private val environment = mutableMapOf<String, Variable>()
     private val stack = mutableListOf<Any?>()
 
 
@@ -59,12 +59,12 @@ class Executor(
     fun pushLiteral(value: Any?) = stack.add(value)
     fun popLiteral(): Any? = if (stack.isEmpty()) null else stack.removeAt(stack.size - 1)
 
-    fun declareVariable(name: String, value: Any?) {
-        if (environment.containsKey(name)) {
-            errorHandler.handleError("Variable $name already declared")
+    fun declareVariable(variable: Variable) {
+        if (environment.containsKey(variable.name)) {
+            errorHandler.handleError("Variable $variable.name already declared")
             return
         }
-        environment[name] = value
+        environment[variable.name] = variable
     }
 
     fun assignVariable(name: String, value: Any?) {
@@ -72,7 +72,12 @@ class Executor(
             errorHandler.handleError("Variable $name not declared")
             return
         }
-        environment[name] = value
+        val variable = environment[name]!!
+        if (variable.immutable && variable.value != null) {
+            errorHandler.handleError("Immutable variable $name already assigned")
+            return
+        }
+        environment[name] = Variable(variable.name, value, variable.immutable)
     }
 
     fun isVariableDeclared(name: String): Boolean {
@@ -183,7 +188,7 @@ class Executor(
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        declareVariable(statement.symbol.value, value)
+        declareVariable(Variable(statement.symbol.value, value, immutable = false))
         return statement
     }
 
@@ -192,7 +197,7 @@ class Executor(
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        declareVariable(statement.symbol.value, value)
+        declareVariable(Variable(statement.symbol.value, value, immutable = true))
         return statement
     }
 }

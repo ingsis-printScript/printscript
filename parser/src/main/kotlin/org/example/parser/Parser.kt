@@ -16,8 +16,6 @@ class Parser(
 ) : PrintScriptIterator<Result> {
 
     override fun hasNext(): Boolean {
-        // duda: miro si buffer tiene next o si recibo un ASTNode?
-        // si lo cambio a que haya un statement completo valido, update condition parse()
         return tokenBuffer.hasNext()
     }
 

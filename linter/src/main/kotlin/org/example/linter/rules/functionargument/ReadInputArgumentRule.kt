@@ -34,6 +34,6 @@ class ReadInputArgumentRule(
     }
 
     override fun isEnabled(configuration: LinterConfiguration): Boolean {
-        return configuration.getBoolean("readInput_only_literals_and_identifiers")
+        return configuration.getBoolean("mandatory-variable-or-literal-in-readInput")
     }
 }

@@ -36,11 +36,10 @@ class ReadEnvNodeHandlerTest {
 
     @Test
     fun `should read string env variable correctly`() {
-        val varName = "PATH"
         val startPos = Position(0, 0)
         val endPos = Position(0, 0)
         val range = Range(startPos, endPos)
-        val node = ReadEnvExpression(varName, range)
+        val node = ReadEnvExpression("PATH", range)
         val executor = Executor(
             handlers,
             inputProvider = fakeInputProvider,
@@ -48,10 +47,12 @@ class ReadEnvNodeHandlerTest {
             errorHandler = fakeErrorHandler
         )
 
+        executor.declareVariable("PATH", "/usr/bin")
+
         val result = executor.evaluate(node)
 
         assertTrue(result is String)
-        assertTrue((result as String).isNotEmpty())
+        assertEquals("/usr/bin", result)
         assertTrue(fakeErrorHandler.errors.isEmpty())
     }
 
@@ -72,10 +73,5 @@ class ReadEnvNodeHandlerTest {
 
         assertEquals(null, result)
         assertTrue(fakeErrorHandler.errors.isNotEmpty())
-    }
-
-    private fun setEnv(vararg pairs: Pair<String, String>) {
-        val env = System.getenv() as MutableMap
-        pairs.forEach { (k, v) -> env[k] = v }
     }
 }

@@ -1,306 +1,571 @@
+import org.example.ast.ASTNode
+import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.OptionalExpression
+import org.example.ast.expressions.ReadInputExpression
+import org.example.ast.statements.VariableAssigner
+import org.example.ast.statements.VariableDeclarator
+import org.example.ast.statements.functions.PrintFunction
+import org.example.common.ErrorHandler
+import org.example.common.Position
+import org.example.common.PrintScriptIterator
+import org.example.common.Range
 import org.example.common.enums.Operator
 import org.example.common.enums.Type
+import org.example.common.results.Error
+import org.example.common.results.Result
+import org.example.common.results.Success
 import org.example.linter.Linter
-import org.example.linter.provider.LinterProvider10
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Path
+import org.example.linter.provider.LinterVersionProvider
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class LinterTest {
 
-    @TempDir
-    lateinit var tempDir: Path
-    private lateinit var linter: Linter
-    private val astFactory = AstFactory()
-
-    @BeforeEach
-    fun setUp() {
-        this.linter = LinterProvider10().provide()
+    //linter -----------------------------------------
+    class TestIterator(private val items: List<ASTNode>) : PrintScriptIterator<Result> {
+        private var index = 0
+        override fun hasNext() = index < items.size
+        override fun getNext(): Result = Success(items[index++])
     }
 
-    @Test
-    fun `should read JSON configuration correctly`() {
-        // Config: { "identifier_format": "camel_case", "println_only_literals_and_identifiers": true }
-        val configFile = createJsonConfig(
-            mapOf(
-                "identifier_format" to "camel_case",
-                "println_only_literals_and_identifiers" to true
-            )
-        )
+    val astFactory = AstFactory()
 
-        // AST: Simple symbol "userName" (valid camelCase)
-        val ast = astFactory.createSymbol("userName")
-
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
+    private fun createLinter(version: String, nodes: List<ASTNode>, inputStream: InputStream, errorHandler: ErrorHandler) : Linter {
+        val provider = LinterVersionProvider().with(version)
+        return provider.provide(TestIterator(nodes), inputStream, errorHandler)
     }
 
-    @Test
-    fun `should read YAML configuration correctly`() {
-        // Config: identifier_format: snake_case, println_only_literals_and_identifiers: false
-        val configFile = createYamlConfig(
-            mapOf(
-                "identifier_format" to "snake_case",
-                "println_only_literals_and_identifiers" to false
-            )
-        )
-
-        // AST: Simple symbol "user_name" (valid snake_case)
-        val ast = astFactory.createSymbol("user_name")
-
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
-    }
-
-    @Test
-    fun `should throw exception for non-existent config file`() {
-        // AST: Any simple AST
-        val ast = astFactory.createSymbol("test")
-
-        assertThrows(IllegalArgumentException::class.java) {
-            linter.analyze(ast, "non-existent.json")
+    private fun configStream(
+        printlnOnlyLiteralsAndIdentifiers: Boolean? = null,
+        identifierFormat: String? = null,
+        readInputOnlyLiteralsAndIdentifiers: Boolean? = null
+    ): InputStream {
+        val parts = mutableListOf<String>()
+        if (printlnOnlyLiteralsAndIdentifiers != null) {
+            parts += "\"mandatory-variable-or-literal-in-println\": $printlnOnlyLiteralsAndIdentifiers"
         }
+        if (identifierFormat != null) {
+            parts += "\"identifier_format\": \"$identifierFormat\""
+        }
+        if (readInputOnlyLiteralsAndIdentifiers != null) {
+            parts += "\"mandatory-variable-or-literal-in-readInput\": $readInputOnlyLiteralsAndIdentifiers"
+        }
+        val json = "{${parts.joinToString(",")}}"
+        return ByteArrayInputStream(json.toByteArray())
     }
 
-    // ========== SYMBOL FORMAT RULE TESTS ==========
 
-    @Test
-    fun `should accept valid camelCase identifiers`() {
-        val configFile = createJsonConfig(mapOf("identifier_format" to "camel_case"))
 
-        // camelCase let userName: string = "test";
-        val symbol = astFactory.createSymbol("userName")
-        val value = OptionalExpression.HasExpression(astFactory.createString("test"))
-        val ast = astFactory.createVariableDeclarator(symbol, Type.STRING, value)
+    //astnodes -----------------------------------------
 
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
-    }
-
-    @Test
-    fun `should reject invalid camelCase identifiers`() {
-        val configFile = createJsonConfig(mapOf("identifier_format" to "camel_case"))
-
-        // AST: Variable declaration with snake_case name - let user_name: string = "test";
-        val symbol = astFactory.createSymbol("user_name")
-        val value = OptionalExpression.HasExpression(astFactory.createString("test"))
-        val ast = astFactory.createVariableDeclarator(symbol, Type.STRING, value)
-
-        val report = linter.analyze(ast, configFile)
-        assertTrue(report.hasViolations())
-        assertTrue(report.violations[0].message.contains("should be in camelCase format"))
-    }
-
-    @Test
-    fun `should accept valid snake_case identifiers`() {
-        val configFile = createJsonConfig(mapOf("identifier_format" to "snake_case"))
-
-        // AST: Variable assignment - user_name = "test";
-        val symbol = astFactory.createSymbol("user_name")
-        val value = OptionalExpression.HasExpression(astFactory.createString("test"))
-        val ast = astFactory.createVariableAssigment(symbol, value)
-
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
-    }
-
-    @Test
-    fun `should reject invalid snake_case identifiers`() {
-        val configFile = createJsonConfig(mapOf("identifier_format" to "snake_case"))
-
-        // AST: Variable assignment - userName = "test";
-        val symbol = astFactory.createSymbol("userName")
-        val value = OptionalExpression.HasExpression(astFactory.createString("test"))
-        val ast = astFactory.createVariableAssigment(symbol, value)
-
-        val report = linter.analyze(ast, configFile)
-        assertTrue(report.hasViolations())
-        assertTrue(report.violations[0].message.contains("should be in snake_case format"))
-    }
-
-    @Test
-    fun `should check symbols in binary expressions`() {
-        val configFile = createJsonConfig(mapOf("identifier_format" to "camel_case"))
-
-        // AST: Binary expression - user_name + other_var (both invalid camelCase)
-        val leftSymbol = astFactory.createSymbol("user_name")
-        val rightSymbol = astFactory.createSymbol("other_var")
-        val ast = astFactory.createBinaryExpression(leftSymbol, Operator.ADD, rightSymbol)
-
-        val report = linter.analyze(ast, configFile)
-        assertEquals(2, report.violations.size)
-    }
-
-    @Test
-    fun `symbol format rule should be disabled when not configured`() {
-        val configFile = createJsonConfig(emptyMap())
-
-        // AST: Variable with any format - user_name (no rule configured, should pass)
-        val symbol = astFactory.createSymbol("user_name")
-        val ast = astFactory.createVariableDeclarator(symbol, Type.STRING)
-
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
-    }
-
-    // ========== PRINT ARGUMENT RULE TESTS ==========
-
-    @Test
-    fun `should allow println with string literal`() {
-        val configFile = createJsonConfig(mapOf("println_only_literals_and_identifiers" to true))
-
-        // AST: println("hello world");
-        val stringArg = astFactory.createString("hello world")
-        val ast = astFactory.createPrintFunction(OptionalExpression.HasExpression(stringArg))
-
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
-    }
-
-    @Test
-    fun `should allow println with number literal`() {
-        val configFile = createJsonConfig(mapOf("println_only_literals_and_identifiers" to true))
-
-        // AST: println(42);
-        val numberArg = astFactory.createNumber("42")
-        val ast = astFactory.createPrintFunction(OptionalExpression.HasExpression(numberArg))
-
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
-    }
-
-    @Test
-    fun `should allow println with identifier`() {
-        val configFile = createJsonConfig(mapOf("println_only_literals_and_identifiers" to true))
-
-        // AST: println(variable);
-        val symbolArg = astFactory.createSymbol("variable")
-        val ast = astFactory.createPrintFunction(OptionalExpression.HasExpression(symbolArg))
-
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
-    }
-
-    @Test
-    fun `should reject println with binary expression`() {
-        val configFile = createJsonConfig(mapOf("println_only_literals_and_identifiers" to true))
-
-        // AST: println(a + b);
-        val leftSymbol = astFactory.createSymbol("a")
-        val rightSymbol = astFactory.createSymbol("b")
-        val binaryExpr = astFactory.createBinaryExpression(leftSymbol, Operator.ADD, rightSymbol)
-        val ast = astFactory.createPrintFunction(OptionalExpression.HasExpression(binaryExpr))
-
-        val report = linter.analyze(ast, configFile)
-        assertTrue(report.hasViolations())
-        assertTrue(report.violations[0].message.contains("println() can not contain"))
-    }
-
-    @Test
-    fun `should allow println with no arguments`() {
-        val configFile = createJsonConfig(mapOf("println_only_literals_and_identifiers" to true))
-
-        // AST: println();
-        val ast = astFactory.createPrintFunction(OptionalExpression.NoExpression)
-
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
-    }
-
-    @Test
-    fun `print argument rule should be disabled when not configured`() {
-        val configFile = createJsonConfig(mapOf("println_only_literals_and_identifiers" to false))
-
-        // AST: println(a + b); (should pass since rule is disabled)
-        val leftSymbol = astFactory.createSymbol("a")
-        val rightSymbol = astFactory.createSymbol("b")
-        val binaryExpr = astFactory.createBinaryExpression(leftSymbol, Operator.ADD, rightSymbol)
-        val ast = astFactory.createPrintFunction(OptionalExpression.HasExpression(binaryExpr))
-
-        val report = linter.analyze(ast, configFile)
-        assertFalse(report.hasViolations())
-    }
-
-    // ========== INTEGRATION TESTS ==========
-
-    @Test
-    fun `should apply multiple rules simultaneously`() {
-        val configFile = createJsonConfig(
-            mapOf(
-                "identifier_format" to "camel_case",
-                "println_only_literals_and_identifiers" to true
-            )
+    // let userName: string = "Juan"
+    val varDeclCamel: VariableDeclarator =
+        astFactory.createVariableDeclarator(
+            astFactory.createSymbol("userName"),
+            Type.STRING,
+            OptionalExpression.HasExpression(astFactory.createString("Juan"))
         )
 
-        // AST: println(user_name + other_var);
-        val leftSymbol = astFactory.createSymbol("user_name")
-        val rightSymbol = astFactory.createSymbol("other_var")
-        val binaryExpr = astFactory.createBinaryExpression(leftSymbol, Operator.ADD, rightSymbol)
-        val ast = astFactory.createPrintFunction(OptionalExpression.HasExpression(binaryExpr))
+    // let user_name: string = "Juan"
+    val varDeclSnake: VariableDeclarator =
+        astFactory.createVariableDeclarator(
+            astFactory.createSymbol("user_name"),
+            Type.STRING,
+            OptionalExpression.HasExpression(astFactory.createString("Juan"))
+        )
 
-        val report = linter.analyze(ast, configFile)
-        assertEquals(3, report.violations.size)
+    // userName = 1
+    val assignCamel: VariableAssigner =
+        astFactory.createVariableAssigment(
+            astFactory.createSymbol("userName"),
+            OptionalExpression.HasExpression(astFactory.createNumber("1"))
+        )
+
+    // println("hola")
+    val printLiteral: PrintFunction =
+        astFactory.createPrintFunction(
+            OptionalExpression.HasExpression(astFactory.createString("hola"))
+        )
+
+    // println(1 + 2)
+    val binLiteralPlus: org.example.ast.expressions.Expression =
+        astFactory.createBinaryExpression(
+            astFactory.createNumber("1"),
+            Operator.ADD,
+            astFactory.createNumber("2")
+        )
+    val printBinary: PrintFunction =
+        astFactory.createPrintFunction(
+            OptionalExpression.HasExpression(binLiteralPlus)
+        )
+
+    // println(userAge + 1)
+    val binIdPlusNum: org.example.ast.expressions.Expression =
+        astFactory.createBinaryExpression(
+            astFactory.createSymbol("userAge"),
+            Operator.ADD,
+            astFactory.createNumber("1")
+        )
+    val printBinaryWithIdentifier: PrintFunction =
+        astFactory.createPrintFunction(
+            OptionalExpression.HasExpression(binIdPlusNum)
+        )
+
+    val readInputIdentifier = ReadInputExpression(
+        OptionalExpression.HasExpression(astFactory.createSymbol("promptVar")),
+        astFactory.basicRange
+    )
+
+
+    val bin = astFactory.createBinaryExpression(
+            astFactory.createNumber("1"),
+            Operator.ADD,
+            astFactory.createNumber("2")
+        )
+    val readInputBinary =ReadInputExpression(
+            OptionalExpression.HasExpression(bin),
+            astFactory.basicRange
+        )
+
+// tests -------------------------------------------------
+
+        @Test
+        fun `regla habilitada - permite literal e identificador, prohíbe binaria`() {
+            val nodes = listOf(printLiteral, printBinary, printBinaryWithIdentifier)
+            val fakeErrorHandler = object : ErrorHandler {
+                val errors = mutableListOf<String>()
+                override fun handleError(message: String) {
+                    errors.add(message)
+                }
+            }
+            val linter =
+                createLinter("1.0", nodes, configStream(printlnOnlyLiteralsAndIdentifiers = true), fakeErrorHandler)
+
+            // Casos OK
+            val r1 = linter.getNext()
+            assertTrue(r1 is Success<*>)
+            assertTrue(fakeErrorHandler.errors.isEmpty())
+
+            // Casos prohibidos
+            val r3 = linter.getNext()
+            assertTrue(linter.hasNext())
+            val r4 = linter.getNext()
+            assertTrue(r3 is Success<*>)
+            assertTrue(r4 is Success<*>)
+            assertTrue(
+                fakeErrorHandler.errors.isNotEmpty()
+            )
+        }
+
+        @Test
+        fun `regla deshabilitada - no reporta nada aunque el argumento sea binario`() {
+            val nodes = listOf(printBinary)
+            val fakeErrorHandler = object : ErrorHandler {
+                val errors = mutableListOf<String>()
+                override fun handleError(message: String) {
+                    errors.add(message)
+                }
+            }
+            val linter =
+                createLinter("1.0", nodes, configStream(printlnOnlyLiteralsAndIdentifiers = false), fakeErrorHandler)
+
+            val r = linter.getNext()
+            assertTrue(r is Success<*>)
+            assertTrue(
+                fakeErrorHandler.errors.isEmpty(),
+            )
+        }
+
+
+        // =============== TESTS SymbolFormatRule =================
+
+        @Test
+        fun `identifier_format=camelCase - camel OK, snake reporta error`() {
+            val nodes = listOf(varDeclCamel, assignCamel, varDeclSnake)
+            val fakeErrorHandler = object : ErrorHandler {
+                val errors = mutableListOf<String>()
+                override fun handleError(message: String) {
+                    errors.add(message)
+                }
+            }
+
+            val linter = createLinter(
+                "1.0",
+                nodes,
+                configStream(identifierFormat = "camelCase"),
+                fakeErrorHandler
+            )
+
+            val r1 = linter.getNext()
+            val r2 = linter.getNext()
+            assertTrue(r1 is Success<*>)
+            assertTrue(r2 is Success<*>)
+            assertTrue(fakeErrorHandler.errors.isEmpty())
+
+            val r3 = linter.getNext()
+            assertTrue(r3 is Success<*>)
+            assertTrue(fakeErrorHandler.errors.isNotEmpty())
+        }
+
+        @Test
+        fun `identifier_format=snake_case - snake OK, camel reporta error`() {
+            val nodes = listOf(varDeclSnake, varDeclCamel)
+            val fakeErrorHandler = object : ErrorHandler {
+                val errors = mutableListOf<String>()
+                override fun handleError(message: String) {
+                    errors.add(message)
+                }
+            }
+
+            val linter = createLinter(
+                "1.0",
+                nodes,
+                configStream(identifierFormat = "snake_case"),
+                fakeErrorHandler
+            )
+
+            // OK (snake)
+            val r1 = linter.getNext()
+            assertTrue(r1 is Success<*>)
+            assertTrue(fakeErrorHandler.errors.isEmpty())
+
+            // Camel => debería reportar
+            val r2 = linter.getNext()
+            assertTrue(r2 is Success<*>)
+            assertTrue(fakeErrorHandler.errors.isNotEmpty())
+        }
+
+        @Test
+        fun `identifier_format no seteado - no reporta nada (regla deshabilitada)`() {
+            val nodes = listOf(varDeclCamel, varDeclSnake)
+            val fakeErrorHandler = object : ErrorHandler {
+                val errors = mutableListOf<String>()
+                override fun handleError(message: String) {
+                    errors.add(message)
+                }
+            }
+
+            val linter = createLinter(
+                "1.0",
+                nodes,
+                configStream(printlnOnlyLiteralsAndIdentifiers = true),
+                fakeErrorHandler
+            )
+
+            val r1 = linter.getNext()
+            val r2 = linter.getNext()
+            assertTrue(r1 is Success<*>)
+            assertTrue(r2 is Success<*>)
+            assertTrue(fakeErrorHandler.errors.isEmpty())
+        }
+
+        @Test
+        fun `regla habilitada - print con boolean como argumento reporta error`() {
+            // println(true)
+            val booleanArg = BooleanExpression("true", astFactory.basicPosition)
+            val printBooleanFail: PrintFunction =
+                astFactory.createPrintFunction(
+                    OptionalExpression.HasExpression(booleanArg)
+                )
+
+            val fakeErrorHandler = object : ErrorHandler {
+                val errors = mutableListOf<String>()
+                override fun handleError(message: String) {
+                    errors.add(message)
+                }
+            }
+
+            val linter = createLinter(
+                "1.0",
+                listOf(printBooleanFail, booleanArg),
+                configStream(printlnOnlyLiteralsAndIdentifiers = true),
+                fakeErrorHandler
+            )
+
+            val r = linter.getNext()
+            assertTrue(r is Error)
+            val r2 = linter.getNext()
+            assertTrue(r2 is Error)
+            assertTrue(fakeErrorHandler.errors.isEmpty())
+        }
+
+
+        //tests for linter 1.1 -------------------------
+        @Test
+        fun `regla habilitada - print con boolean como argumento no reporta error`() {
+            // println(true)
+            val booleanArg = BooleanExpression("true", astFactory.basicPosition)
+            val printBooleanFail: PrintFunction =
+                astFactory.createPrintFunction(
+                    OptionalExpression.HasExpression(booleanArg)
+                )
+
+            val fakeErrorHandler = object : ErrorHandler {
+                val errors = mutableListOf<String>()
+                override fun handleError(message: String) {
+                    errors.add(message)
+                }
+            }
+
+            val linter = createLinter(
+                "1.1",
+                listOf(printBooleanFail, booleanArg),
+                configStream(printlnOnlyLiteralsAndIdentifiers = true),
+                fakeErrorHandler
+            )
+
+            val r = linter.getNext()
+            assertTrue(r is Success<*>)
+            val r2 = linter.getNext()
+            assertTrue(r2 is Success<*>)
+            assertTrue(fakeErrorHandler.errors.isEmpty())
+        }
+
+        @Test
+        fun `readInput habilitada - permite literal e identificador, prohíbe binaria`() {
+            val nodes = listOf(readInputIdentifier, readInputBinary)
+            val fakeErrorHandler = object : ErrorHandler {
+                val errors = mutableListOf<String>()
+                override fun handleError(message: String) {
+                    errors.add(message)
+                }
+            }
+
+            val linter = createLinter(
+                "1.1",
+                nodes,
+                configStream(readInputOnlyLiteralsAndIdentifiers = true),
+                fakeErrorHandler
+            )
+
+            // Casos OK
+            val r1 = linter.getNext()
+            assertTrue(r1 is Success<*>)
+            assertTrue(fakeErrorHandler.errors.isEmpty())
+
+            // Caso prohibido
+            val r2 = linter.getNext()
+            assertTrue(r2 is Success<*>)
+            assertTrue(fakeErrorHandler.errors.isNotEmpty())
+        }
+
+    private fun readInputBinaryWithRange(range: Range): ReadInputExpression {
+        val bin = astFactory.createBinaryExpression(
+            astFactory.createNumber("1"),
+            Operator.ADD,
+            astFactory.createNumber("2")
+        )
+        return ReadInputExpression(
+            OptionalExpression.HasExpression(bin),
+            range
+        )
     }
 
     @Test
-    fun `should handle complex AST with nested violations`() {
-        val configFile = createJsonConfig(
-            mapOf(
-                "identifier_format" to "snake_case",
-                "println_only_literals_and_identifiers" to true
-            )
+    fun `readInput habilitada - mensaje incluye nombre de funcion y range`() {
+        // rango distintivo para asertar exactamente
+        val customRange = Range(Position(7, 4), Position(7, 12))
+        val node = readInputBinaryWithRange(customRange)
+
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) { errors.add(message) }
+        }
+
+        // Usar provider 1.1
+        val linter = createLinter(
+            "1.1",
+            listOf(node),
+            configStream(readInputOnlyLiteralsAndIdentifiers = true),
+            fakeErrorHandler
         )
 
-        // let userName: string = "test";
-        // userName = userName + someVar;
-        // println(userName + someVar);
+        val r = linter.getNext()
+        assertTrue(r is Success<*>)
 
-        val symbol1 = astFactory.createSymbol("userName")
-        val value1 = OptionalExpression.HasExpression(astFactory.createString("test"))
-        val declaration = astFactory.createVariableDeclarator(symbol1, Type.STRING, value1)
+        assertTrue(fakeErrorHandler.errors.isNotEmpty())
+        val msg = fakeErrorHandler.errors.first()
 
-        // Then create assignment with binary expression
-        val symbol2 = astFactory.createSymbol("userName")
-        val symbol3 = astFactory.createSymbol("someVar")
-        val binaryExpr = astFactory.createBinaryExpression(symbol2, Operator.ADD, symbol3)
-        val assignment = astFactory.createVariableAssigment(symbol1, OptionalExpression.HasExpression(binaryExpr))
-
-        // Finally println with binary expression
-        val printFunction = astFactory.createPrintFunction(OptionalExpression.HasExpression(binaryExpr))
-
-        // Test each part separately to verify violations
-        val report1 = linter.analyze(declaration, configFile)
-        val report2 = linter.analyze(assignment, configFile)
-        val report3 = linter.analyze(printFunction, configFile)
-
-        assertTrue(report1.hasViolations())
-        assertTrue(report2.hasViolations())
-        assertTrue(report3.hasViolations()) // cambiar a size check
+        assertTrue("readInput()" in msg)
+        assertTrue(customRange.toString() in msg, "El mensaje debe incluir el range del ReadInputExpression")
     }
 
-    // ========== HELPER METHODS ==========
-
-    private fun createJsonConfig(config: Map<String, Any>): String {
-        val configFile = tempDir.resolve("config.json").toFile()
-        val jsonContent = config.entries.joinToString(",\n") { (key, value) ->
-            "  \"$key\": ${if (value is String) "\"$value\"" else value}"
+    @Test
+    fun `readInput habilitada - literal permitido no reporta`() {
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) { errors.add(message) }
         }
-        configFile.writeText("{\n$jsonContent\n}")
-        return configFile.absolutePath
+
+        val linter = createLinter(
+            "1.1",
+            listOf(readInputIdentifier),
+            configStream(readInputOnlyLiteralsAndIdentifiers = true),
+            fakeErrorHandler
+        )
+
+        val r1 = linter.getNext()
+        assertTrue(r1 is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isEmpty(), "Literal o identificador no deberían reportar")
     }
 
-    private fun createYamlConfig(config: Map<String, Any>): String {
-        val configFile = tempDir.resolve("config.yaml").toFile()
-        val yamlContent = config.entries.joinToString("\n") { (key, value) ->
-            "$key: $value"
+    @Test
+    fun `1_1 camelCase - marca snake_case en todos los nodos soportados`() {
+        val snake = "bad_name"
+
+        val nodes = listOf(
+            // SymbolExpression directo
+            astFactory.createSymbol(snake),
+            // BinaryExpression: símbolo a la izquierda (y número a la derecha)
+            astFactory.createBinaryExpression(astFactory.createSymbol(snake), Operator.ADD, astFactory.createNumber("1")),
+            // PrintFunction(value = SymbolExpression snake)
+            astFactory.createPrintFunction(OptionalExpression.HasExpression(astFactory.createSymbol(snake))),
+            // VariableAssigner(symbol = snake, value = número)
+            astFactory.createVariableAssigment(astFactory.createSymbol(snake), OptionalExpression.HasExpression(astFactory.createNumber("10"))),
+            // VariableDeclarator(symbol = snake, value = string)
+            astFactory.createVariableDeclarator(astFactory.createSymbol(snake), Type.STRING, OptionalExpression.HasExpression(astFactory.createString("x"))),
+            // ReadInputExpression(value = SymbolExpression snake)
+            ReadInputExpression(OptionalExpression.HasExpression(astFactory.createSymbol(snake)), astFactory.basicRange),
+        )
+
+        val eh = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) { errors += message }
         }
-        configFile.writeText(yamlContent)
-        return configFile.absolutePath
+
+        val linter = createLinter(
+            "1.1",
+            nodes,
+            configStream(identifierFormat = "camelCase"),
+            eh
+        )
+
+        // corremos todos los nodos
+        while (linter.hasNext()) {
+            val r = linter.getNext()
+            assertTrue(r is Success<*>)
+        }
+
+        // Cada nodo de arriba contiene exactamente 1 símbolo snake a chequear -> 6 errores
+        kotlin.test.assertEquals(6, eh.errors.size, "Debe reportar formato inválido para cada símbolo snake_case")
     }
-}
+
+    @Test
+    fun `1_1 camelCase - NO marca camelCase en todos los nodos soportados`() {
+        val camel = "goodName"
+
+        val nodes = listOf(
+            astFactory.createSymbol(camel),
+            astFactory.createBinaryExpression(astFactory.createSymbol(camel), Operator.ADD, astFactory.createNumber("1")),
+            astFactory.createPrintFunction(OptionalExpression.HasExpression(astFactory.createSymbol(camel))),
+            astFactory.createVariableAssigment(astFactory.createSymbol(camel), OptionalExpression.HasExpression(astFactory.createNumber("10"))),
+            astFactory.createVariableDeclarator(astFactory.createSymbol(camel), Type.STRING, OptionalExpression.HasExpression(astFactory.createString("x"))),
+            ReadInputExpression(OptionalExpression.HasExpression(astFactory.createSymbol(camel)), astFactory.basicRange),
+        )
+
+        val eh = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) { errors += message }
+        }
+
+        val linter = createLinter(
+            "1.1",
+            nodes,
+            configStream(identifierFormat = "camelCase"),
+            eh
+        )
+
+        while (linter.hasNext()) {
+            val r = linter.getNext()
+            assertTrue(r is Success<*>)
+        }
+        assertTrue(eh.errors.isEmpty(), "No deberían reportarse errores para camelCase válido")
+    }
+
+    @Test
+    fun `1_1 snake_case - marca camelCase en todos los nodos soportados`() {
+        val camel = "badName"
+
+        val nodes = listOf(
+            astFactory.createSymbol(camel),
+            astFactory.createBinaryExpression(astFactory.createSymbol(camel), Operator.ADD, astFactory.createNumber("1")),
+            astFactory.createPrintFunction(OptionalExpression.HasExpression(astFactory.createSymbol(camel))),
+            astFactory.createVariableAssigment(astFactory.createSymbol(camel), OptionalExpression.HasExpression(astFactory.createNumber("10"))),
+            astFactory.createVariableDeclarator(astFactory.createSymbol(camel), Type.STRING, OptionalExpression.HasExpression(astFactory.createString("x"))),
+            ReadInputExpression(OptionalExpression.HasExpression(astFactory.createSymbol(camel)), astFactory.basicRange),
+        )
+
+        val eh = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) { errors += message }
+        }
+
+        val linter = createLinter(
+            "1.1",
+            nodes,
+            configStream(identifierFormat = "snake_case"),
+            eh
+        )
+
+        while (linter.hasNext()) {
+            val r = linter.getNext()
+            assertTrue(r is Success<*>)
+        }
+        kotlin.test.assertEquals(6, eh.errors.size, "Debe reportar cada símbolo camelCase bajo regla snake_case")
+    }
+
+    @Test
+    fun `1_1 camelCase - BinaryExpression con dos símbolos snake produce dos errores (recorre left y right)`() {
+        val leftSnake  = astFactory.createSymbol("left_bad_name")
+        val rightSnake = astFactory.createSymbol("right_bad_name")
+        val binBoth = astFactory.createBinaryExpression(leftSnake, Operator.ADD, rightSnake)
+
+        val eh = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) { errors += message }
+        }
+
+        val linter = createLinter(
+            "1.1",
+            listOf(binBoth),
+            configStream(identifierFormat = "camelCase"),
+            eh
+        )
+
+        val r = linter.getNext()
+        assertTrue(r is Success<*>)
+        kotlin.test.assertEquals(2, eh.errors.size, "Debe reportar por cada símbolo snake en left y right")
+    }
+
+    @Test
+    fun `1_1 camelCase - ignora hojas no-símbolo (Number, Boolean, String) y no reporta`() {
+        // Estos nodos no contienen símbolos; el handler no debería reportar nada
+        val nodes = listOf(
+            // BooleanExpression, NumberExpression y StringExpression se ignoran en el when del handler
+            BooleanExpression("true", astFactory.basicPosition),
+            astFactory.createNumber("123"),
+            astFactory.createString("hola")
+        )
+
+        val eh = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) { errors += message }
+        }
+
+        val linter = createLinter(
+            "1.1",
+            nodes,
+            configStream(identifierFormat = "camelCase"),
+            eh
+        )
+
+        while (linter.hasNext()) {
+            val r = linter.getNext()
+            assertTrue(r is Success<*>)
+        }
+        assertTrue(eh.errors.isEmpty(), "Nodos hoja sin símbolos no deberían reportar")
+    }
+
+    }
