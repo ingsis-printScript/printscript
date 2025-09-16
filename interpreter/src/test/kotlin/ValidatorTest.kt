@@ -20,6 +20,10 @@ class ValidatorTest {
             errors.add(message)
         }
     }
+    private val errorHandler = FakeErrorHandler()
+
+    private val validator = Validator(errorHandler)
+
 
     @Test
     fun `should declare variable and infer type`() {
@@ -64,7 +68,6 @@ class ValidatorTest {
         val errorHandler = FakeErrorHandler()
         val validator = Validator(errorHandler)
 
-        // Declarar primero
         validator.evaluate(
             VariableDeclarator(
                 SymbolExpression("x", dummyPos),
@@ -74,7 +77,6 @@ class ValidatorTest {
             )
         )
 
-        // Asignar
         val assign = VariableAssigner(
             SymbolExpression("x", dummyPos),
             OptionalExpression.HasExpression(NumberExpression("10", dummyPos)),
@@ -164,4 +166,39 @@ class ValidatorTest {
         assertEquals(Type.BOOLEAN, validator.evaluate(BooleanExpression("true", dummyPos)))
         assertEquals(Type.STRING, validator.evaluate(StringExpression("\"hello\"", dummyPos)))
     }
+
+    @Test
+    fun `visitReadInput should push STRING type`() {
+        val node = ReadInputExpression(OptionalExpression.NoExpression, dummyRange)
+
+        validator.visitReadInput(node)
+
+        val result = validator.popLiteral()
+        assertEquals(Type.STRING, result)
+    }
+
+    @Test
+    fun `visitReadEnv without expression should push STRING type`() {
+        val node = ReadEnvExpression(OptionalExpression.NoExpression, dummyRange)
+
+        validator.visitReadEnv(node)
+
+        val result = validator.popLiteral()
+        assertEquals(Type.STRING, result)
+    }
+
+    @Test
+    fun `visitReadEnv with expression should evaluate expression type`() {
+        val expr = NumberExpression("123", dummyPos)
+        val node = ReadEnvExpression(OptionalExpression.HasExpression(expr), dummyRange)
+
+        validator.visitReadEnv(node)
+
+        val result = validator.popLiteral()
+        assertEquals(Type.NUMBER, result)
+    }
+
+
+
+
 }
