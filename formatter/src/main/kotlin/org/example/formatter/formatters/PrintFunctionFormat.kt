@@ -3,6 +3,7 @@ package org.example.formatter.formatters
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.functions.PrintFunction
+import org.example.formatter.PrivateIterator
 import org.example.formatter.Rule
 import java.io.Writer
 
@@ -14,7 +15,8 @@ class PrintFunctionFormat : ASTFormat {
         node: ASTNode,
         writer: Writer,
         rules: Map<String, Rule>,
-        nestingLevel: Int
+        nestingLevel: Int,
+        context: PrivateIterator
     ) {
         val printFunc = node as PrintFunction
 
@@ -23,13 +25,16 @@ class PrintFunctionFormat : ASTFormat {
 
         printFunc.value.let { expr ->
             if (expr is OptionalExpression.HasExpression) {
-                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
+                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel, context)
             }
         }
 
         writer.write(")")
-        for (i in 0 until indentation) {
-            writer.write("\n")
+        writer.write(";")
+        if (context.hasNext()) {
+            for (i in 0 until indentation) {
+                writer.write("\n")
+            }
         }
     }
 }

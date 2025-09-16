@@ -2,6 +2,7 @@ package org.example.formatter.formatters
 
 import org.example.ast.ASTNode
 import org.example.ast.statements.Condition
+import org.example.formatter.PrivateIterator
 import org.example.formatter.Rule
 import java.io.Writer
 
@@ -13,7 +14,8 @@ class ConditionFormat : ASTFormat {
         node: ASTNode,
         writer: Writer,
         rules: Map<String, Rule>,
-        nestingLevel: Int
+        nestingLevel: Int,
+        context: PrivateIterator
     ) {
         if (node !is Condition) return
 
@@ -26,7 +28,7 @@ class ConditionFormat : ASTFormat {
             val childSpaces = " ".repeat((nestingLevel + 1) * (rules["spaces"]?.quantity ?: 4))
             if (child is Condition) {
                 // recursión
-                formatNode(child, writer, rules, nestingLevel + 1)
+                formatNode(child, writer, rules, nestingLevel + 1, context)
             } else {
                 writer.append(childSpaces)
                 writer.append(child.toString() + newLine)
@@ -40,7 +42,7 @@ class ConditionFormat : ASTFormat {
             elseBlock.forEach { child ->
                 val childSpaces = " ".repeat((nestingLevel + 1) * (rules["spaces"]?.quantity ?: 4))
                 if (child is Condition) {
-                    formatNode(child, writer, rules, nestingLevel + 1)
+                    formatNode(child, writer, rules, nestingLevel + 1, context)
                 } else {
                     writer.append(childSpaces)
                     writer.append(child.toString() + newLine)

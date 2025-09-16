@@ -30,9 +30,7 @@ class Formatter(
     private val rules = ruler.allRules()
 
     fun formatNode(node: ASTNode, writer: Writer, nestingLevel: Int = 0) {
-        astFormat.formatNode(node, writer, rules, nestingLevel)
-        writer.write(";")
-        writer.write("\n")
+        astFormat.formatNode(node, writer, rules, nestingLevel, PrivateIterator(nodes))
     }
 
     // standard rules I'll probably have to use in most formatters, I made them private functions

@@ -3,6 +3,7 @@ package org.example.formatter.formatters
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableDeclarator
+import org.example.formatter.PrivateIterator
 import org.example.formatter.Rule
 import java.io.Writer
 
@@ -14,7 +15,8 @@ class VariableDeclaratorFormat : ASTFormat {
         node: ASTNode,
         writer: Writer,
         rules: Map<String, Rule>,
-        nestingLevel: Int
+        nestingLevel: Int,
+        context: PrivateIterator
     ) {
         val declarator = node as VariableDeclarator
 
@@ -33,15 +35,19 @@ class VariableDeclaratorFormat : ASTFormat {
         writer.write(":")
         writer.write(rightColonSpace + arroundColonSpace)
         writer.write(declarator.type.name.lowercase()) // asumiendo que Type tiene .name
-        writer.write(leftEqualSpace + arroundEqualSpace)
-        writer.write("=")
-        writer.write(rightEqualSpace + arroundEqualSpace)
+        if (declarator.value is OptionalExpression.HasExpression) {
+            writer.write(leftEqualSpace + arroundEqualSpace)
+            writer.write("=")
+            writer.write(rightEqualSpace + arroundEqualSpace)
+        }
 
         // Si hay valor, agregar '=' y formatearlo
         declarator.value.let { expr ->
             if (expr is OptionalExpression.HasExpression) {
-                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
+                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel, context)
             }
         }
+        writer.write(";")
+        if (context.hasNext()) writer.write("\n")
     }
 }

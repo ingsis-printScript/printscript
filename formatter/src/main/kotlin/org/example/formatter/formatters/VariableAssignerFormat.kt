@@ -3,6 +3,7 @@ package org.example.formatter.formatters
 import org.example.ast.ASTNode
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.VariableAssigner
+import org.example.formatter.PrivateIterator
 import org.example.formatter.Rule
 import java.io.Writer
 
@@ -14,7 +15,8 @@ class VariableAssignerFormat : ASTFormat {
         node: ASTNode,
         writer: Writer,
         rules: Map<String, Rule>,
-        nestingLevel: Int
+        nestingLevel: Int,
+        context: PrivateIterator
     ) {
         val assigner = node as VariableAssigner
 
@@ -32,8 +34,10 @@ class VariableAssignerFormat : ASTFormat {
         // Formateo del valor si existe
         assigner.value.let { expr ->
             if (expr is OptionalExpression.HasExpression) {
-                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
+                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel, context)
             }
         }
+        writer.write(";")
+        if (context.hasNext()) writer.write("\n")
     }
 }

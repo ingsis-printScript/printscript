@@ -2,6 +2,7 @@ package org.example.formatter.formatters
 
 import org.example.ast.ASTNode
 import org.example.ast.expressions.StringExpression
+import org.example.formatter.PrivateIterator
 import org.example.formatter.Rule
 import java.io.Writer
 
@@ -13,7 +14,8 @@ class StringExpressionFormat : ASTFormat {
         node: ASTNode,
         writer: Writer,
         rules: Map<String, Rule>,
-        nestingLevel: Int
+        nestingLevel: Int,
+        context: PrivateIterator
     ) {
         val stringExpr = node as StringExpression
 
