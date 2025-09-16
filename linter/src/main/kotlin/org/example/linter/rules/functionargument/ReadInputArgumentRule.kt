@@ -29,7 +29,6 @@ class ReadInputArgumentRule(
             errorHandler
         )
 
-
         return result
     }
 

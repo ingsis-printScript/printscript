@@ -8,5 +8,6 @@ data class BooleanExpression(
     val position: Position
 ) : Expression {
     override fun <T> accept(visitor: ASTVisitor<T>): T {
-        return  visitor.visitBoolean(this)  }
+        return visitor.visitBoolean(this)
+    }
 }

@@ -1,7 +1,6 @@
 
 import org.example.common.enums.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
-import org.example.common.exceptions.UnsupportedCharacterException
 import org.example.lexer.Lexer
 import org.example.lexer.provider.LexerProvider10
 import org.example.token.Token
@@ -147,16 +146,14 @@ class LexerTest {
     }
 
     @Test
-    fun `test lexer throws exception for unsupported character`() {
+    fun `test lexer returns unknown for unsupported character`() {
         // Given
         val lexer = createLexer("@invalid")
 
         // When & Then
         assertTrue(lexer.hasNext())
 
-        assertThrows(UnsupportedCharacterException::class.java) {
-            lexer.getNext()
-        }
+        assertEquals(TokenType.UNKNOWN, lexer.getNext().type)
     }
 
     @Test

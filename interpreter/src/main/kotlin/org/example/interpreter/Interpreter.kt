@@ -32,7 +32,6 @@ class Interpreter(
         return Success(node)
     }
 
-
     fun run(): List<Result> {
         val results = mutableListOf<Result>()
         while (hasNext()) {

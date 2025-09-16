@@ -3,12 +3,12 @@ package org.example.linter.provider
 import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.BooleanExpression
-import org.example.ast.expressions.OptionalExpression
-import org.example.ast.expressions.SymbolExpression
 import org.example.ast.expressions.NumberExpression
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.ReadEnvExpression
 import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.StringExpression
+import org.example.ast.expressions.SymbolExpression
 import org.example.ast.statements.Condition
 import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
@@ -30,7 +30,7 @@ import org.example.linter.rules.symbolformat.checker.SnakeCaseChecker
 import java.io.InputStream
 import kotlin.reflect.KClass
 
-class LinterProvider11() : LinterProvider {
+class LinterProvider11 : LinterProvider {
     override fun provide(iterator: PrintScriptIterator<Result>, inputStream: InputStream, errorHandler: ErrorHandler): Linter {
         val symbolFormats = mapOf(
             SymbolFormat.CAMEL_CASE to CamelCaseChecker(),
@@ -72,45 +72,39 @@ class LinterProvider11() : LinterProvider {
         return { node, symbolChecker ->
             when (node) {
                 is SymbolExpression -> symbolChecker(node)
-                is BinaryExpression -> {
-                    createSymbolNodeHandler()(node.left, symbolChecker)
-                    createSymbolNodeHandler()(node.right, symbolChecker)
-                }
-                is PrintFunction -> {
-                    checkOptionalExpression(node.value, symbolChecker)
-                }
-                is VariableAssigner -> {
-                    symbolChecker(node.symbol)
-                    checkOptionalExpression(node.value, symbolChecker)
-                }
-                is VariableDeclarator -> {
-                    symbolChecker(node.symbol)
-                    checkOptionalExpression(node.value, symbolChecker)
-                }
-                is VariableImmutableDeclarator -> {
-                    symbolChecker(node.symbol)
-                    checkOptionalExpression(node.value, symbolChecker)
-                }
-                is ReadInputExpression -> {
-                    checkOptionalExpression(node.value, symbolChecker)
-                }
-                is ReadEnvExpression -> {
-                    checkOptionalExpression(node.value, symbolChecker)
-                }
-                is BooleanExpression -> {}
-                is NumberExpression -> {}
-                is Condition -> {
-                    node.ifBlock.forEach { astNode ->
-                        createSymbolNodeHandler()(astNode, symbolChecker)
-                    }
-                    node.elseBlock?.forEach { astNode ->
-                        createSymbolNodeHandler()(astNode, symbolChecker)
-                    }
-                }
-                is StringExpression -> {}
+                is BinaryExpression -> handleBinaryExpression(node, symbolChecker)
+                is PrintFunction -> checkOptionalExpression(node.value, symbolChecker)
+                is VariableAssigner -> handleVariableNode(node.symbol, node.value, symbolChecker)
+                is VariableDeclarator -> handleVariableNode(node.symbol, node.value, symbolChecker)
+                is VariableImmutableDeclarator -> handleVariableNode(node.symbol, node.value, symbolChecker)
+                is ReadInputExpression -> checkOptionalExpression(node.value, symbolChecker)
+                is ReadEnvExpression -> checkOptionalExpression(node.value, symbolChecker)
+                is Condition -> handleCondition(node, symbolChecker)
+                is BooleanExpression, is NumberExpression, is StringExpression -> { /* No action needed */ }
                 else -> throw IllegalArgumentException("Unsupported node type: $node")
             }
         }
+    }
+
+    private fun handleBinaryExpression(node: BinaryExpression, symbolChecker: (SymbolExpression) -> Unit) {
+        val handler = createSymbolNodeHandler()
+        handler(node.left, symbolChecker)
+        handler(node.right, symbolChecker)
+    }
+
+    private fun handleVariableNode(symbol: SymbolExpression, value: OptionalExpression, symbolChecker: (SymbolExpression) -> Unit) {
+        symbolChecker(symbol)
+        checkOptionalExpression(value, symbolChecker)
+    }
+
+    private fun handleCondition(node: Condition, symbolChecker: (SymbolExpression) -> Unit) {
+        val handler = createSymbolNodeHandler()
+        node.ifBlock.forEach { handler(it, symbolChecker) }
+        node.elseBlock?.forEach { handler(it, symbolChecker) }
+    }
+
+    private fun checkOptionalExpression(expression: ASTNode?, symbolChecker: (SymbolExpression) -> Unit) {
+        expression?.let { createSymbolNodeHandler()(it, symbolChecker) }
     }
 
     private fun checkOptionalExpression(value: OptionalExpression, symbolChecker: (SymbolExpression) -> Unit) {

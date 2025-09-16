@@ -29,7 +29,6 @@ class Executor(
     private val environment = mutableMapOf<String, Variable>()
     private val stack = mutableListOf<Any?>()
 
-
     fun evaluate(node: ASTNode): Any? {
         node.accept(this)
         return popLiteral()
@@ -75,8 +74,7 @@ class Executor(
         environment[name] = Variable(variable.name, value, variable.immutable)
     }
 
-    fun getEnvVar(name: String): Any? = environment[name]
-
+    fun getEnvVar(name: String): Variable? = environment[name]
 
     override fun visitBinary(expr: BinaryExpression): ASTNode {
         val left = evaluate(expr.left)
@@ -153,9 +151,8 @@ class Executor(
         return expr
     }
 
-
     override fun visitSymbol(expr: SymbolExpression): ASTNode {
-        val value = getEnvVar(expr.value)
+        val value = getEnvVar(expr.value)?.value
         pushLiteral(value)
         return expr
     }
