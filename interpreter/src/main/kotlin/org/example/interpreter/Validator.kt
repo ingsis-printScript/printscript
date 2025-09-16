@@ -17,6 +17,7 @@ import org.example.ast.statements.functions.PrintFunction
 import org.example.ast.visitor.ASTVisitor
 import org.example.common.enums.Type
 import org.example.common.ErrorHandler
+import org.example.common.enums.Operator
 
 class Validator(
     val errorHandler: ErrorHandler
@@ -138,9 +139,21 @@ class Validator(
     }
 
     override fun visitBinary(expr: BinaryExpression): ASTNode {
-        evaluate(expr.left)
-        evaluate(expr.right)
-        pushLiteral(Type.NUMBER)
+        val leftType = evaluate(expr.left)
+        val rightType = evaluate(expr.right)
+
+        val resultType = when (expr.operator) {
+            Operator.ADD -> if (leftType == Type.STRING || rightType == Type.STRING) Type.STRING else Type.NUMBER
+            Operator.SUB, Operator.MUL, Operator.DIV, Operator.MOD -> {
+                if (leftType != Type.NUMBER || rightType != Type.NUMBER) {
+                    reportError("Binary operation ${expr.operator} requires numeric operands")
+                }
+                Type.NUMBER
+            }
+        }
+
+        pushLiteral(resultType)
         return expr
     }
+
 }

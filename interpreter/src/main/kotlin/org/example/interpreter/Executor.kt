@@ -82,7 +82,10 @@ class Executor(
         val left = evaluate(expr.left)
         val right = evaluate(expr.right)
         val result = when (expr.operator) {
-            Operator.ADD -> (left as Number).toDouble() + (right as Number).toDouble()
+            Operator.ADD -> when {
+                left is Number && right is Number -> left.toDouble() + right.toDouble()
+                else -> left.toString() + right.toString() // concatenación
+            }
             Operator.SUB -> (left as Number).toDouble() - (right as Number).toDouble()
             Operator.MUL -> (left as Number).toDouble() * (right as Number).toDouble()
             Operator.DIV -> (left as Number).toDouble() / (right as Number).toDouble()
@@ -91,6 +94,7 @@ class Executor(
         pushLiteral(result)
         return expr
     }
+
 
 
     override fun visitBoolean(expr: BooleanExpression): ASTNode {
