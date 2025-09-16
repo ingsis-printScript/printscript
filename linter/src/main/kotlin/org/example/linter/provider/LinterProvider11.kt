@@ -94,9 +94,11 @@ class LinterProvider11() : LinterProvider {
                 is ReadInputExpression -> {
                     checkOptionalExpression(node.value, symbolChecker)
                 }
+                is ReadEnvExpression -> {
+                    checkOptionalExpression(node.value, symbolChecker)
+                }
                 is BooleanExpression -> {}
                 is NumberExpression -> {}
-                is ReadEnvExpression -> {}//cambiar?
                 is Condition -> {
                     node.ifBlock.forEach { astNode ->
                         createSymbolNodeHandler()(astNode, symbolChecker)

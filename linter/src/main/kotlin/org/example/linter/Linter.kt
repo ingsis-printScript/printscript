@@ -32,6 +32,7 @@ class Linter(
 
     override fun getNext(): Result {
         val result = iterator.getNext()
+        println("getNext:$result")
         if (result is Error) {
             errorHandler.handleError(result.message)
             return result
@@ -44,7 +45,10 @@ class Linter(
     fun analyze(ast: ASTNode): Result {
 
         for (rule in rules) {
-            rule.check(ast, configuration, errorHandler)
+            val result = rule.check(ast, configuration, errorHandler)
+            if (result is Error) {
+                return result
+            }
         }
         return Success(Unit)
     }
