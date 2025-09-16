@@ -33,7 +33,7 @@ class ConditionFormat : ASTFormat {
             }
         }
 
-        writer.append("${spaces}}")
+        writer.append("$spaces}")
 
         node.elseBlock?.let { elseBlock ->
             writer.append(" else {$newLine")
@@ -46,7 +46,7 @@ class ConditionFormat : ASTFormat {
                     writer.append(child.toString() + newLine)
                 }
             }
-            writer.append("${spaces}}$newLine")
+            writer.append("$spaces}$newLine")
         } ?: writer.append(newLine)
     }
 }
