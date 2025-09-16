@@ -12,6 +12,7 @@ class ExpressionValidator(
         t.type == TokenType.NUMBER || t.type == TokenType.STRING || t.type == TokenType.SYMBOL
     },
     private val isOperator: (Token) -> Boolean = { t -> t.type == TokenType.OPERATOR },
+    private val isKeyword: (Token) -> Boolean = { t -> t.type == TokenType.KEYWORD },
     private val isGroupStart: (Token) -> Boolean = { t -> t.type == TokenType.PUNCTUATION && t.value == "(" },
     private val isGroupEnd: (Token) -> Boolean = { t -> t.type == TokenType.PUNCTUATION && t.value == ")" }
 ) : TokenValidator {
@@ -60,6 +61,12 @@ class ExpressionValidator(
         val t = buf.lookahead(pos0)
         return when {
             isElement(t) -> Step.Advanced(pos0 + 1, add(cons, t), needElem = false, depth = depth0)
+            isKeyword(t) && buf.hasNext() && isGroupStart(buf.lookahead(pos0 + 1)) -> {
+                Step.Advanced(pos0 + 2, add(add(cons, t), buf.lookahead(pos0 + 1)), needElem = true, depth = depth0 + 1)
+            }
+            isKeyword(t) -> {
+                Step.Fail(err(pos0 + 1, "expected '(' after keyword '${t.value}'"))
+            }
             isGroupStart(t) -> Step.Advanced(pos0 + 1, add(cons, t), needElem = true, depth = depth0 + 1)
             else -> Step.Fail(err(pos0, "Expected element or '(', found '${t.value}'"))
         }

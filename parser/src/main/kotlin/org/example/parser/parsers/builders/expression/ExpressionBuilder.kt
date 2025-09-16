@@ -12,7 +12,9 @@ import org.example.parser.parsers.builders.expression.rules.OperatorPrecedence
 import org.example.parser.parsers.builders.expression.rules.ParenthesesHandler
 import org.example.token.Token
 
-class ExpressionBuilder {
+class ExpressionBuilder(
+    private val keywordMap: Map<String, (OptionalExpression, Range) -> Expression>
+) {
 
     private val operatorPrecedence = OperatorPrecedence()
     private val parenthesesHandler = ParenthesesHandler()
@@ -60,6 +62,20 @@ class ExpressionBuilder {
             return buildExpression(tokens, start + 1, closeParenIndex) as Expression
         }
 
+        if (token.type == TokenType.KEYWORD) {
+            keywordMap[token.value.lowercase()]?.let { factory ->
+                val open = start + 1
+                if (open >= end || !parenthesesHandler.isOpenParen(tokens[open])) {
+                    throw SyntaxException("Expected '(' after ${token.value}")
+                }
+                val close = parenthesesHandler.findMatchingCloseParen(tokens, open)
+                val innerExp = buildExpression(tokens, open + 1, close)
+                val range = createRange(tokens[start], tokens[close])
+                return factory(innerExp, range)
+            }
+            throw SyntaxException("keyword not supported: ${token.value}")
+        }
+
         return expressionFactory.createExpression(token)
     }
 
@@ -70,6 +86,15 @@ class ExpressionBuilder {
 
         if (parenthesesHandler.isOpenParen(token)) {
             return parenthesesHandler.findMatchingCloseParen(tokens, start) + 1
+        }
+
+        if (token.type == TokenType.KEYWORD && keywordMap.containsKey(token.value.lowercase())) {
+            val open = start + 1
+            if (open < end && parenthesesHandler.isOpenParen(tokens[open])) {
+                val close = parenthesesHandler.findMatchingCloseParen(tokens, open)
+                return close + 1
+            }
+            return start + 1
         }
 
         return start + 1

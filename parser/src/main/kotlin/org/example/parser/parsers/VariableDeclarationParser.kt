@@ -1,6 +1,8 @@
 package org.example.parser.parsers
 
 import org.example.ast.ASTNode
+import org.example.ast.expressions.Expression
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
 import org.example.common.Position
 import org.example.common.Range
@@ -23,7 +25,8 @@ class VariableDeclarationParser(
     private val keywordFactoryMap: Map<String, VariableStatementFactory>,
     expectedKeywords: Set<String>,
     expectedTypes: Set<String>,
-    expressionValidators: List<TokenValidator>
+    expressionValidators: List<TokenValidator>,
+    private val keywordMap: Map<String, (OptionalExpression, Range) -> Expression>
 ) : StatementParser {
 
     private val patterns = listOf(
@@ -66,7 +69,7 @@ class VariableDeclarationParser(
             Position(statements[statements.size - 1].position.line, statements[statements.size - 1].position.column)
         )
 
-        val expressionBuilder = ExpressionBuilder()
+        val expressionBuilder = ExpressionBuilder(keywordMap)
         val expression = expressionBuilder.buildExpression(statements, EQUALS_POS + 1, statements.size - 1)
 
         return factory(symbol, detectType(statements[3]), range, expression)

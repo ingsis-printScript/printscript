@@ -1,7 +1,12 @@
 package org.example.parser.provider
 
+import org.example.ast.expressions.Expression
+import org.example.ast.expressions.OptionalExpression
+import org.example.ast.expressions.ReadEnvExpression
+import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.VariableImmutableDeclarator
+import org.example.common.Range
 import org.example.parser.Parser
 import org.example.parser.TokenBuffer
 import org.example.parser.VariableStatementFactory
@@ -29,9 +34,14 @@ class ParserProvider11 : ParserProvider {
             BooleanValidator()
         )
 
+        val keywordMap: Map<String, (OptionalExpression, Range) -> Expression> = mapOf(
+            "readinput" to { opt, range -> ReadInputExpression(opt, range) },
+            "readenv"   to { opt, range -> ReadEnvExpression(opt, range) }
+        )
+
         val commonParsers = listOf<StatementParser>(
-            VariableAssignationParser(expressions),
-            VariableDeclarationParser(keywordFactoryMap, declarators, types, expressions),
+            VariableAssignationParser(expressions, keywordMap),
+            VariableDeclarationParser(keywordFactoryMap, declarators, types, expressions, keywordMap),
             PrintParser(expressions)
         )
 
