@@ -139,14 +139,14 @@ class FormatterTest {
         }
     }
 
-
     // --- BINARIOS (espacios alrededor de operadores) ---
-
 
     @Test
     fun `BinaryExpression con 1 espacio alrededor del operador`() {
         val expr = astFactory.createBinaryExpression(
-            astFactory.createNumber("1"), Operator.MUL, astFactory.createNumber("3")
+            astFactory.createNumber("1"),
+            Operator.MUL,
+            astFactory.createNumber("3")
         )
         val (formatter, out) = createFormatter("1.0", listOf(expr), configStream(spacesAroundOperators = true))
 
@@ -350,7 +350,7 @@ class FormatterTest {
             nodes,
             configStream(
                 spaceAroundColon = true,
-                spaceAroundEquals = false,       // afecta assignment (x=3)
+                spaceAroundEquals = false
             )
         )
 

@@ -20,8 +20,8 @@ class LexerProvider11 : LexerProvider {
             OperatorTokenConstructor(operators),
             PunctuationTokenConstructor(punctuations),
             StringTokenConstructor(),
-            SymbolTokenConstructor(),
-            BooleanTokenConstructor()
+            BooleanTokenConstructor(),
+            SymbolTokenConstructor()
         )
         val keywordConstructor = KeywordTokenConstructor(keywords)
         val whiteSpaces = listOf(' ', '\t', '\n')
