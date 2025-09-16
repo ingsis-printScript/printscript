@@ -176,17 +176,22 @@ class Executor(
     }
 
     override fun visitCondition(statement: Condition): ASTNode {
-        val cond = evaluate(statement.condition) as? Boolean ?: false
+        val conditionResult = evaluate(statement.condition)
+        val cond = (conditionResult as? Boolean) ?: false
+        stack.clear()
+
         val blockToExecute = if (cond) statement.ifBlock else statement.elseBlock.orEmpty()
 
         var lastValue: Any? = null
-        blockToExecute.forEach {
-            lastValue = evaluate(it)
+        for (stmt in blockToExecute) {
+            stmt.accept(this)
+            lastValue = popLiteral()
         }
 
         pushLiteral(lastValue)
         return statement
     }
+
 
 
 
