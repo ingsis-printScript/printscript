@@ -3,6 +3,7 @@ package org.example.formatter.formatters
 import org.example.ast.ASTNode
 import org.example.ast.statements.functions.PrintFunction
 import org.example.formatter.Rule
+import java.io.Writer
 
 class PrintFunctionFormat : ASTFormat {
 
@@ -10,11 +11,12 @@ class PrintFunctionFormat : ASTFormat {
 
     override fun formatNode(
         node: ASTNode,
-        result: StringBuilder,
+        writer: Writer,
         rules: Map<String, Rule>,
         nestingLevel: Int
     ) {
         val printFunc = node as PrintFunction
+        val result = StringBuilder()
         result.append("println(")
 
         printFunc.value.let { expr ->
@@ -22,5 +24,6 @@ class PrintFunctionFormat : ASTFormat {
         }
 
         result.append(")")
+        writer.write(result.toString())
     }
 }

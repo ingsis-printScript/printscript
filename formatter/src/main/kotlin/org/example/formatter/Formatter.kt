@@ -3,23 +3,24 @@ package org.example.formatter
 import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
 import org.example.formatter.formatters.ASTFormat
+import java.io.StringWriter
 
 class Formatter(
     private val rules: Map<String, Rule>,
     private val nodes: PrintScriptIterator<ASTNode>,
+    private val writer: StringWriter,
     private val astFormat: ASTFormat
-) {
+) : PrintScriptIterator<Unit> {
     fun format(): String {
-        val sb = StringBuilder()
         while (nodes.hasNext()) {
             val node = nodes.getNext()
-            formatNode(node, sb, 0)
+            formatNode(node, writer, 0)
         }
-        return sb.toString()
+        return writer.toString()
     }
 
-    fun formatNode(node: ASTNode, sb: StringBuilder, nestingLevel: Int = 0) {
-        astFormat.formatNode(node, sb, rules, nestingLevel)
+    fun formatNode(node: ASTNode, writer: StringWriter, nestingLevel: Int = 0) {
+        astFormat.formatNode(node, writer, rules, nestingLevel)
     }
 
     // standard rules I'll probably have to use in most formatters, I made them private functions
@@ -41,5 +42,13 @@ class Formatter(
     private fun checkRules(ruleName: String, append: String): String {
         val rule = rules[ruleName]
         return if (rule?.rule == true) append else ""
+    }
+
+    override fun hasNext(): Boolean {
+        return nodes.hasNext()
+    }
+
+    override fun getNext() {
+        formatNode(nodes.getNext(), writer, )
     }
 }
