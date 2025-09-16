@@ -7,14 +7,28 @@ import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.common.results.Error
 import org.example.formatter.formatters.ASTFormat
+import java.io.File
+import java.io.InputStream
 import java.io.Writer
 
 class Formatter(
-    private val rules: Map<String, Rule>,
     private val nodes: PrintScriptIterator<Result>,
     private val writer: Writer,
-    private val astFormat: ASTFormat
+    private val astFormat: ASTFormat,
+    private val configInputStream: InputStream
 ) : PrintScriptIterator<Unit> {
+
+    private val ruler: Ruler by lazy {
+        val tempFile = createTempConfigFile(configInputStream)
+        try {
+            Ruler.fromJsonFile(tempFile.absolutePath)
+        } finally {
+            tempFile.delete()
+        }
+    }
+
+    private val rules = ruler.allRules()
+
     fun format(): String {
         while (nodes.hasNext()) {
             getNext()
@@ -45,6 +59,16 @@ class Formatter(
     private fun checkRules(ruleName: String, append: String): String {
         val rule = rules[ruleName]
         return if (rule?.rule == true) append else ""
+    }
+
+    private fun createTempConfigFile(configInputStream: InputStream): File {
+        val tempFile = File.createTempFile("formatter_rules", ".json")
+        configInputStream.use { input ->
+            tempFile.outputStream().use { out ->
+                input.copyTo(out)
+            }
+        }
+        return tempFile
     }
 
     override fun hasNext(): Boolean {
