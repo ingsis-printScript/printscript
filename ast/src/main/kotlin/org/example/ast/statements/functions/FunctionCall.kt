@@ -4,5 +4,5 @@ import org.example.ast.statements.Statement
 import org.example.ast.visitor.ASTVisitor
 
 interface FunctionCall : Statement{
-    fun <T> accept(visitor: ASTVisitor<T>): T
+    override fun <T> accept(visitor: ASTVisitor<T>): T
 }

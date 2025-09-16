@@ -4,6 +4,7 @@ import org.example.ast.ASTNode
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.BooleanExpression
 import org.example.ast.expressions.NumberExpression
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.ReadEnvExpression
 import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.StringExpression
@@ -15,6 +16,7 @@ import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.ast.visitor.ASTVisitor
 import org.example.common.ErrorHandler
+import org.example.common.enums.Operator
 import org.example.common.enums.Type
 import org.example.common.results.Result
 import org.example.common.results.Success
@@ -89,20 +91,16 @@ class Executor(
         val left = evaluate(expr.left)
         val right = evaluate(expr.right)
         val result = when (expr.operator) {
-            org.example.common.enums.Operator.PLUS -> (left as Number).toDouble() + (right as Number).toDouble()
-            org.example.common.enums.Operator.MINUS -> (left as Number).toDouble() - (right as Number).toDouble()
-            org.example.common.enums.Operator.MULTIPLY -> (left as Number).toDouble() * (right as Number).toDouble()
-            org.example.common.enums.Operator.DIVIDE -> (left as Number).toDouble() / (right as Number).toDouble()
-            org.example.common.enums.Operator.EQUALS -> left == right
-            org.example.common.enums.Operator.NOT_EQUALS -> left != right
-            org.example.common.enums.Operator.LESS -> (left as Comparable<Any>) < right
-            org.example.common.enums.Operator.LESS_EQUALS -> (left as Comparable<Any>) <= right
-            org.example.common.enums.Operator.GREATER -> (left as Comparable<Any>) > right
-            org.example.common.enums.Operator.GREATER_EQUALS -> (left as Comparable<Any>) >= right
+            Operator.ADD -> (left as Number).toDouble() + (right as Number).toDouble()
+            Operator.SUB -> (left as Number).toDouble() - (right as Number).toDouble()
+            Operator.MUL -> (left as Number).toDouble() * (right as Number).toDouble()
+            Operator.DIV -> (left as Number).toDouble() / (right as Number).toDouble()
+            Operator.MOD -> (left as Number).toDouble() % (right as Number).toDouble()
         }
         pushLiteral(result)
         return expr
     }
+
 
     override fun visitBoolean(expr: BooleanExpression): ASTNode {
         pushLiteral(expr.value.equals("true", ignoreCase = true))
