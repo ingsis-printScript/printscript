@@ -1,11 +1,9 @@
 package org.example.formatter.providers
 
-import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
 import org.example.common.results.Result
 import org.example.formatter.CompositeASTFormat
 import org.example.formatter.Formatter
-import org.example.formatter.Ruler
 import org.example.formatter.formatters.BinaryExpressionFormat
 import org.example.formatter.formatters.NumberExpressionFormat
 import org.example.formatter.formatters.PrintFunctionFormat
@@ -13,12 +11,12 @@ import org.example.formatter.formatters.StringExpressionFormat
 import org.example.formatter.formatters.SymbolExpressionFormat
 import org.example.formatter.formatters.VariableAssignerFormat
 import org.example.formatter.formatters.VariableDeclaratorFormat
+import java.io.InputStream
 import java.io.Writer
 
-class FormatterProvider10(private val ruler: Ruler) : FormatterProvider {
+class FormatterProvider10() : FormatterProvider {
 
-    override fun provide(nodes: PrintScriptIterator<Result>, writer: Writer): Formatter {
-        val rules = ruler.allRules()
+    override fun provide(nodes: PrintScriptIterator<Result>, writer: Writer, inputStream: InputStream): Formatter {
         val formats = listOf(
             BinaryExpressionFormat(),
             NumberExpressionFormat(),
@@ -28,6 +26,6 @@ class FormatterProvider10(private val ruler: Ruler) : FormatterProvider {
             SymbolExpressionFormat(),
             VariableAssignerFormat()
         )
-        return Formatter(rules, nodes, writer, CompositeASTFormat(formats))
+        return Formatter(nodes, writer, CompositeASTFormat(formats), inputStream)
     }
 }
