@@ -186,8 +186,7 @@ class Executor(
 
         var lastValue: Any? = null
         blockToExecute.forEach {
-            it.accept(this)
-            lastValue = stack.lastOrNull()
+            lastValue = evaluate(it)
         }
 
         pushLiteral(lastValue)
