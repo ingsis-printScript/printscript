@@ -29,7 +29,7 @@ class VariableDeclaratorFormat : ASTFormat {
 
         // Si hay valor, agregar '=' y formatearlo
         declarator.value.let { expr ->
-            if (expr is OptionalExpression.HasExpression){
+            if (expr is OptionalExpression.HasExpression) {
                 ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
             }
         }

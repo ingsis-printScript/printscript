@@ -46,8 +46,11 @@ class OperationDispatch {
             if (reader.isEmpty) return Optional.empty()
 
             val configStream: InputStream =
-                if (config != null) Files.newInputStream(Paths.get(config))
-                else java.io.ByteArrayInputStream(ByteArray(0))
+                if (config != null) {
+                    Files.newInputStream(Paths.get(config))
+                } else {
+                    java.io.ByteArrayInputStream(ByteArray(0))
+                }
 
             val srcPath = Paths.get(source)
             val outPath = buildFormattedOutputPath(srcPath)
@@ -64,7 +67,6 @@ class OperationDispatch {
 
             return Optional.of(FormattingOperation(version, reader.get(), writer, configStream))
         }
-
 
         private fun createSourceReader(pathStr: String): Optional<Iterator<String>> {
             val path = Paths.get(pathStr)
@@ -84,6 +86,5 @@ class OperationDispatch {
             val outName = "formatted-$base$ext"
             return src.resolveSibling(outName)
         }
-
     }
 }

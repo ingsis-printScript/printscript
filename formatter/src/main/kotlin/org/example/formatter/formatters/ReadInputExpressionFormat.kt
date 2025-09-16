@@ -1,7 +1,6 @@
 package org.example.formatter.formatters
 
 import org.example.ast.ASTNode
-import org.example.ast.expressions.ReadEnvExpression
 import org.example.ast.expressions.ReadInputExpression
 import org.example.formatter.Rule
 import java.io.Writer

@@ -20,10 +20,14 @@ class Interpreter(
     override fun getNext(): Result {
         val result = iterator.getNext()
 
-        val node = (result as? Success<ASTNode>)?.value ?: return result
+        val node: ASTNode = when (result) {
+            is Success<*> -> result.value as? ASTNode
+                ?: return Error("The result is not an AST node")
+            else -> return result
+        }
 
         if (!supportedNodes.contains(node::class.java)) {
-            return Error("Nodo ${node::class.simpleName} no soportado en esta versión")
+            return Error("The node: ${node::class.simpleName} isn't supported by this version")
         }
 
         node.accept(validator)

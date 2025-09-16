@@ -31,13 +31,12 @@ class VariableAssignerFormat : ASTFormat {
 
         // Formateo del valor si existe
         assigner.value.let { expr ->
-            if (expr is OptionalExpression.HasExpression){
+            if (expr is OptionalExpression.HasExpression) {
                 ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel)
             }
         }
 
         writer.write("\n")
     }
-
 
 }

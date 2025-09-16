@@ -124,22 +124,19 @@ class Executor(
         }
 
         val input = inputProvider.readInput(prompt)
-        if (input == null) {
-            reportError("No input provided")
-            pushLiteral(null)
-            return expr
-        }
 
-        val value: Any = when {
-            input.equals("true", ignoreCase = true) || input.equals("false", ignoreCase = true) -> input.equals("true", ignoreCase = true)
+        val result: Any = when {
+            input.equals("true", ignoreCase = true) -> true
+            input.equals("false", ignoreCase = true) -> false
             input.toIntOrNull() != null -> input.toInt()
             input.toDoubleOrNull() != null -> input.toDouble()
             else -> input
         }
 
-        pushLiteral(value)
+        pushLiteral(result)
         return expr
     }
+
 
     override fun visitReadEnv(expr: ReadEnvExpression): ASTNode {
         val varName = when (val opt = expr.value) {

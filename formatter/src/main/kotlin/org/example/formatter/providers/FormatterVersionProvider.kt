@@ -1,6 +1,5 @@
 package org.example.formatter.providers
 
-
 class FormatterVersionProvider {
     fun with(version: String): FormatterProvider {
         return when (version) {
