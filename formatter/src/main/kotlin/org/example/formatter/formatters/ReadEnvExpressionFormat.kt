@@ -20,11 +20,11 @@ class ReadEnvExpressionFormat : ASTFormat {
     ) {
         if (node !is ReadEnvExpression) return
 
-        writer.append("readEnv(")
+        writer.write("readEnv(")
         if (node.value is OptionalExpression.HasExpression) {
             ExpressionFormatterHelper().formatExpression((node.value as OptionalExpression.HasExpression).expression, writer, rules, nestingLevel, context)
         }
 
-        writer.append(")")
+        writer.write(")")
     }
 }

@@ -20,33 +20,58 @@ class VariableDeclaratorFormat : ASTFormat {
     ) {
         val declarator = node as VariableDeclarator
 
-        // Indentación según rule
-        val leftColonSpace = if (rules["enforce-spacing-before-colon-in-declaration"]?.rule == true) " " else ""
-        val rightColonSpace = if (rules["enforce-spacing-after-colon-in-declaration"]?.rule == true) " " else ""
-        val arroundColonSpace = if (rules["enforce-spacing-around-colon"]?.rule == true) " " else ""
-        val leftEqualSpace = if (rules["enforce-spacing-before-equals-in-declaration"]?.rule == true) " " else ""
-        val rightEqualSpace = if (rules["enforce-spacing-after-equals-in-declaration"]?.rule == true) " " else ""
-        val arroundEqualSpace = if (rules["enforce-spacing-around-equals"]?.rule == true) " " else ""
+        // COLON: default -> NO espacio antes, SÍ espacio después
+        val leftColonSpace = if (
+            rules["enforce-spacing-before-colon-in-declaration"]?.rule
+                ?: rules["enforce-spacing-around-colon"]?.rule
+                ?: false
+        ) " " else ""
 
-        // Escribir tipo y nombre
+        val rightColonSpace = if (
+            rules["enforce-spacing-after-colon-in-declaration"]?.rule
+                ?: rules["enforce-spacing-around-colon"]?.rule
+                ?: true
+        ) " " else ""
+
+        // EQUALS: fallback a spacesAroundOperators (o true) si no vienen reglas específicas
+        val aroundEqFallback = rules["enforce-spacing-around-equals"]?.rule
+            ?: rules["spacesAroundOperators"]?.rule
+            ?: true
+
+        val leftEqualSpace = if (
+            rules["enforce-spacing-before-equals-in-declaration"]?.rule
+                ?: aroundEqFallback
+        ) " " else ""
+
+        val rightEqualSpace = if (
+            rules["enforce-spacing-after-equals-in-declaration"]?.rule
+                ?: aroundEqFallback
+        ) " " else ""
+
+        // let <symbol> : <type> [= <value>]
         writer.write("let ")
         writer.write(declarator.symbol.value)
-        writer.write(leftColonSpace + arroundColonSpace)
+
+        writer.write(leftColonSpace)
         writer.write(":")
-        writer.write(rightColonSpace + arroundColonSpace)
-        writer.write(declarator.type.name.lowercase()) // asumiendo que Type tiene .name
+        writer.write(rightColonSpace)
+
+        writer.write(declarator.type.name.lowercase())
+
         if (declarator.value is OptionalExpression.HasExpression) {
-            writer.write(leftEqualSpace + arroundEqualSpace)
+            writer.write(leftEqualSpace)
             writer.write("=")
-            writer.write(rightEqualSpace + arroundEqualSpace)
+            writer.write(rightEqualSpace)
         }
 
-        // Si hay valor, agregar '=' y formatearlo
         declarator.value.let { expr ->
             if (expr is OptionalExpression.HasExpression) {
-                ExpressionFormatterHelper().formatExpression(expr.expression, writer, rules, nestingLevel, context)
+                ExpressionFormatterHelper().formatExpression(
+                    expr.expression, writer, rules, nestingLevel, context
+                )
             }
         }
+
         writer.write(";")
         if (context.hasNext()) writer.write("\n")
     }

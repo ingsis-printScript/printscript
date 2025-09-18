@@ -20,12 +20,12 @@ class ReadInputExpressionFormat : ASTFormat {
     ) {
         if (node !is ReadInputExpression) return
 
-        writer.append("readInput(")
+        writer.write("readInput(")
         if (node.value is OptionalExpression.HasExpression) {
             ExpressionFormatterHelper().formatExpression((node.value as OptionalExpression.HasExpression).expression, writer, rules, nestingLevel, context)
         }
 
-        writer.append(")")
+        writer.write(")")
 
     }
 }

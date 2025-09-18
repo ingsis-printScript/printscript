@@ -135,7 +135,7 @@ class FormatterTest {
                 configStream(lineBreaksAfterPrintln = 2)
             )
             while (formatter.hasNext()) formatter.getNext()
-            assertEquals("println(\"hola\");\n\nprintln(\"chau\");", out.toString())
+            assertEquals("println(\"hola\");\n\n\nprintln(\"chau\");", out.toString())
         }
     }
 

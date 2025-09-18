@@ -30,6 +30,7 @@ class Formatter(
     private val rules = ruler.allRules()
 
     fun formatNode(node: ASTNode, writer: Writer, nestingLevel: Int = 0) {
+        println("RULES ACTIVAS: " + ruler.allRules().mapValues { it.value })
         astFormat.formatNode(node, writer, rules, nestingLevel, PrivateIterator(nodes))
     }
 

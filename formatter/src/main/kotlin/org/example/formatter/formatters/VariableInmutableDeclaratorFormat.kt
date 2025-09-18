@@ -21,25 +21,44 @@ class VariableInmutableDeclaratorFormat : ASTFormat {
         val declarator = node as VariableImmutableDeclarator
 
         // Indentación segun rule
-        val leftColonSpace = if (rules["enforce-spacing-before-colon-in-declaration"]?.rule == true) " " else ""
-        val rightColonSpace = if (rules["enforce-spacing-after-colon-in-declaration"]?.rule == true) " " else ""
-        val arroundColonSpace = if (rules["enforce-spacing-around-colon"]?.rule == true) " " else ""
-        val leftEqualSpace = if (rules["enforce-spacing-before-equals-in-declaration"]?.rule == true) " " else ""
-        val rightEqualSpace = if (rules["enforce-spacing-after-equals-in-declaration"]?.rule == true) " " else ""
-        val arroundEqualSpace = if (rules["enforce-spacing-around-equals"]?.rule == true) " " else ""
+        val leftColonSpace = if (
+            rules["enforce-spacing-before-colon-in-declaration"]?.rule
+                ?: rules["enforce-spacing-around-colon"]?.rule
+                ?: false
+        ) " " else ""
+
+        val rightColonSpace = if (
+            rules["enforce-spacing-after-colon-in-declaration"]?.rule
+                ?: rules["enforce-spacing-around-colon"]?.rule
+                ?: true
+        ) " " else ""
+
+        val aroundEqFallback = rules["enforce-spacing-around-equals"]?.rule
+            ?: rules["spacesAroundOperators"]?.rule
+            ?: true
+
+        val leftEqualSpace = if (
+            rules["enforce-spacing-before-equals-in-declaration"]?.rule
+                ?: aroundEqFallback
+        ) " " else ""
+
+        val rightEqualSpace = if (
+            rules["enforce-spacing-after-equals-in-declaration"]?.rule
+                ?: aroundEqFallback
+        ) " " else ""
 
         // Escribir tipo y nombre
         writer.write("const ")
         writer.write(declarator.symbol.value)
-        writer.write(leftColonSpace + arroundColonSpace)
+        writer.write(leftColonSpace)
         writer.write(":")
-        writer.write(rightColonSpace + arroundColonSpace)
+        writer.write(rightColonSpace)
         writer.write(declarator.type.name.lowercase()) // asumiendo que Type tiene .name
 
         if (declarator.value is OptionalExpression.HasExpression) {
-            writer.write(leftEqualSpace + arroundEqualSpace)
+            writer.write(leftEqualSpace)
             writer.write("=")
-            writer.write(rightEqualSpace + arroundEqualSpace)
+            writer.write(rightEqualSpace)
         }
 
         // Si hay valor, agregar '=' y formatearlo

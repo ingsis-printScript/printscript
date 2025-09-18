@@ -20,16 +20,26 @@ class VariableAssignerFormat : ASTFormat {
     ) {
         val assigner = node as VariableAssigner
 
-        // Indentación según rule
-        val leftEqualSpace = if (rules["enforce-spacing-before-equals-in-declaration"]?.rule == true) " " else ""
-        val rightEqualSpace = if (rules["enforce-spacing-after-equals-in-declaration"]?.rule == true) " " else ""
-        val arroundEqualSpace = if (rules["enforce-spacing-around-equals"]?.rule == true) " " else ""
+        // EQUALS: fallback a spacesAroundOperators (o true) si no vienen reglas específicas
+        val aroundEqFallback = rules["enforce-spacing-around-equals"]?.rule
+            ?: rules["spacesAroundOperators"]?.rule
+            ?: true
+
+        val leftEqualSpace = if (
+            rules["enforce-spacing-before-equals-in-declaration"]?.rule
+                ?: aroundEqFallback
+        ) " " else ""
+
+        val rightEqualSpace = if (
+            rules["enforce-spacing-after-equals-in-declaration"]?.rule
+                ?: aroundEqFallback
+        ) " " else ""
 
         // Formateo del símbolo
         writer.write(assigner.symbol.value)
-        writer.write(leftEqualSpace + arroundEqualSpace)
+        writer.write(leftEqualSpace)
         writer.write("=")
-        writer.write(rightEqualSpace + arroundEqualSpace)
+        writer.write(rightEqualSpace)
 
         // Formateo del valor si existe
         assigner.value.let { expr ->

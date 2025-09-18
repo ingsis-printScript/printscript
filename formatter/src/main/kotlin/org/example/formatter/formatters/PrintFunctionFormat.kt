@@ -32,7 +32,7 @@ class PrintFunctionFormat : ASTFormat {
         writer.write(")")
         writer.write(";")
         if (context.hasNext()) {
-            for (i in 0 until indentation) {
+            for (i in 0 until indentation + 1) {
                 writer.write("\n")
             }
         }
