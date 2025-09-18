@@ -24,7 +24,10 @@ class Interpreter(
             is Success<*> ->
                 result.value as? ASTNode
                     ?: return Error("The result is not an AST node")
-            else -> return result
+            else -> {
+                executor.reportError((result as Error).message)
+                return result
+            }
         }
 
         if (!supportedNodes.contains(node::class.java)) {

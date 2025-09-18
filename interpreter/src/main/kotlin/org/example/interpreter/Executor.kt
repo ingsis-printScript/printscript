@@ -55,7 +55,7 @@ class Executor(
 
     fun declareVariable(variable: Variable) {
         if (environment.containsKey(variable.name)) {
-            errorHandler.handleError("Variable $variable.name already declared")
+            reportError("Variable $variable.name already declared")
             return
         }
         environment[variable.name] = variable
@@ -63,12 +63,12 @@ class Executor(
 
     fun assignVariable(name: String, value: Any?) {
         if (!environment.containsKey(name)) {
-            errorHandler.handleError("Variable $name not declared")
+            reportError("Variable $name not declared")
             return
         }
         val variable = environment[name]!!
         if (variable.immutable && variable.value != null) {
-            errorHandler.handleError("Immutable variable $name already assigned")
+            reportError("Immutable variable $name already assigned")
             return
         }
         environment[name] = Variable(variable.name, value, variable.immutable)
