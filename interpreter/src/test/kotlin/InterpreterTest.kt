@@ -39,7 +39,7 @@ class InterpreterTest {
     }
 
     private fun fakeInputProvider(value: String = "123") = object : InputProvider {
-        override fun readInput(prompt: String) = value
+        override fun readInput() = value
     }
 
     private fun createInterpreter(

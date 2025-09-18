@@ -5,8 +5,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     env:
-      PUBLISH_USERNAME: ${{ vars.PUBLISH_USERNAME }}   # variable del repo
-      PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}       # secret del repo
+      PUBLISH_USERNAME: ${{ vars.PUBLISH_USERNAME }}
+      PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+      CI_VERSION: 0.1.${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -15,4 +16,4 @@ jobs:
           java-version: 17
       - uses: gradle/gradle-build-action@v3
         with:
-          arguments: publish
+          arguments: publish --info

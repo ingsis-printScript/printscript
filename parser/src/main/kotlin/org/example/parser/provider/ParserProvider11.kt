@@ -35,8 +35,8 @@ class ParserProvider11 : ParserProvider {
         )
 
         val keywordMap: Map<String, (OptionalExpression, Range) -> Expression> = mapOf(
-            "readInput" to { opt, range -> ReadInputExpression(opt, range) },
-            "readEnv" to { opt, range -> ReadEnvExpression(opt, range) }
+            "readinput" to { opt, range -> ReadInputExpression(opt, range) },
+            "readenv" to { opt, range -> ReadEnvExpression(opt, range) }
         )
 
         val commonParsers = listOf<StatementParser>(

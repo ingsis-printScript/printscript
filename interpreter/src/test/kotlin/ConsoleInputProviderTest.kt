@@ -13,7 +13,7 @@ class ConsoleInputProviderTest {
         System.setIn(inputStream)
 
         val provider = ConsoleInputProvider()
-        val result = provider.readInput("Escriba algo")
+        val result = provider.readInput()
 
         assertEquals("Hola Mundo", result)
     }
@@ -25,7 +25,7 @@ class ConsoleInputProviderTest {
         System.setIn(inputStream)
 
         val provider = ConsoleInputProvider()
-        val result = provider.readInput("Ingrese algo")
+        val result = provider.readInput()
 
         assertEquals("", result)
     }

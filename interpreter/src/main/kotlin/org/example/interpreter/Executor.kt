@@ -130,7 +130,8 @@ class Executor(
             is OptionalExpression.NoExpression -> ""
         }
 
-        val input = inputProvider.readInput(prompt)
+        outputPrinter.print(prompt)
+        val input = inputProvider.readInput()
 
         val result: Any = when {
             input.equals("true", ignoreCase = true) -> true
@@ -203,6 +204,7 @@ class Executor(
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
+        System.err.println("IMMUTABLE DECLARATION: ${statement.symbol.value} = $value")
         declareVariable(Variable(statement.symbol.value, value, immutable = true))
         return statement
     }

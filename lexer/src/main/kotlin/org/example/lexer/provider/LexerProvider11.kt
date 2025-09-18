@@ -8,10 +8,9 @@ import org.example.lexer.constructors.OperatorTokenConstructor
 import org.example.lexer.constructors.PunctuationTokenConstructor
 import org.example.lexer.constructors.StringTokenConstructor
 import org.example.lexer.constructors.SymbolTokenConstructor
-
 class LexerProvider11 : LexerProvider {
     override fun provide(reader: Iterator<String>): Lexer {
-        val keywords = setOf("let", "const", "if", "else")
+        val keywords = setOf("let", "const", "if", "else", "readInput", "readEnv")
         val operators = setOf("+", "-", "*", "/")
         val punctuations = setOf(":", ";", ",", "(", ")", "{", "}", "=")
 
