@@ -31,7 +31,7 @@ class ExecutorTest {
     private val dummyRange = Range(dummyPos, dummyPos)
 
     private val fakeInputProvider = object : InputProvider {
-        override fun readInput(prompt: String) = "42"
+        override fun readInput() = "42"
     }
 
     private val printed = mutableListOf<String>()
@@ -189,7 +189,7 @@ class ExecutorTest {
     @Test
     fun `visitReadInput parses true and false correctly`() {
         val booleanProvider = object : InputProvider {
-            override fun readInput(prompt: String) = "true"
+            override fun readInput() = "true"
         }
         val exec = Executor(booleanProvider, fakePrinter, fakeErrorHandler)
         val node = ReadInputExpression(OptionalExpression.NoExpression, dummyRange)
@@ -197,7 +197,7 @@ class ExecutorTest {
         assertEquals(true, result)
 
         val falseProvider = object : InputProvider {
-            override fun readInput(prompt: String) = "false"
+            override fun readInput() = "false"
         }
         val execFalse = Executor(falseProvider, fakePrinter, fakeErrorHandler)
         val resultFalse = execFalse.evaluate(node)
@@ -207,7 +207,7 @@ class ExecutorTest {
     @Test
     fun `visitReadInput parses integer and double correctly`() {
         val intProvider = object : InputProvider {
-            override fun readInput(prompt: String) = "123"
+            override fun readInput() = "123"
         }
         val execInt = Executor(intProvider, fakePrinter, fakeErrorHandler)
         val node = ReadInputExpression(OptionalExpression.NoExpression, dummyRange)
@@ -215,7 +215,7 @@ class ExecutorTest {
         assertEquals(123, resultInt)
 
         val doubleProvider = object : InputProvider {
-            override fun readInput(prompt: String) = "3.14"
+            override fun readInput() = "3.14"
         }
         val execDouble = Executor(doubleProvider, fakePrinter, fakeErrorHandler)
         val resultDouble = execDouble.evaluate(node)
@@ -225,7 +225,7 @@ class ExecutorTest {
     @Test
     fun `visitReadInput returns string when input is non-numeric`() {
         val strProvider = object : InputProvider {
-            override fun readInput(prompt: String) = "hello"
+            override fun readInput() = "hello"
         }
         val execStr = Executor(strProvider, fakePrinter, fakeErrorHandler)
         val node = ReadInputExpression(OptionalExpression.NoExpression, dummyRange)
@@ -236,7 +236,7 @@ class ExecutorTest {
     @Test
     fun `visitReadInput handles empty input`() {
         val emptyProvider = object : InputProvider {
-            override fun readInput(prompt: String) = ""
+            override fun readInput() = ""
         }
         val execEmpty = Executor(emptyProvider, fakePrinter, fakeErrorHandler)
         val node = ReadInputExpression(OptionalExpression.NoExpression, dummyRange)
@@ -247,8 +247,7 @@ class ExecutorTest {
     @Test
     fun `visitReadInput handles prompt expression`() {
         val promptProvider = object : InputProvider {
-            override fun readInput(prompt: String): String {
-                assertEquals("Enter value:", prompt)
+            override fun readInput(): String {
                 return "42"
             }
         }
