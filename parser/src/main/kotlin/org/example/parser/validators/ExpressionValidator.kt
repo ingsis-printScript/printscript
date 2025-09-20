@@ -7,10 +7,7 @@ import org.example.parser.ValidationResult
 import org.example.token.Token
 
 class ExpressionValidator(
-    private val tokenValidators: List<TokenValidator>, // TODO
-    private val isElement: (Token) -> Boolean = { t ->
-        t.type == TokenType.NUMBER || t.type == TokenType.STRING || t.type == TokenType.SYMBOL
-    },
+    private val elements: List<TokenValidator>,
     private val isOperator: (Token) -> Boolean = { t -> t.type == TokenType.OPERATOR },
     private val isKeyword: (Token) -> Boolean = { t -> t.type == TokenType.KEYWORD },
     private val isGroupStart: (Token) -> Boolean = { t -> t.type == TokenType.PUNCTUATION && t.value == "(" },
@@ -60,7 +57,7 @@ class ExpressionValidator(
     private fun consumeElementOrGroup(buf: TokenBuffer, pos0: Int, cons: List<Token>, depth0: Int): Step {
         val t = buf.lookahead(pos0)
         return when {
-            isElement(t) -> Step.Advanced(pos0 + 1, add(cons, t), needElem = false, depth = depth0)
+            isElement(buf, pos0) -> Step.Advanced(pos0 + 1, add(cons, t), needElem = false, depth = depth0)
             isKeyword(t) && buf.hasNext() && isGroupStart(buf.lookahead(pos0 + 1)) -> {
                 Step.Advanced(pos0 + 2, add(add(cons, t), buf.lookahead(pos0 + 1)), needElem = true, depth = depth0 + 1)
             }
@@ -70,6 +67,12 @@ class ExpressionValidator(
             isGroupStart(t) -> Step.Advanced(pos0 + 1, add(cons, t), needElem = true, depth = depth0 + 1)
             else -> Step.Fail(err(pos0, "Expected element or '(', found '${t.value}'"))
         }
+    }
+
+    private fun isElement(buffer: TokenBuffer, position: Int): Boolean {
+        return elements.any { v ->
+            val r = v.validate(buffer, position)
+            r is ValidationResult.Success }
     }
 
     private fun afterElementStep(buf: TokenBuffer, pos0: Int, cons: List<Token>, depth0: Int): Step {

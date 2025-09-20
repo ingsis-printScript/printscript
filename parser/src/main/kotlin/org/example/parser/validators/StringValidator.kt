@@ -8,30 +8,20 @@ import org.example.token.Token
 
 class StringValidator : TokenValidator {
 
-    private val stringPattern = Regex("^\".*\"$")
-
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
-        val token: Token
-        try {
-            token = statementBuffer.lookahead(position)
-        } catch (e: NoMoreTokensAvailableException) {
+        val token = try {
+            statementBuffer.lookahead(position)
+        } catch (_: NoMoreTokensAvailableException) {
             return ValidationResult.Error("string expected, but reached end of statement", position)
         }
-        return when {
-            token.type == TokenType.STRING && isValidStringFormat(token.value) -> {
-                ValidationResult.Success(listOf(token))
-            }
-            else -> {
-                ValidationResult.Error("Invalid string format: '${token.value}'", position)
-            }
+
+        return if (token.type == TokenType.STRING) {
+            ValidationResult.Success(listOf(token))
+        } else {
+            ValidationResult.Error("Invalid string: '${token.value}'", position)
         }
     }
 
-    private fun isValidStringFormat(name: String): Boolean {
-        return name.matches(stringPattern)
-    }
-
-    override fun getExpectedDescription(): String {
-        return "Expected valid string format: ${stringPattern.pattern}"
-    }
+    override fun getExpectedDescription(): String =
+        "Expected string literal"
 }

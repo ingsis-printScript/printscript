@@ -200,19 +200,4 @@ class ConditionStatementTest {
             )
         )
     }
-
-    @Test
-    fun `build - invalido - condicion no booleana`() {
-        // if (5) { }
-        assertInvalid(
-            tokens(
-                keyword("if"),
-                punct("("),
-                number("5"),
-                punct(")"),
-                punct("{"),
-                punct("}")
-            )
-        )
-    }
 }

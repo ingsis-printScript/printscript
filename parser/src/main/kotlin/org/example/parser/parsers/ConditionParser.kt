@@ -1,20 +1,21 @@
 package org.example.parser.parsers
 
 import org.example.ast.ASTNode
-import org.example.ast.expressions.BooleanExpression
+import org.example.ast.expressions.Expression
+import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.Condition
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.TokenType
 import org.example.parser.parsers.builders.block.BlockBuilder
-import org.example.parser.validators.BlockValidator
-import org.example.parser.validators.BooleanValidator
-import org.example.parser.validators.KeywordValidator
-import org.example.parser.validators.PunctuationValidator
+import org.example.parser.parsers.builders.expression.ExpressionBuilder
+import org.example.parser.validators.*
 import org.example.token.Token
 
 class ConditionParser(
-    private val statementParsers: List<StatementParser>
+    statementParsers: List<StatementParser>,
+    expressionElements: List<TokenValidator>,
+    private val keywordMap: Map<String, (OptionalExpression, Range) -> Expression>
 ) : StatementParser {
     private val blockBuilder = BlockBuilder(statementParsers)
 
@@ -23,7 +24,7 @@ class ConditionParser(
             listOf(
                 KeywordValidator(setOf("if")),
                 PunctuationValidator("("),
-                BooleanValidator(),
+                ExpressionValidator(expressionElements), //check
                 PunctuationValidator(")"),
                 PunctuationValidator("{"),
                 BlockValidator(statementParsers),
@@ -34,7 +35,7 @@ class ConditionParser(
             listOf(
                 KeywordValidator(setOf("if")),
                 PunctuationValidator("("),
-                BooleanValidator(),
+                ExpressionValidator(expressionElements),
                 PunctuationValidator(")"),
                 PunctuationValidator("{"),
                 BlockValidator(statementParsers),
@@ -53,17 +54,19 @@ class ConditionParser(
             Position(statements[statements.size - 1].position.line, statements[statements.size - 1].position.column)
         )
 
-        val condition = statements[2]
-        val boolean = BooleanExpression(condition.value, condition.position)
+        val expressionBuilder = ExpressionBuilder(keywordMap)
+        val condition = expressionBuilder.buildExpression(statements, 2, endOfCondition(statements))
+        // endOfCondition or endOfCondition-1?... Creo que incluyo al ')'
+        // todo: OptionalExpression -> error... or leave up to interpreter?
 
         val divider = endOfBlock(statements)
         val ifBlock = blockBuilder.build(statements.subList(5, divider))
 
         if (noElseBlock(divider, statements)) {
-            return Condition(boolean, ifBlock, null, range)
+            return Condition(condition, ifBlock, null, range)
         } else {
             val elseBlock = blockBuilder.build(statements.subList(divider + 3, statements.size - 1))
-            return Condition(boolean, ifBlock, elseBlock, range)
+            return Condition(condition, ifBlock, elseBlock, range)
         }
     }
 
@@ -72,6 +75,9 @@ class ConditionParser(
 
     private fun endOfBlock(statements: List<Token>) =
         statements.indexOfFirst { it.type == TokenType.PUNCTUATION && it.value == "}" }
+
+    private fun endOfCondition(statements: List<Token>) =
+        statements.indexOfFirst { it.type == TokenType.PUNCTUATION && it.value == ")" }
 
     override fun getPatterns(): List<StatementPattern> = patterns
 }

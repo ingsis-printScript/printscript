@@ -16,7 +16,7 @@ class Interpreter {
         src: Iterator<String>,
         version: String,
         emitter: OutputPrinter,
-        handler: ErrorHandler, // keep throws??
+        handler: ErrorHandler,
         provider: InputProvider
     ) {
         val lexer = LexerVersionProvider().with(version).provide(src)

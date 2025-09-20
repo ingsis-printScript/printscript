@@ -27,7 +27,7 @@ class ParserProvider11 : ParserProvider {
 
         val declarators = setOf("let", "const")
         val types = setOf("number", "string", "boolean")
-        val expressions = listOf(
+        val expressionElements = listOf(
             NumberValidator(),
             SymbolValidator(),
             StringValidator(),
@@ -40,12 +40,13 @@ class ParserProvider11 : ParserProvider {
         )
 
         val commonParsers = listOf<StatementParser>(
-            VariableAssignationParser(expressions, keywordMap),
-            VariableDeclarationParser(keywordFactoryMap, declarators, types, expressions, keywordMap),
-            PrintParser(expressions, keywordMap)
+            VariableAssignationParser(expressionElements, keywordMap),
+            VariableDeclarationParser(keywordFactoryMap, declarators, types, expressionElements, keywordMap),
+            PrintParser(expressionElements, keywordMap)
         )
 
-        val conditionParser = ConditionParser(commonParsers)
+        // check
+        val conditionParser = ConditionParser(commonParsers, expressionElements, keywordMap)
 
         val parsers = commonParsers + conditionParser
 
