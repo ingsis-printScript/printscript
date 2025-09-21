@@ -8,6 +8,7 @@ import org.example.ast.expressions.ReadEnvExpression
 import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.expressions.StringExpression
 import org.example.ast.expressions.SymbolExpression
+import org.example.ast.statements.Condition
 import org.example.ast.statements.VariableAssigner
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.VariableImmutableDeclarator
@@ -38,6 +39,7 @@ class InterpreterProvider11 : InterpreterProvider {
 
     private fun supportedNodes(): Set<Class<out ASTNode>> {
         return setOf(
+            Condition::class.java,
             BooleanExpression::class.java,
             ReadEnvExpression::class.java,
             ReadInputExpression::class.java,
