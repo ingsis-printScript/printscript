@@ -174,6 +174,7 @@ class Executor(
         return expr
     }
 
+
     override fun visitPrintFunction(statement: PrintFunction): ASTNode {
         if (hasExecutionError) return statement
         val value = when (val opt = statement.value) {
@@ -194,22 +195,29 @@ class Executor(
     }
 
     override fun visitVariableDeclarator(statement: VariableDeclarator): ASTNode {
+        declareVariable(Variable(statement.symbol.value, null, immutable = false))
+
         val value = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        declareVariable(Variable(statement.symbol.value, value, immutable = false))
+
+        assignVariable(statement.symbol.value, value)
         return statement
     }
 
     override fun visitVariableImmutableDeclarator(statement: VariableImmutableDeclarator): ASTNode {
+        declareVariable(Variable(statement.symbol.value, null, immutable = true))
+
         val value = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        declareVariable(Variable(statement.symbol.value, value, immutable = true))
+
+        assignVariable(statement.symbol.value, value)
         return statement
     }
+
 
     override fun visitCondition(statement: Condition): ASTNode {
         val conditionResult = when (val opt = statement.condition) {

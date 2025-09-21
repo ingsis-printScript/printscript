@@ -48,38 +48,37 @@ class Validator(
     override fun visitVariableDeclarator(statement: VariableDeclarator): ASTNode {
         val exprType = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
-            is OptionalExpression.NoExpression -> null
+            is OptionalExpression.NoExpression -> statement.type
         }
 
-        val declaredType = statement.type
-        if (exprType != null && exprType != declaredType) {
-            reportError("Type mismatch: expected $declaredType but got $exprType")
+        if (exprType != statement.type) {
+            reportError("Type mismatch: expected ${statement.type} but got $exprType")
         }
 
-        environment[statement.symbol.value] = declaredType
+        environment[statement.symbol.value] = statement.type
+        pushLiteral(statement.type)
         return statement
     }
-
 
     override fun visitVariableImmutableDeclarator(statement: VariableImmutableDeclarator): ASTNode {
         val exprType = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
-            is OptionalExpression.NoExpression -> null
+            is OptionalExpression.NoExpression -> statement.type
         }
-
-        val declaredType = statement.type
 
         if (environment.containsKey(statement.symbol.value)) {
             reportError("Immutable variable ${statement.symbol.value} already declared")
         } else {
-            if (exprType != null && exprType != declaredType) {
-                reportError("Type mismatch: expected $declaredType but got $exprType")
+            if (exprType != statement.type) {
+                reportError("Type mismatch: expected ${statement.type} but got $exprType")
             }
-            environment[statement.symbol.value] = exprType ?: declaredType
+            environment[statement.symbol.value] = statement.type
         }
 
+        pushLiteral(statement.type)
         return statement
     }
+
 
 
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
@@ -99,9 +98,13 @@ class Validator(
 
     override fun visitSymbol(expr: SymbolExpression): ASTNode {
         val type = lookupSymbol(expr.value)
+        if (type == null) {
+            reportError("Undefined symbol: ${expr.value}")
+        }
         pushLiteral(type)
         return expr
     }
+
 
     override fun visitBoolean(expr: BooleanExpression): ASTNode {
         pushLiteral(Type.BOOLEAN)
