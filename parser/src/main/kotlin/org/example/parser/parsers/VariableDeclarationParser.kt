@@ -23,19 +23,20 @@ private const val EQUALS_POS = 4
 
 class VariableDeclarationParser(
     private val keywordFactoryMap: Map<String, VariableStatementFactory>,
-    expectedKeywords: Set<String>,
-    expectedTypes: Set<String>,
-    expressionValidators: List<TokenValidator>,
+    private val expectedKeywords: Set<String>,
+    private val expectedTypes: Set<Type>,
+    private val expressionValidators: List<TokenValidator>,
     private val keywordMap: Map<String, (OptionalExpression, Range) -> Expression>
 ) : StatementParser {
 
+    private val types = expectedTypes.map { it.name.lowercase() }.toSet()
     private val patterns = listOf(
         StatementPattern(
             listOf(
                 KeywordValidator(expectedKeywords),
                 SymbolValidator(),
                 PunctuationValidator(":"),
-                TypeValidator(expectedTypes),
+                TypeValidator(types),
                 PunctuationValidator("="),
                 ExpressionValidator(expressionValidators),
                 PunctuationValidator(";")
@@ -46,7 +47,7 @@ class VariableDeclarationParser(
                 KeywordValidator(expectedKeywords),
                 SymbolValidator(),
                 PunctuationValidator(":"),
-                TypeValidator(expectedTypes),
+                TypeValidator(types),
                 PunctuationValidator(";")
             )
         )
@@ -76,11 +77,16 @@ class VariableDeclarationParser(
     }
 
     private fun detectType(token: Token): Type {
-        return when (token.value.lowercase()) {
-            "number" -> Type.NUMBER
-            "string" -> Type.STRING
-            else -> throw SyntaxException("Unsupported token type: ${token.type}")
+        val type = token.value.lowercase()
+        if (type !in types) {
+            throw SyntaxException("Unsupported token type: ${token.type}")
+        } else {
+            return getCorrectType(type)
         }
+    }
+
+    private fun getCorrectType(type: String) : Type {
+        return expectedTypes.first { it.name.equals(type, ignoreCase = true) }
     }
 
     override fun getPatterns(): List<StatementPattern> = patterns

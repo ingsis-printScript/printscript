@@ -207,7 +207,6 @@ class Executor(
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
-        System.err.println("IMMUTABLE DECLARATION: ${statement.symbol.value} = $value")
         declareVariable(Variable(statement.symbol.value, value, immutable = true))
         return statement
     }

@@ -7,6 +7,7 @@ import org.example.ast.expressions.ReadInputExpression
 import org.example.ast.statements.VariableDeclarator
 import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.common.Range
+import org.example.common.enums.Type
 import org.example.parser.Parser
 import org.example.parser.TokenBuffer
 import org.example.parser.VariableStatementFactory
@@ -26,7 +27,7 @@ class ParserProvider11 : ParserProvider {
         val keywordFactoryMap = createKeywordFactoryMap()
 
         val declarators = setOf("let", "const")
-        val types = setOf("number", "string", "boolean")
+        val types = setOf(Type.NUMBER, Type.STRING, Type.BOOLEAN)
         val expressionElements = listOf(
             NumberValidator(),
             SymbolValidator(),
