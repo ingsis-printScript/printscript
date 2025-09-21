@@ -7,13 +7,12 @@ import java.util.*
 
 class OperatorTokenConstructor(private val operators: Set<String>) : TokenConstructor {
 
-    override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
+    override fun constructToken(input: String, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
 
         val op = longestMatch(input)
         if (op != null) {
-            val tokenPosition = Position(position.line, offset)
-            return Optional.of(Token(TokenType.OPERATOR, op, tokenPosition))
+            return Optional.of(Token(TokenType.OPERATOR, op, position))
         }
 
         return Optional.empty()

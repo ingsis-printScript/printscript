@@ -6,7 +6,7 @@ import org.example.token.Token
 import java.util.Optional
 
 class NumberTokenConstructor : TokenConstructor {
-    override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
+    override fun constructToken(input: String, position: Position): Optional<Token> {
         if (input.isEmpty() || !input[0].isDigit()) return Optional.empty()
 
         var hasDot = false
@@ -23,7 +23,6 @@ class NumberTokenConstructor : TokenConstructor {
             }
         }
 
-        val tokenPosition = Position(position.line, offset)
-        return Optional.of(Token(TokenType.NUMBER, numberStr, tokenPosition))
+        return Optional.of(Token(TokenType.NUMBER, numberStr, position))
     }
 }

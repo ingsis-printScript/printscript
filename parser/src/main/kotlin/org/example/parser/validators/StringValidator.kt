@@ -4,7 +4,6 @@ import org.example.common.enums.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
-import org.example.token.Token
 
 class StringValidator : TokenValidator {
 

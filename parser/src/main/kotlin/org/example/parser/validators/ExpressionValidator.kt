@@ -72,7 +72,8 @@ class ExpressionValidator(
     private fun isElement(buffer: TokenBuffer, position: Int): Boolean {
         return elements.any { v ->
             val r = v.validate(buffer, position)
-            r is ValidationResult.Success }
+            r is ValidationResult.Success
+        }
     }
 
     private fun afterElementStep(buf: TokenBuffer, pos0: Int, cons: List<Token>, depth0: Int): Step {

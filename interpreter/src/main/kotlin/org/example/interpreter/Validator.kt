@@ -44,7 +44,6 @@ class Validator(
         return environment[name]
     }
 
-
     override fun visitVariableDeclarator(statement: VariableDeclarator): ASTNode {
         val exprType = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
@@ -79,8 +78,6 @@ class Validator(
         return statement
     }
 
-
-
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val type = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
@@ -104,7 +101,6 @@ class Validator(
         pushLiteral(type)
         return expr
     }
-
 
     override fun visitBoolean(expr: BooleanExpression): ASTNode {
         pushLiteral(Type.BOOLEAN)
@@ -163,15 +159,17 @@ class Validator(
         return statement
     }
 
-
     override fun visitBinary(expr: BinaryExpression): ASTNode {
         val leftType = evaluate(expr.left)
         val rightType = evaluate(expr.right)
 
         val resultType = when (expr.operator) {
             Operator.ADD ->
-                if (leftType == Type.STRING || rightType == Type.STRING) Type.STRING
-                else Type.NUMBER
+                if (leftType == Type.STRING || rightType == Type.STRING) {
+                    Type.STRING
+                } else {
+                    Type.NUMBER
+                }
             Operator.SUB, Operator.MUL, Operator.DIV, Operator.MOD -> {
                 if (leftType != Type.NUMBER || rightType != Type.NUMBER) {
                     reportError("Binary operation ${expr.operator} requires numeric operands")
@@ -183,5 +181,4 @@ class Validator(
         pushLiteral(resultType)
         return expr
     }
-
 }

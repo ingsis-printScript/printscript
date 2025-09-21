@@ -17,26 +17,26 @@ class Lexer(
 ) : PrintScriptIterator<Token> {
 
     private var currentLine: String = ""
-    private var tokenOffset: Int = 0
-    private var line: Int = 0
+    private var currentColumn: Int = 1
+    private var currentLineNumber: Int = 0
 
     override fun hasNext(): Boolean {
         if (noMoreLines()) { return false }
 
         if (ontoNextLine()) {
             currentLine = reader.next()
-            tokenOffset = skipWhiteSpace(0)
-            line++
+            currentColumn = skipWhiteSpaceAndGetColumn(1)
+            currentLineNumber++
         }
 
         while (onEmptyLine()) {
             currentLine = reader.next()
-            tokenOffset = skipWhiteSpace(0)
-            line++
+            currentColumn = skipWhiteSpaceAndGetColumn(1)
+            currentLineNumber++
         }
 
-        val nextValidPosition = skipWhiteSpace(tokenOffset)
-        return stillOnLine(nextValidPosition)
+        val nextValidColumn = skipWhiteSpaceAndGetColumn(currentColumn)
+        return stillOnLine(nextValidColumn)
     }
 
     private fun onEmptyLine() = reader.hasNext() && currentLine.isEmpty()
@@ -50,7 +50,7 @@ class Lexer(
             throw NoMoreTokensAvailableException()
         }
 
-        tokenOffset = skipWhiteSpace(tokenOffset)
+        currentColumn = skipWhiteSpaceAndGetColumn(currentColumn)
         if (ontoNextLine()) {
             throw NoMoreTokensAvailableException()
         }
@@ -59,27 +59,28 @@ class Lexer(
 
         if (optionalToken.isPresent) {
             val token = optionalToken.get()
-            tokenOffset += token.value.length
+            currentColumn += token.value.length
             return token
         }
 
-        val ch = currentLine[tokenOffset].toString()
-        val tok = Token(TokenType.UNKNOWN, ch, Position(line, tokenOffset + 1))
-        tokenOffset += 1
+        val ch = currentLine[toArrayIndex(currentColumn)].toString()
+        val tok = Token(TokenType.UNKNOWN, ch, Position(currentLineNumber, currentColumn))
+        currentColumn += 1
         return tok
     }
 
-    private fun ontoNextLine() = tokenOffset >= currentLine.length
+    private fun ontoNextLine() = toArrayIndex(currentColumn) >= currentLine.length
 
     private fun getOptionalToken(): Optional<Token> {
-        val s = currentLine.substring(tokenOffset)
-        val startPosition = Position(line, tokenOffset)
+        val arrayIndex = toArrayIndex(currentColumn)
+        val s = currentLine.substring(arrayIndex)
+        val startPosition = Position(currentLineNumber, currentColumn)
 
-        return keywords.constructToken(s, tokenOffset, startPosition)
+        return keywords.constructToken(s, startPosition)
             .or {
                 Optional.ofNullable(
                     constructors.asSequence()
-                        .map { it.constructToken(s, tokenOffset, startPosition) }
+                        .map { it.constructToken(s, startPosition) }
                         .filter { it.isPresent }
                         .map { it.get() }
                         .maxByOrNull { it.value.length }
@@ -87,15 +88,20 @@ class Lexer(
             }
     }
 
-    private fun skipWhiteSpace(tokenOffset: Int): Int {
-        var offset: Int = tokenOffset
-        while (stillOnLine(offset) && isWhitespace(offset)) {
-            offset++
+    private fun skipWhiteSpaceAndGetColumn(startColumn: Int): Int {
+        var column = startColumn
+        while (stillOnLine(column) && isWhitespace(column)) {
+            column++
         }
-        return offset
+        return column
     }
 
-    private fun isWhitespace(offset: Int) = whiteSpaces.contains(currentLine[offset])
+    private fun isWhitespace(column: Int): Boolean {
+        val arrayIndex = toArrayIndex(column)
+        return whiteSpaces.contains(currentLine[arrayIndex])
+    }
 
-    private fun stillOnLine(offset: Int) = offset < currentLine.length
+    private fun stillOnLine(column: Int) = toArrayIndex(column) < currentLine.length
+
+    private fun toArrayIndex(column: Int) = column - 1
 }

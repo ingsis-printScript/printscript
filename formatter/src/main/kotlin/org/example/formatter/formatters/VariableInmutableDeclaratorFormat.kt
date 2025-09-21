@@ -23,15 +23,23 @@ class VariableInmutableDeclaratorFormat : ASTFormat {
         // Indentación segun rule
         val leftColonSpace = if (
             rules["enforce-spacing-before-colon-in-declaration"]?.rule
-                ?: rules["enforce-spacing-around-colon"]?.rule
-                ?: false
-        ) " " else ""
+            ?: rules["enforce-spacing-around-colon"]?.rule
+            ?: false
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         val rightColonSpace = if (
             rules["enforce-spacing-after-colon-in-declaration"]?.rule
-                ?: rules["enforce-spacing-around-colon"]?.rule
-                ?: true
-        ) " " else ""
+            ?: rules["enforce-spacing-around-colon"]?.rule
+            ?: true
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         val aroundEqFallback = rules["enforce-spacing-around-equals"]?.rule
             ?: rules["spacesAroundOperators"]?.rule
@@ -39,13 +47,21 @@ class VariableInmutableDeclaratorFormat : ASTFormat {
 
         val leftEqualSpace = if (
             rules["enforce-spacing-before-equals-in-declaration"]?.rule
-                ?: aroundEqFallback
-        ) " " else ""
+            ?: aroundEqFallback
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         val rightEqualSpace = if (
             rules["enforce-spacing-after-equals-in-declaration"]?.rule
-                ?: aroundEqFallback
-        ) " " else ""
+            ?: aroundEqFallback
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         // Escribir tipo y nombre
         writer.write("const ")

@@ -23,15 +23,23 @@ class VariableDeclaratorFormat : ASTFormat {
         // COLON: default -> NO espacio antes, SÍ espacio después
         val leftColonSpace = if (
             rules["enforce-spacing-before-colon-in-declaration"]?.rule
-                ?: rules["enforce-spacing-around-colon"]?.rule
-                ?: false
-        ) " " else ""
+            ?: rules["enforce-spacing-around-colon"]?.rule
+            ?: false
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         val rightColonSpace = if (
             rules["enforce-spacing-after-colon-in-declaration"]?.rule
-                ?: rules["enforce-spacing-around-colon"]?.rule
-                ?: true
-        ) " " else ""
+            ?: rules["enforce-spacing-around-colon"]?.rule
+            ?: true
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         // EQUALS: fallback a spacesAroundOperators (o true) si no vienen reglas específicas
         val aroundEqFallback = rules["enforce-spacing-around-equals"]?.rule
@@ -40,13 +48,21 @@ class VariableDeclaratorFormat : ASTFormat {
 
         val leftEqualSpace = if (
             rules["enforce-spacing-before-equals-in-declaration"]?.rule
-                ?: aroundEqFallback
-        ) " " else ""
+            ?: aroundEqFallback
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         val rightEqualSpace = if (
             rules["enforce-spacing-after-equals-in-declaration"]?.rule
-                ?: aroundEqFallback
-        ) " " else ""
+            ?: aroundEqFallback
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         // let <symbol> : <type> [= <value>]
         writer.write("let ")
@@ -67,7 +83,11 @@ class VariableDeclaratorFormat : ASTFormat {
         declarator.value.let { expr ->
             if (expr is OptionalExpression.HasExpression) {
                 ExpressionFormatterHelper().formatExpression(
-                    expr.expression, writer, rules, nestingLevel, context
+                    expr.expression,
+                    writer,
+                    rules,
+                    nestingLevel,
+                    context
                 )
             }
         }

@@ -7,7 +7,7 @@ import java.util.*
 
 class KeywordTokenConstructor(private val keywords: Set<String>) : TokenConstructor {
 
-    override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
+    override fun constructToken(input: String, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
 
         val firstWord = input.takeWhile { it.isLetter() } // toma la primera "palabra"

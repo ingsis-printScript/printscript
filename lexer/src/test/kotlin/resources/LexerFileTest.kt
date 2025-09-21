@@ -1,4 +1,4 @@
-package resources// package org.example.lexer
+package resources // package org.example.lexer
 //
 // import org.example.common.tokens.detectors.KeywordTokenConstructor
 // import org.example.lexer.TokenCollector

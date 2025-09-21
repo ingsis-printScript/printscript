@@ -174,7 +174,6 @@ class Executor(
         return expr
     }
 
-
     override fun visitPrintFunction(statement: PrintFunction): ASTNode {
         if (hasExecutionError) return statement
         val value = when (val opt = statement.value) {
@@ -218,7 +217,6 @@ class Executor(
         return statement
     }
 
-
     override fun visitCondition(statement: Condition): ASTNode {
         val conditionResult = when (val opt = statement.condition) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
@@ -235,5 +233,4 @@ class Executor(
         }
         return statement
     }
-
 }

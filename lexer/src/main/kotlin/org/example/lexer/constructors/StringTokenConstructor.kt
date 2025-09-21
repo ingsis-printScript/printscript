@@ -6,7 +6,7 @@ import java.util.*
 
 class StringTokenConstructor : TokenConstructor {
 
-    override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
+    override fun constructToken(input: String, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
 
         val quoteChar = input[0]
@@ -16,7 +16,6 @@ class StringTokenConstructor : TokenConstructor {
         if (closingIndex == -1) return Optional.empty()
 
         val strValue = input.substring(0, closingIndex + 1)
-        val tokenPosition = Position(position.line, offset)
-        return Optional.of(Token(TokenType.STRING, strValue, tokenPosition))
+        return Optional.of(Token(TokenType.STRING, strValue, position))
     }
 }

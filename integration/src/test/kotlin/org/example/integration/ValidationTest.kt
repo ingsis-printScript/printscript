@@ -177,10 +177,10 @@ class ValidationTest {
     private fun colOf(line: String, needle: String, from: Int = 0): Int {
         val idx = line.indexOf(needle, from)
         require(idx >= 0) { "No se encontró '$needle' en la línea: '$line'" }
-        return idx
+        return idx + 1
     }
 
-    private fun endCol(line: String): Int = line.lastIndex
+    private fun endCol(line: String): Int = line.length
 
     // ========================================
     // CASOS BÁSICOS (una sola sentencia)
@@ -352,10 +352,10 @@ class ValidationTest {
 
         val colX = colOf(line, "x")
         val colEq = colOf(line, "=")
-        val col5 = colOf(line, "5", from = colEq)
-        val colPlus = colOf(line, "+", from = col5) // no lo usamos, pero sirve como doc
-        val col3 = colOf(line, "3", from = colPlus)
-        val start = 0
+        val col5 = colOf(line, "5", from = colEq - 1)
+        val colPlus = colOf(line, "+", from = col5 - 1)
+        val col3 = colOf(line, "3", from = colPlus - 1)
+        val start = 1
         val end = endCol(line)
 
         assertEquals(1, decl.symbol.position.line)
@@ -397,7 +397,7 @@ class ValidationTest {
 
         val colPi = colOf(line, "pi")
         val colEq = colOf(line, "=")
-        val col314 = colOf(line, "3.14", from = colEq)
+        val col314 = colOf(line, "3.14", from = colEq - 1)
         val end = endCol(line)
 
         assertEquals(1, assign.symbol.position.line)
@@ -407,7 +407,7 @@ class ValidationTest {
         assertEquals(1, valueExpr.position.line)
         assertEquals(col314, valueExpr.position.column)
 
-        assertEquals(0, assign.range.start.column)
+        assertEquals(1, assign.range.start.column)
         assertEquals(end, assign.range.end.column)
     }
 
@@ -419,9 +419,9 @@ class ValidationTest {
         val line = firstLine(src)
 
         val colLparen = colOf(line, "(")
-        val colSomeStr = colOf(line, "someString", from = colLparen)
-        val colPlus = colOf(line, "+", from = colSomeStr)
-        val colSomeNum = colOf(line, "someNumber", from = colPlus)
+        val colSomeStr = colOf(line, "someString", from = colLparen - 1)
+        val colPlus = colOf(line, "+", from = colSomeStr - 1)
+        val colSomeNum = colOf(line, "someNumber", from = colPlus - 1)
         val end = endCol(line)
 
         val expr = (printFn.value as OptionalExpression.HasExpression).expression as BinaryExpression
@@ -431,7 +431,7 @@ class ValidationTest {
         assertEquals(colSomeStr, leftSym.position.column)
         assertEquals(colSomeNum, rightSym.position.column)
 
-        assertEquals(0, printFn.range.start.column)
+        assertEquals(1, printFn.range.start.column)
         assertEquals(end, printFn.range.end.column)
     }
 }

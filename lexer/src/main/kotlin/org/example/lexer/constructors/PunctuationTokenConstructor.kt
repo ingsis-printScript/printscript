@@ -7,13 +7,12 @@ import java.util.*
 
 class PunctuationTokenConstructor(private val punctuations: Set<String>) : TokenConstructor {
 
-    override fun constructToken(input: String, offset: Int, position: Position): Optional<Token> {
+    override fun constructToken(input: String, position: Position): Optional<Token> {
         if (input.isEmpty()) return Optional.empty()
 
         val punc = longestMatch(input)
         if (punc != null) {
-            val tokenPosition = Position(position.line, offset)
-            return Optional.of(Token(TokenType.PUNCTUATION, punc, tokenPosition))
+            return Optional.of(Token(TokenType.PUNCTUATION, punc, position))
         }
 
         return Optional.empty()

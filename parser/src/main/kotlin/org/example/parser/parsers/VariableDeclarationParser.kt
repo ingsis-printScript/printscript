@@ -85,7 +85,7 @@ class VariableDeclarationParser(
         }
     }
 
-    private fun getCorrectType(type: String) : Type {
+    private fun getCorrectType(type: String): Type {
         return expectedTypes.first { it.name.equals(type, ignoreCase = true) }
     }
 

@@ -9,7 +9,11 @@ import org.example.common.Range
 import org.example.common.enums.TokenType
 import org.example.parser.parsers.builders.block.BlockBuilder
 import org.example.parser.parsers.builders.expression.ExpressionBuilder
-import org.example.parser.validators.*
+import org.example.parser.validators.BlockValidator
+import org.example.parser.validators.ExpressionValidator
+import org.example.parser.validators.KeywordValidator
+import org.example.parser.validators.PunctuationValidator
+import org.example.parser.validators.TokenValidator
 import org.example.token.Token
 
 class ConditionParser(
@@ -24,7 +28,7 @@ class ConditionParser(
             listOf(
                 KeywordValidator(setOf("if")),
                 PunctuationValidator("("),
-                ExpressionValidator(expressionElements), //check
+                ExpressionValidator(expressionElements), // check
                 PunctuationValidator(")"),
                 PunctuationValidator("{"),
                 BlockValidator(statementParsers),

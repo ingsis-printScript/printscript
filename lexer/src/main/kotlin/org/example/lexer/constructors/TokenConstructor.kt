@@ -5,5 +5,5 @@ import org.example.token.Token
 import java.util.*
 
 interface TokenConstructor {
-    fun constructToken(input: String, offset: Int, position: Position): Optional<Token>
+    fun constructToken(input: String, position: Position): Optional<Token>
 }

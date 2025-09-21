@@ -27,13 +27,21 @@ class VariableAssignerFormat : ASTFormat {
 
         val leftEqualSpace = if (
             rules["enforce-spacing-before-equals-in-declaration"]?.rule
-                ?: aroundEqFallback
-        ) " " else ""
+            ?: aroundEqFallback
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         val rightEqualSpace = if (
             rules["enforce-spacing-after-equals-in-declaration"]?.rule
-                ?: aroundEqFallback
-        ) " " else ""
+            ?: aroundEqFallback
+        ) {
+            " "
+        } else {
+            ""
+        }
 
         // Formateo del símbolo
         writer.write(assigner.symbol.value)

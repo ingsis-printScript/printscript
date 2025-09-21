@@ -1,9 +1,6 @@
 package org.example.integration
 
-import org.example.ast.statements.Condition
 import org.example.common.ErrorHandler
-import org.example.common.results.Error
-import org.example.common.results.Success
 import org.example.interpreter.input.InputProvider
 import org.example.interpreter.output.OutputPrinter
 import org.example.interpreter.providers.InterpreterVersionProvider

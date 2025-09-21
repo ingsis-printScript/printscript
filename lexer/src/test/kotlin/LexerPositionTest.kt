@@ -22,18 +22,24 @@ class LexerPositionTest {
     }
 
     private fun assertToken(
-        expectedType: TokenType, expectedValue: String,
-        expectedLine: Int, expectedColumn: Int,
+        expectedType: TokenType,
+        expectedValue: String,
+        expectedLine: Int,
+        expectedColumn: Int,
         actualToken: Token
     ) {
         assertEquals(expectedType, actualToken.type, "Token type mismatch")
         assertEquals(expectedValue, actualToken.value, "Token value mismatch")
         assertEquals(
-            expectedLine, actualToken.position.line,
-            "Token line position mismatch for '${actualToken.value}'")
+            expectedLine,
+            actualToken.position.line,
+            "Token line position mismatch for '${actualToken.value}'"
+        )
         assertEquals(
-            expectedColumn, actualToken.position.column,
-            "Token column position mismatch for '${actualToken.value}'")
+            expectedColumn,
+            actualToken.position.column,
+            "Token column position mismatch for '${actualToken.value}'"
+        )
     }
 
     private fun getAllTokens(lexer: Lexer): List<Token> {
@@ -61,10 +67,10 @@ class LexerPositionTest {
     @Test
     fun `test multi-line token positioning with whitespace`() {
         val lines = listOf(
-            "let name: string;",        // Line 1
-            "",                        // Line 2 (empty)
-            "  name = \"Hello\";",      // Line 3 (with leading spaces)
-            "println(name);"           // Line 4
+            "let name: string;", // Line 1
+            "", // Line 2 (empty)
+            "  name = \"Hello\";", // Line 3 (with leading spaces)
+            "println(name);" // Line 4
         )
         val tokens = getAllTokens(createLexerFromLines(lines))
 
@@ -116,8 +122,10 @@ class LexerPositionTest {
             assertTrue(matchingTokens.isNotEmpty(), "Should find token: $value")
 
             expectations.forEachIndexed { index, (expectedType, expectedLine, expectedColumn) ->
-                assertTrue(index < matchingTokens.size,
-                    "Should have enough occurrences of token: $value")
+                assertTrue(
+                    index < matchingTokens.size,
+                    "Should have enough occurrences of token: $value"
+                )
                 assertToken(expectedType, value, expectedLine, expectedColumn, matchingTokens[index])
             }
         }
@@ -126,11 +134,17 @@ class LexerPositionTest {
 
         val tokenCounts = tokens.groupBy { it.type }.mapValues { it.value.size }
 
-        assertTrue(tokenCounts.getOrDefault(TokenType.KEYWORD, 0) > 0,
-            "Should have keywords")
-        assertTrue(tokenCounts.getOrDefault(TokenType.SYMBOL, 0) > 0,
-            "Should have symbols")
-        assertTrue(tokenCounts.getOrDefault(TokenType.STRING, 0) > 0,
-            "Should have strings")
+        assertTrue(
+            tokenCounts.getOrDefault(TokenType.KEYWORD, 0) > 0,
+            "Should have keywords"
+        )
+        assertTrue(
+            tokenCounts.getOrDefault(TokenType.SYMBOL, 0) > 0,
+            "Should have symbols"
+        )
+        assertTrue(
+            tokenCounts.getOrDefault(TokenType.STRING, 0) > 0,
+            "Should have strings"
+        )
     }
 }
