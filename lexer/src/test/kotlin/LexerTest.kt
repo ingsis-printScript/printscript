@@ -1,4 +1,3 @@
-
 import org.example.common.enums.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.lexer.Lexer
@@ -46,7 +45,7 @@ class LexerTest {
 
         val token = lexer.getNext()
         assertTokenEquals(TokenType.KEYWORD, "let", token)
-        assertTokenAtPosition(1, 0, token)
+        assertTokenAtPosition(1, 1, token)
 
         assertFalse(lexer.hasNext(), "Lexer should not have more tokens")
     }
@@ -114,17 +113,17 @@ class LexerTest {
         assertTrue(lexer.hasNext())
         val firstToken = lexer.getNext()
         assertTokenEquals(TokenType.KEYWORD, "let", firstToken)
-        assertTokenAtPosition(1, 0, firstToken)
+        assertTokenAtPosition(1, 1, firstToken)
 
         assertTrue(lexer.hasNext())
         val secondToken = lexer.getNext()
         assertTokenEquals(TokenType.SYMBOL, "a", secondToken)
-        assertTokenAtPosition(2, 0, secondToken)
+        assertTokenAtPosition(2, 1, secondToken)
 
         assertTrue(lexer.hasNext())
         val thirdToken = lexer.getNext()
         assertTokenEquals(TokenType.SYMBOL, "string", thirdToken)
-        assertTokenAtPosition(2, 2, thirdToken)
+        assertTokenAtPosition(2, 3, thirdToken)
 
         assertFalse(lexer.hasNext())
     }
