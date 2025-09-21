@@ -62,19 +62,25 @@ class Validator(
 
 
     override fun visitVariableImmutableDeclarator(statement: VariableImmutableDeclarator): ASTNode {
-        val type = when (val opt = statement.value) {
+        val exprType = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
 
+        val declaredType = statement.type
+
         if (environment.containsKey(statement.symbol.value)) {
             reportError("Immutable variable ${statement.symbol.value} already declared")
         } else {
-            environment[statement.symbol.value] = type ?: statement.type
+            if (exprType != null && exprType != declaredType) {
+                reportError("Type mismatch: expected $declaredType but got $exprType")
+            }
+            environment[statement.symbol.value] = exprType ?: declaredType
         }
 
         return statement
     }
+
 
     override fun visitVariableAssigner(statement: VariableAssigner): ASTNode {
         val type = when (val opt = statement.value) {
