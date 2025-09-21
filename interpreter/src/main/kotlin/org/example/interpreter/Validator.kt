@@ -25,6 +25,12 @@ class Validator(
 
     private val stack = mutableListOf<Type?>()
     private val environment = mutableMapOf<String, Type>()
+    var hasErrors = false
+
+    fun reportError(message: String) {
+        errorHandler.handleError(message)
+        hasErrors = true
+    }
 
     fun evaluate(node: ASTNode): Type? {
         node.accept(this)
@@ -38,19 +44,22 @@ class Validator(
         return environment[name]
     }
 
-    fun reportError(message: String) {
-        errorHandler.handleError(message)
-    }
 
     override fun visitVariableDeclarator(statement: VariableDeclarator): ASTNode {
-        val type = when (val opt = statement.value) {
+        val exprType = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
         }
 
-        environment[statement.symbol.value] = type ?: statement.type
+        val declaredType = statement.type
+        if (exprType != null && exprType != declaredType) {
+            reportError("Type mismatch: expected $declaredType but got $exprType")
+        }
+
+        environment[statement.symbol.value] = declaredType
         return statement
     }
+
 
     override fun visitVariableImmutableDeclarator(statement: VariableImmutableDeclarator): ASTNode {
         val type = when (val opt = statement.value) {
@@ -128,18 +137,32 @@ class Validator(
     }
 
     override fun visitCondition(statement: Condition): ASTNode {
-        evaluate(statement.condition)
+        when (val opt = statement.condition) {
+            is OptionalExpression.HasExpression -> {
+                val condType = evaluate(opt.expression)
+                if (condType != Type.BOOLEAN) {
+                    reportError("Condition must be a boolean expression")
+                }
+            }
+            is OptionalExpression.NoExpression -> {
+                reportError("Condition without expression is invalid")
+            }
+        }
+
         statement.ifBlock.forEach { evaluate(it) }
         statement.elseBlock?.forEach { evaluate(it) }
         return statement
     }
+
 
     override fun visitBinary(expr: BinaryExpression): ASTNode {
         val leftType = evaluate(expr.left)
         val rightType = evaluate(expr.right)
 
         val resultType = when (expr.operator) {
-            Operator.ADD -> if (leftType == Type.STRING || rightType == Type.STRING) Type.STRING else Type.NUMBER
+            Operator.ADD ->
+                if (leftType == Type.STRING || rightType == Type.STRING) Type.STRING
+                else Type.NUMBER
             Operator.SUB, Operator.MUL, Operator.DIV, Operator.MOD -> {
                 if (leftType != Type.NUMBER || rightType != Type.NUMBER) {
                     reportError("Binary operation ${expr.operator} requires numeric operands")
@@ -151,4 +174,5 @@ class Validator(
         pushLiteral(resultType)
         return expr
     }
+
 }

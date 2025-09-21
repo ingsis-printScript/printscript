@@ -28,6 +28,7 @@ class Executor(
 
     private val environment = mutableMapOf<String, Variable>()
     private val stack = mutableListOf<Any?>()
+    private var hasExecutionError = false
 
     fun evaluate(node: ASTNode): Any? {
         node.accept(this)
@@ -48,6 +49,7 @@ class Executor(
 
     fun reportError(message: String) {
         errorHandler.handleError(message)
+        hasExecutionError = true
     }
 
     fun pushLiteral(value: Any?) = stack.add(value)
@@ -173,6 +175,7 @@ class Executor(
     }
 
     override fun visitPrintFunction(statement: PrintFunction): ASTNode {
+        if (hasExecutionError) return statement
         val value = when (val opt = statement.value) {
             is OptionalExpression.HasExpression -> evaluate(opt.expression)
             is OptionalExpression.NoExpression -> null
@@ -210,19 +213,20 @@ class Executor(
     }
 
     override fun visitCondition(statement: Condition): ASTNode {
-        val conditionResult = evaluate(statement.condition)
+        val conditionResult = when (val opt = statement.condition) {
+            is OptionalExpression.HasExpression -> evaluate(opt.expression)
+            is OptionalExpression.NoExpression -> false
+        }
+
         val cond = (conditionResult as? Boolean) ?: false
-        stack.clear()
 
         val blockToExecute = if (cond) statement.ifBlock else statement.elseBlock.orEmpty()
 
-        var lastValue: Any? = null
         for (stmt in blockToExecute) {
+            if (hasExecutionError) break
             stmt.accept(this)
-            lastValue = popLiteral()
         }
-
-        pushLiteral(lastValue)
         return statement
     }
+
 }

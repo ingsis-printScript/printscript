@@ -35,6 +35,11 @@ class Interpreter(
         }
 
         node.accept(validator)
+        if (validator.hasErrors) {
+            return Error("Validation failed for node: ${node::class.simpleName}")
+        }
+        node.accept(executor)
+
         node.accept(executor)
 
         return Success(node)
