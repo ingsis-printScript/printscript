@@ -12,7 +12,8 @@ import kotlin.reflect.KClass
 
 class ReadInputArgumentRule(
     private val prohibitedNodes: Set<KClass<out ASTNode>>,
-    private val supportedNodes: Set<KClass<out ASTNode>>
+    private val supportedNodes: Set<KClass<out ASTNode>>,
+    private val nodeHandler: (ASTNode, (ReadInputExpression) -> Result) -> Result
 ) : Rule {
 
     private val checker = FunctionArgumentChecker(prohibitedNodes, supportedNodes)
@@ -20,16 +21,16 @@ class ReadInputArgumentRule(
     override fun check(node: ASTNode, configuration: LinterConfiguration, errorHandler: ErrorHandler): Result {
         if (!isEnabled(configuration)) return Success(Unit)
 
-        val result = checker.checkNodes(
-            node = node,
-            shouldCheckNode = { it is ReadInputExpression },
-            extractValue = { (it as ReadInputExpression).value },
-            getFunctionName = { "readInput()" },
-            getRange = { (it as ReadInputExpression).range },
-            errorHandler
-        )
-
-        return result
+        return nodeHandler(node) { ri ->
+            checker.checkNodes(
+                node = ri,
+                shouldCheckNode = { it is ReadInputExpression },
+                extractValue = { (it as ReadInputExpression).value },
+                getFunctionName = { "readInput()" },
+                getRange = { (it as ReadInputExpression).range },
+                errorHandler
+            )
+        }
     }
 
     override fun isEnabled(configuration: LinterConfiguration): Boolean {

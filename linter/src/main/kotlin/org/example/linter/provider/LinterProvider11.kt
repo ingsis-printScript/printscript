@@ -18,6 +18,8 @@ import org.example.common.ErrorHandler
 import org.example.common.PrintScriptIterator
 import org.example.common.enums.SymbolFormat
 import org.example.common.results.Result
+import org.example.common.results.Success
+import org.example.common.results.Error
 import org.example.linter.Linter
 import org.example.linter.configurationreaders.ConfigurationReader
 import org.example.linter.configurationreaders.mappers.JsonMapper
@@ -31,7 +33,11 @@ import java.io.InputStream
 import kotlin.reflect.KClass
 
 class LinterProvider11 : LinterProvider {
-    override fun provide(iterator: PrintScriptIterator<Result>, inputStream: InputStream, errorHandler: ErrorHandler): Linter {
+    override fun provide(
+        iterator: PrintScriptIterator<Result>,
+        inputStream: InputStream,
+        errorHandler: ErrorHandler
+    ): Linter {
         val symbolFormats = mapOf(
             SymbolFormat.CAMEL_CASE to CamelCaseChecker(),
             SymbolFormat.SNAKE_CASE to SnakeCaseChecker()
@@ -40,11 +46,12 @@ class LinterProvider11 : LinterProvider {
         val prohibitedNodes = setOf(BinaryExpression::class)
         val supportedNodes = createSupportedNodes()
         val symbolNodeHandler = createSymbolNodeHandler()
+        val readInputNodeHandler = createReadInputNodeHandler()
 
         val rules = listOf(
             PrintArgumentRule(prohibitedNodes, supportedNodes),
             SymbolFormatRule(symbolFormats, supportedNodes, symbolNodeHandler),
-            ReadInputArgumentRule(prohibitedNodes, supportedNodes)
+            ReadInputArgumentRule(prohibitedNodes, supportedNodes, readInputNodeHandler)
         )
         val configurationReader = ConfigurationReader(listOf(JsonMapper(), YamlMapper()))
 
@@ -63,7 +70,8 @@ class LinterProvider11 : LinterProvider {
             StringExpression::class,
             PrintFunction::class,
             VariableAssigner::class,
-            VariableDeclarator::class
+            VariableDeclarator::class,
+            Condition::class
         )
         return supported
     }
@@ -80,7 +88,9 @@ class LinterProvider11 : LinterProvider {
                 is ReadInputExpression -> checkOptionalExpression(node.value, symbolChecker)
                 is ReadEnvExpression -> checkOptionalExpression(node.value, symbolChecker)
                 is Condition -> handleCondition(node, symbolChecker)
-                is BooleanExpression, is NumberExpression, is StringExpression -> { /* No action needed */ }
+                is BooleanExpression, is NumberExpression, is StringExpression -> { /* No action needed */
+                }
+
                 else -> throw IllegalArgumentException("Unsupported node type: $node")
             }
         }
@@ -92,7 +102,11 @@ class LinterProvider11 : LinterProvider {
         handler(node.right, symbolChecker)
     }
 
-    private fun handleVariableNode(symbol: SymbolExpression, value: OptionalExpression, symbolChecker: (SymbolExpression) -> Unit) {
+    private fun handleVariableNode(
+        symbol: SymbolExpression,
+        value: OptionalExpression,
+        symbolChecker: (SymbolExpression) -> Unit
+    ) {
         symbolChecker(symbol)
         checkOptionalExpression(value, symbolChecker)
     }
@@ -103,13 +117,64 @@ class LinterProvider11 : LinterProvider {
         node.elseBlock?.forEach { handler(it, symbolChecker) }
     }
 
-    private fun checkOptionalExpression(expression: ASTNode?, symbolChecker: (SymbolExpression) -> Unit) {
-        expression?.let { createSymbolNodeHandler()(it, symbolChecker) }
-    }
-
     private fun checkOptionalExpression(value: OptionalExpression, symbolChecker: (SymbolExpression) -> Unit) {
         if (value is OptionalExpression.HasExpression) {
             createSymbolNodeHandler()(value.expression, symbolChecker)
         }
     }
+
+    private fun createReadInputNodeHandler(): (ASTNode, (ReadInputExpression) -> Result) -> Result {
+        return { node, visit -> walkReadInput(node, visit) }
+    }
+
+    private fun walkReadInput(node: ASTNode, visit: (ReadInputExpression) -> Result
+    ): Result {
+        return when (node) {
+            is ReadInputExpression -> visit(node)
+
+            is PrintFunction -> walkOptional(node.value, visit)
+            is VariableAssigner -> walkOptional(node.value, visit)
+            is VariableDeclarator -> walkOptional(node.value, visit)
+            is VariableImmutableDeclarator -> walkOptional(node.value, visit)
+            is ReadEnvExpression -> walkOptional(node.value, visit)
+
+            is BinaryExpression -> {
+                val r1 = walkReadInput(node.left as ASTNode, visit)
+                val r2 = walkReadInput(node.right as ASTNode, visit)
+                mergeResults(r1, r2)
+            }
+
+            is Condition -> {
+                val results = buildList {
+                    node.ifBlock.forEach { add(walkReadInput(it, visit)) }
+                    node.elseBlock?.forEach { add(walkReadInput(it, visit)) }
+                }
+                results.fold< Result, Result >(Success(Unit)) { acc, r -> mergeResults(acc, r) }
+            }
+
+            is SymbolExpression, is NumberExpression, is StringExpression, is BooleanExpression -> Success(Unit)
+
+            else -> Error("Unsupported node type: $node")
+        }
+    }
+
+    private fun walkOptional(
+        value: OptionalExpression,
+        visit: (ReadInputExpression) -> Result
+    ): Result {
+        return if (value is OptionalExpression.HasExpression) {
+            walkReadInput(value.expression as ASTNode, visit)
+        } else {
+            Success(Unit)
+        }
+    }
+
+    private fun mergeResults(r1: Result, r2: Result): Result {
+        return when {
+            r1 is Error -> r1
+            r2 is Error -> r2
+            else -> Success(Unit)
+        }
+    }
+
 }
