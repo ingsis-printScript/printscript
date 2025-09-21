@@ -562,4 +562,43 @@ class LinterTest {
         }
         assertTrue(eh.errors.isEmpty(), "Nodos hoja sin símbolos no deberían reportar")
     }
+
+    @Test
+    fun `declaracion con readInput literal - permitido y no reporta`() {
+        // let a: String = readInput("hola" + "chau")
+        val varDeclWithReadInput: VariableDeclarator =
+            astFactory.createVariableDeclarator(
+                astFactory.createSymbol("a"),
+                Type.STRING,
+                OptionalExpression.HasExpression(
+                    ReadInputExpression(
+                        OptionalExpression.HasExpression(
+                            astFactory.createBinaryExpression(
+                                astFactory.createString("hola"),
+                                Operator.ADD,
+                                astFactory.createString("chau")
+                            )
+                        ),
+                        astFactory.basicRange
+                    )
+                )
+            )
+
+        val fakeErrorHandler = object : ErrorHandler {
+            val errors = mutableListOf<String>()
+            override fun handleError(message: String) { errors.add(message) }
+        }
+
+        val linter = createLinter(
+            "1.1",
+            listOf(varDeclWithReadInput),
+            configStream(readInputOnlyLiteralsAndIdentifiers = true),
+            fakeErrorHandler
+        )
+
+        val r = linter.getNext()
+        assertTrue(r is Success<*>)
+        assertTrue(fakeErrorHandler.errors.isNotEmpty())
+    }
+
 }
