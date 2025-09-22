@@ -1,6 +1,6 @@
 package org.example.parser.validators
 
-import org.example.common.enums.TokenType
+import org.example.token.TokenType
 import org.example.parser.AnalysisOutcome
 import org.example.parser.Parser
 import org.example.parser.TokenBuffer

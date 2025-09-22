@@ -5,7 +5,7 @@ import org.example.ast.expressions.ReadInputExpression
 import org.example.common.ErrorHandler
 import org.example.common.results.Result
 import org.example.common.results.Success
-import org.example.linter.LinterConfiguration
+import org.example.common.configuration.configurationreaders.RulesConfiguration
 import org.example.linter.rules.Rule
 import org.example.linter.rules.functionargument.checker.FunctionArgumentChecker
 import kotlin.reflect.KClass
@@ -18,7 +18,7 @@ class ReadInputArgumentRule(
 
     private val checker = FunctionArgumentChecker(prohibitedNodes, supportedNodes)
 
-    override fun check(node: ASTNode, configuration: LinterConfiguration, errorHandler: ErrorHandler): Result {
+    override fun check(node: ASTNode, configuration: RulesConfiguration, errorHandler: ErrorHandler): Result {
         if (!isEnabled(configuration)) return Success(Unit)
 
         return nodeHandler(node) { ri ->
@@ -33,7 +33,7 @@ class ReadInputArgumentRule(
         }
     }
 
-    override fun isEnabled(configuration: LinterConfiguration): Boolean {
+    override fun isEnabled(configuration: RulesConfiguration): Boolean {
         return configuration.getBoolean("mandatory-variable-or-literal-in-readInput")
     }
 }

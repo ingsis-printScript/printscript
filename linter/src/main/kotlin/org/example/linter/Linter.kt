@@ -2,11 +2,12 @@ package org.example.linter
 
 import org.example.ast.ASTNode
 import org.example.common.ErrorHandler
+import org.example.common.configuration.configurationreaders.RulesConfiguration
 import org.example.common.PrintScriptIterator
 import org.example.common.results.Error
 import org.example.common.results.Result
 import org.example.common.results.Success
-import org.example.linter.configurationreaders.ConfigurationReader
+import org.example.common.configuration.configurationreaders.ConfigurationReader
 import org.example.linter.rules.Rule
 import java.io.File
 import java.io.InputStream
@@ -19,11 +20,11 @@ class Linter(
     private val errorHandler: ErrorHandler
 ) : PrintScriptIterator<Result> {
 
-    private val configuration: LinterConfiguration by lazy {
+    private val configuration: RulesConfiguration by lazy {
         val tempFile = createTempConfigFile(configInputStream)
         val configData = configurationReader.read(tempFile.absolutePath)
         tempFile.delete()
-        LinterConfiguration(configData)
+        RulesConfiguration(configData)
     }
 
     override fun hasNext(): Boolean {

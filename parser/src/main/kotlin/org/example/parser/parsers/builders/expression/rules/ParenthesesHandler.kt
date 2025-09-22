@@ -1,6 +1,6 @@
 package org.example.parser.parsers.builders.expression.rules
 
-import org.example.common.enums.TokenType
+import org.example.token.TokenType
 import org.example.parser.exceptions.SyntaxException
 import org.example.token.Token
 

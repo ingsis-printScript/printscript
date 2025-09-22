@@ -6,7 +6,7 @@ import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.Condition
 import org.example.common.Position
 import org.example.common.Range
-import org.example.common.enums.TokenType
+import org.example.token.TokenType
 import org.example.parser.parsers.builders.block.BlockBuilder
 import org.example.parser.parsers.builders.expression.ExpressionBuilder
 import org.example.parser.validators.BlockValidator

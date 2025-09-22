@@ -7,7 +7,7 @@ import org.example.common.Range
 import org.example.common.enums.SymbolFormat
 import org.example.common.results.Result
 import org.example.common.results.Success
-import org.example.linter.LinterConfiguration
+import org.example.common.configuration.configurationreaders.RulesConfiguration
 import org.example.linter.rules.Rule
 import org.example.linter.rules.symbolformat.checker.SymbolFormatChecker
 import kotlin.collections.get
@@ -19,10 +19,10 @@ class SymbolFormatRule(
     private val nodeHandler: (ASTNode, (SymbolExpression) -> Unit) -> Unit
 ) : Rule {
 
-    private lateinit var currentConfig: LinterConfiguration
+    private lateinit var currentConfig: RulesConfiguration
     private lateinit var errorHandler: ErrorHandler
 
-    override fun check(node: ASTNode, configuration: LinterConfiguration, errorHandler: ErrorHandler): Result {
+    override fun check(node: ASTNode, configuration: RulesConfiguration, errorHandler: ErrorHandler): Result {
         if (!isEnabled(configuration)) return Success(Unit)
 
         this.currentConfig = configuration
@@ -31,7 +31,7 @@ class SymbolFormatRule(
         return Success(Unit)
     }
 
-    override fun isEnabled(configuration: LinterConfiguration): Boolean {
+    override fun isEnabled(configuration: RulesConfiguration): Boolean {
         return configuration.getString("identifier_format") != null
     }
 

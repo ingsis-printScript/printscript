@@ -1,4 +1,4 @@
-import org.example.common.enums.TokenType
+import org.example.token.TokenType
 import org.example.lexer.Lexer
 import org.example.lexer.provider.LexerProvider11
 import org.junit.jupiter.api.Assertions.assertEquals

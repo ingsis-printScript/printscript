@@ -6,7 +6,7 @@ import org.example.ast.expressions.OptionalExpression
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Operator
-import org.example.common.enums.TokenType
+import org.example.token.TokenType
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.parsers.builders.expression.rules.OperatorPrecedence
 import org.example.parser.parsers.builders.expression.rules.ParenthesesHandler

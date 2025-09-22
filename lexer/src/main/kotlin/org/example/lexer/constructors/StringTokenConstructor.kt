@@ -1,6 +1,6 @@
 package org.example.lexer.constructors
 import org.example.common.Position
-import org.example.common.enums.TokenType
+import org.example.token.TokenType
 import org.example.token.Token
 import java.util.*
 

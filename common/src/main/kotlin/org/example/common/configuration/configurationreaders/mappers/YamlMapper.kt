@@ -1,4 +1,4 @@
-package org.example.linter.configurationreaders.mappers
+package org.example.common.configuration.configurationreaders.mappers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory

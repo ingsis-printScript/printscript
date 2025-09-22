@@ -21,9 +21,9 @@ import org.example.common.results.Result
 import org.example.common.results.Success
 import org.example.common.results.Error
 import org.example.linter.Linter
-import org.example.linter.configurationreaders.ConfigurationReader
-import org.example.linter.configurationreaders.mappers.JsonMapper
-import org.example.linter.configurationreaders.mappers.YamlMapper
+import org.example.common.configuration.configurationreaders.ConfigurationReader
+import org.example.common.configuration.configurationreaders.mappers.JsonMapper
+import org.example.common.configuration.configurationreaders.mappers.YamlMapper
 import org.example.linter.rules.functionargument.PrintArgumentRule
 import org.example.linter.rules.functionargument.ReadInputArgumentRule
 import org.example.linter.rules.symbolformat.SymbolFormatRule
