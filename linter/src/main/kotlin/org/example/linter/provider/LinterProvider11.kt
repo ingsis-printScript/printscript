@@ -16,14 +16,14 @@ import org.example.ast.statements.VariableImmutableDeclarator
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.ErrorHandler
 import org.example.common.PrintScriptIterator
-import org.example.common.enums.SymbolFormat
-import org.example.common.results.Result
-import org.example.common.results.Success
-import org.example.common.results.Error
-import org.example.linter.Linter
 import org.example.common.configuration.configurationreaders.ConfigurationReader
 import org.example.common.configuration.configurationreaders.mappers.JsonMapper
 import org.example.common.configuration.configurationreaders.mappers.YamlMapper
+import org.example.common.enums.SymbolFormat
+import org.example.common.results.Error
+import org.example.common.results.Result
+import org.example.common.results.Success
+import org.example.linter.Linter
 import org.example.linter.rules.functionargument.PrintArgumentRule
 import org.example.linter.rules.functionargument.ReadInputArgumentRule
 import org.example.linter.rules.symbolformat.SymbolFormatRule
@@ -127,7 +127,9 @@ class LinterProvider11 : LinterProvider {
         return { node, visit -> walkReadInput(node, visit) }
     }
 
-    private fun walkReadInput(node: ASTNode, visit: (ReadInputExpression) -> Result
+    private fun walkReadInput(
+        node: ASTNode,
+        visit: (ReadInputExpression) -> Result
     ): Result {
         return when (node) {
             is ReadInputExpression -> visit(node)
@@ -149,7 +151,7 @@ class LinterProvider11 : LinterProvider {
                     node.ifBlock.forEach { add(walkReadInput(it, visit)) }
                     node.elseBlock?.forEach { add(walkReadInput(it, visit)) }
                 }
-                results.fold< Result, Result >(Success(Unit)) { acc, r -> mergeResults(acc, r) }
+                results.fold<Result, Result>(Success(Unit)) { acc, r -> mergeResults(acc, r) }
             }
 
             is SymbolExpression, is NumberExpression, is StringExpression, is BooleanExpression -> Success(Unit)
@@ -176,5 +178,4 @@ class LinterProvider11 : LinterProvider {
             else -> Success(Unit)
         }
     }
-
 }

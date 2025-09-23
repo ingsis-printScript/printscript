@@ -1,8 +1,8 @@
-import org.example.token.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.lexer.Lexer
 import org.example.lexer.provider.LexerProvider10
 import org.example.token.Token
+import org.example.token.TokenType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows

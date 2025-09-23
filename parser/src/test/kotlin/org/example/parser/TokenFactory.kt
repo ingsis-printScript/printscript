@@ -1,8 +1,8 @@
 package org.example.parser
 
 import org.example.common.Position
-import org.example.token.TokenType
 import org.example.token.Token
+import org.example.token.TokenType
 
 class TokenFactory {
 

@@ -3,9 +3,9 @@ package org.example.linter.rules.functionargument
 import org.example.ast.ASTNode
 import org.example.ast.statements.functions.PrintFunction
 import org.example.common.ErrorHandler
+import org.example.common.configuration.RulesConfiguration
 import org.example.common.results.Result
 import org.example.common.results.Success
-import org.example.common.configuration.RulesConfiguration
 import org.example.linter.rules.Rule
 import org.example.linter.rules.functionargument.checker.FunctionArgumentChecker
 import kotlin.reflect.KClass

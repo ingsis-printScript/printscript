@@ -1,9 +1,9 @@
 package org.example.parser.validators
 
-import org.example.token.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
+import org.example.token.TokenType
 
 class StringValidator : TokenValidator {
 

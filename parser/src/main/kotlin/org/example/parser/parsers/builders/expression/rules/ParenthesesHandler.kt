@@ -1,8 +1,8 @@
 package org.example.parser.parsers.builders.expression.rules
 
-import org.example.token.TokenType
 import org.example.parser.exceptions.SyntaxException
 import org.example.token.Token
+import org.example.token.TokenType
 
 class ParenthesesHandler {
     fun findMatchingCloseParen(tokens: List<Token>, openParenIndex: Int): Int {

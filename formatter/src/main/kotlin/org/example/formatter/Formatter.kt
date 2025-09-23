@@ -1,13 +1,13 @@
 package org.example.formatter
 
+import org.example.common.PrintScriptIterator
+import org.example.common.configuration.RulesConfiguration
+import org.example.common.configuration.configurationreaders.ConfigurationReader
+import org.example.formatter.rules.Rule
+import org.example.token.Token
 import java.io.File
 import java.io.InputStream
 import java.io.Writer
-import org.example.common.configuration.RulesConfiguration
-import org.example.common.configuration.configurationreaders.ConfigurationReader
-import org.example.common.PrintScriptIterator
-import org.example.formatter.rules.Rule
-import org.example.token.Token
 
 class Formatter(
     private val iterator: PrintScriptIterator<Token>,

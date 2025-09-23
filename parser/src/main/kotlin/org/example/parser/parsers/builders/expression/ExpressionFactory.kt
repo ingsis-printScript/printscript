@@ -5,9 +5,9 @@ import org.example.ast.expressions.Expression
 import org.example.ast.expressions.NumberExpression
 import org.example.ast.expressions.StringExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.token.TokenType
 import org.example.parser.exceptions.SyntaxException
 import org.example.token.Token
+import org.example.token.TokenType
 
 class ExpressionFactory {
     fun createExpression(token: Token): Expression {

@@ -2,11 +2,11 @@ package org.example.lexer
 
 import org.example.common.Position
 import org.example.common.PrintScriptIterator
-import org.example.token.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.lexer.constructors.KeywordTokenConstructor
 import org.example.lexer.constructors.TokenConstructor
 import org.example.token.Token
+import org.example.token.TokenType
 import java.util.*
 
 class Lexer(

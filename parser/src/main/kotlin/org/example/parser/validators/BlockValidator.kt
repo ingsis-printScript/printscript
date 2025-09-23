@@ -1,12 +1,12 @@
 package org.example.parser.validators
 
-import org.example.token.TokenType
 import org.example.parser.AnalysisOutcome
 import org.example.parser.Parser
 import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.parser.parsers.StatementParser
 import org.example.token.Token
+import org.example.token.TokenType
 
 class BlockValidator(
     private val statementParsers: List<StatementParser>,

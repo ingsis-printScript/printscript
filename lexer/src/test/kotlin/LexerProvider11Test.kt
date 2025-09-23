@@ -1,6 +1,6 @@
-import org.example.token.TokenType
 import org.example.lexer.Lexer
 import org.example.lexer.provider.LexerProvider11
+import org.example.token.TokenType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

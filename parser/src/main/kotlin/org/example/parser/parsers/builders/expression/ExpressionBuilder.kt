@@ -6,11 +6,11 @@ import org.example.ast.expressions.OptionalExpression
 import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Operator
-import org.example.token.TokenType
 import org.example.parser.exceptions.SyntaxException
 import org.example.parser.parsers.builders.expression.rules.OperatorPrecedence
 import org.example.parser.parsers.builders.expression.rules.ParenthesesHandler
 import org.example.token.Token
+import org.example.token.TokenType
 
 class ExpressionBuilder(
     private val keywordMap: Map<String, (OptionalExpression, Range) -> Expression>

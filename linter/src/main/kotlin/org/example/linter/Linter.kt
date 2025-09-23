@@ -2,12 +2,12 @@ package org.example.linter
 
 import org.example.ast.ASTNode
 import org.example.common.ErrorHandler
-import org.example.common.configuration.RulesConfiguration
 import org.example.common.PrintScriptIterator
+import org.example.common.configuration.RulesConfiguration
+import org.example.common.configuration.configurationreaders.ConfigurationReader
 import org.example.common.results.Error
 import org.example.common.results.Result
 import org.example.common.results.Success
-import org.example.common.configuration.configurationreaders.ConfigurationReader
 import org.example.linter.rules.Rule
 import java.io.File
 import java.io.InputStream

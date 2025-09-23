@@ -1,8 +1,8 @@
 package org.example.lexer.constructors
 
 import org.example.common.Position
-import org.example.token.TokenType
 import org.example.token.Token
+import org.example.token.TokenType
 import java.util.*
 
 class PunctuationTokenConstructor(private val punctuations: Set<String>) : TokenConstructor {

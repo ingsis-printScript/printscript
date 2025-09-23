@@ -6,7 +6,6 @@ import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.Condition
 import org.example.common.Position
 import org.example.common.Range
-import org.example.token.TokenType
 import org.example.parser.parsers.builders.block.BlockBuilder
 import org.example.parser.parsers.builders.expression.ExpressionBuilder
 import org.example.parser.validators.BlockValidator
@@ -15,6 +14,7 @@ import org.example.parser.validators.KeywordValidator
 import org.example.parser.validators.PunctuationValidator
 import org.example.parser.validators.TokenValidator
 import org.example.token.Token
+import org.example.token.TokenType
 
 class ConditionParser(
     statementParsers: List<StatementParser>,

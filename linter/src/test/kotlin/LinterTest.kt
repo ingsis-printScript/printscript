@@ -600,5 +600,4 @@ class LinterTest {
         assertTrue(r is Success<*>)
         assertTrue(fakeErrorHandler.errors.isNotEmpty())
     }
-
 }

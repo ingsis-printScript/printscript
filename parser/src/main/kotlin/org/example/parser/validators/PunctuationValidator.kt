@@ -1,10 +1,10 @@
 package org.example.parser.validators
 
-import org.example.token.TokenType
 import org.example.common.exceptions.NoMoreTokensAvailableException
 import org.example.parser.TokenBuffer
 import org.example.parser.ValidationResult
 import org.example.token.Token
+import org.example.token.TokenType
 
 class PunctuationValidator(private val expected: String) : TokenValidator {
     override fun validate(statementBuffer: TokenBuffer, position: Int): ValidationResult {
