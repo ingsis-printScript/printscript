@@ -16,5 +16,4 @@ class LineAfterSemicolonRule : Rule {
     }
 
     private fun isSemicolon(t: Token?) = t?.type == TokenType.PUNCTUATION && t.value == ";"
-
 }

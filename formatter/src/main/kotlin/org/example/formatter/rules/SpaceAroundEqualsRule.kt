@@ -7,9 +7,7 @@ import org.example.token.TokenType
 
 class SpaceAroundEqualsRule : Rule, ClaimsToken {
     private fun enabled(c: RulesConfiguration) =
-        c.getBoolean("enforce-spacing-around-equals") ||
-                c.getBoolean("enforce-spacing-before-equals") ||
-                c.getBoolean("enforce-spacing-after-equals")
+        c.getBoolean("enforce-spacing-around-equals") || c.getBoolean("enforce-spacing-before-equals") || c.getBoolean("enforce-spacing-after-equals")
 
     override fun isEnabled(configuration: RulesConfiguration) = enabled(configuration)
 
@@ -35,5 +33,4 @@ class SpaceAroundEqualsRule : Rule, ClaimsToken {
     }
 
     private fun isEqual(t: Token?) = t?.type == TokenType.PUNCTUATION && t.value == "="
-
 }

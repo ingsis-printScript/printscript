@@ -90,6 +90,7 @@ class LexerPositionTest {
         assertToken(TokenType.SYMBOL, "name", 3, 3, nameAssignment)
     }
 
+    @Suppress("LongMethod")
     @Test
     fun `test extensive PrintScript program from file`() {
         val testFile = Path.of("src/test/kotlin/resources/test_program.ps")

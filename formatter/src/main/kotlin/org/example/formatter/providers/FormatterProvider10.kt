@@ -38,8 +38,6 @@ class FormatterProvider10() : FormatterProvider {
             LinesAfterPrintRule()
         )
 
-
-
         val configurationReader = ConfigurationReader(listOf(JsonMapper(), YamlMapper()))
 
         return Formatter(nodes, rules, configurationReader, inputStream, writer)

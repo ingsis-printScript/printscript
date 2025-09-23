@@ -6,12 +6,11 @@ import org.example.token.Token
 
 class SpaceAroundColonRule : Rule, ClaimsToken {
     override fun isEnabled(configuration: RulesConfiguration) =
-        configuration.getBoolean("enforce-spacing-before-colon-in-declaration") ||
-                configuration.getBoolean("enforce-spacing-after-colon-in-declaration")
+        configuration.getBoolean("enforce-spacing-before-colon-in-declaration") || configuration.getBoolean("enforce-spacing-after-colon-in-declaration")
 
     override fun before(prev: Token?, cur: Token, next: Token?, ctx: FormatterContext) {
         val wantBefore = ctx.configuration.getBoolean("enforce-spacing-before-colon-in-declaration")
-        val wantAfter  = ctx.configuration.getBoolean("enforce-spacing-after-colon-in-declaration")
+        val wantAfter = ctx.configuration.getBoolean("enforce-spacing-after-colon-in-declaration")
 
         if (isColon(cur)) {
             if (wantBefore) ctx.setPendingSpaces(1)
@@ -27,6 +26,4 @@ class SpaceAroundColonRule : Rule, ClaimsToken {
     }
 
     private fun isColon(t: Token?) = t?.type == org.example.token.TokenType.PUNCTUATION && t.value == ":"
-
-
 }

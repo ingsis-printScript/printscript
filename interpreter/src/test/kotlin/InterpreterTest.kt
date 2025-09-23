@@ -31,7 +31,7 @@ class InterpreterTest {
     private val dummyRange = Range(dummyPos, dummyPos)
 
     private fun fakePrinter(printed: MutableList<String>) = object : OutputPrinter {
-        override fun print(value: String) { printed.add(value) }
+        override fun print(output: String) { printed.add(output) }
     }
 
     private fun fakeErrorHandler(errors: MutableList<String>) = object : ErrorHandler {

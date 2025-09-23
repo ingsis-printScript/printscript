@@ -36,7 +36,7 @@ class TokenFactory(
     fun sym(value: String, sameLine: Boolean = true) = add(TokenType.SYMBOL, value, sameLine)
     fun num(value: String, sameLine: Boolean = true) = add(TokenType.NUMBER, value, sameLine)
     fun str(value: String, sameLine: Boolean = true) = add(TokenType.STRING, value, sameLine)
-    fun op(value: String, sameLine: Boolean = true)  = add(TokenType.OPERATOR, value, sameLine)
+    fun op(value: String, sameLine: Boolean = true) = add(TokenType.OPERATOR, value, sameLine)
     fun punct(value: String, sameLine: Boolean = true) = add(TokenType.PUNCTUATION, value, sameLine)
     fun paren(value: String, sameLine: Boolean = true) = punct(value, sameLine)
 

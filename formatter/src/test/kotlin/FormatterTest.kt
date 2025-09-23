@@ -30,7 +30,7 @@ class FormatterTest {
         mandatorySpaceSurroundingOperations: Boolean? = null,
         // flags auxiliares que tu SpaceAroundEveryTokenRule consulta
         spaceBeforeColonFlag: Boolean? = null,
-        spaceAfterColonFlag: Boolean? = null,
+        spaceAfterColonFlag: Boolean? = null
     ): InputStream {
         val parts = mutableListOf<String>()
         fun addBool(k: String, v: Boolean?) { if (v != null) parts += "\"$k\": $v" }
@@ -175,8 +175,6 @@ class FormatterTest {
         assertEquals("println(\"x\");\n\n\nlet a=1;", out.toString())
     }
 
-
-
     @Test
     fun `espacios alrededor de operadores binarios`() {
         // 1+2; -> "1 + 2;"
@@ -191,12 +189,9 @@ class FormatterTest {
         assertEquals("1 + 2;", out.toString())
     }
 
-
     @Test
     fun `precedencia - no spacing around '=' gana sobre single-space separation`() {
-        val tokens = TokenFactory()
-            .sym("a").punct("=").num("1").punct(";")
-            .build()
+        val tokens = TokenFactory().sym("a").punct("=").num("1").punct(";").build()
 
         val cfg = configStream(
             enforceNoSpacingAroundEquals = true,
@@ -232,8 +227,8 @@ class FormatterTest {
 
         val cfg = configStream(
             mandatorySingleSpaceSeparation = true,
-            spaceBeforeColonFlag = true,   // permitir espacio antes de ':'
-        )
+            spaceBeforeColonFlag = true
+        ) // permitir espacio antes de ':'
 
         val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
         fmt.getNext()
@@ -248,14 +243,11 @@ class FormatterTest {
 
         val cfg = configStream(
             mandatorySpaceSurroundingOperations = true, // activa regla de operadores
-            mandatorySingleSpaceSeparation = true       // activa "every" como relleno
-        )
+            mandatorySingleSpaceSeparation = true
+        ) // activa "every" como relleno
 
         val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
         fmt.getNext()
         assertEquals("1 + 2;", out.toString())
     }
-
-
-
 }

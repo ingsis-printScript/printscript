@@ -19,6 +19,5 @@ class SpaceAroundOperatorRule : Rule, ClaimsToken {
         return isOperator(prev) || isOperator(cur)
     }
 
-    private fun isOperator(t: Token?)  = t?.type == TokenType.OPERATOR && Operator.fromString(t.value) != null
-
+    private fun isOperator(t: Token?) = t?.type == TokenType.OPERATOR && Operator.fromString(t.value) != null
 }

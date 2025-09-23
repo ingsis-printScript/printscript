@@ -2,8 +2,6 @@ package org.example.integration
 
 import org.example.formatter.providers.FormatterVersionProvider
 import org.example.lexer.provider.LexerVersionProvider
-import org.example.parser.TokenBuffer
-import org.example.parser.provider.ParserVersionProvider
 import java.io.InputStream
 import java.io.Writer
 

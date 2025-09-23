@@ -61,8 +61,6 @@ class FormatterContext(
         }
     }
 
-
-
     fun flushPendingGap() {
         if (pendingNewlines > 0) {
             repeat(pendingNewlines) { writer.write("\n") }
@@ -78,7 +76,6 @@ class FormatterContext(
         pendingNewlines = 0
         suppressNextSpace = false
     }
-
 
     // Gaps por Position (preserva intención original pero a lo sumo 1 espacio)
     fun emitOriginalSpace(prev: Token?, cur: Token) {

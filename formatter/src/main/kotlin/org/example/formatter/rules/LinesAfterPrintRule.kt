@@ -33,6 +33,5 @@ class LinesAfterPrintRule : Rule {
     }
 
     private fun isSemicolon(t: Token?) = t?.type == TokenType.PUNCTUATION && t.value == ";"
-    private fun isPrintln(t: Token?)   = t != null && t.type == TokenType.SYMBOL && t.value == "println"
-
+    private fun isPrintln(t: Token?) = t != null && t.type == TokenType.SYMBOL && t.value == "println"
 }

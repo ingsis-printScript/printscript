@@ -27,5 +27,4 @@ class NoSpaceAroundEqualsRule : Rule, ClaimsToken {
     }
 
     private fun isEq(t: Token?) = t?.type == TokenType.PUNCTUATION && t.value == "="
-
 }

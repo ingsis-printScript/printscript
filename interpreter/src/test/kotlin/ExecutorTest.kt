@@ -36,7 +36,7 @@ class ExecutorTest {
 
     private val printed = mutableListOf<String>()
     private val fakePrinter = object : OutputPrinter {
-        override fun print(value: String) { printed.add(value) }
+        override fun print(output: String) { printed.add(output) }
     }
 
     private val errors = mutableListOf<String>()
