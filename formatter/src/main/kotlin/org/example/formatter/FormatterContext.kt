@@ -1,9 +1,7 @@
 package org.example.formatter
 
-import org.example.common.enums.Operator
 import org.example.common.configuration.RulesConfiguration
 import org.example.token.Token
-import org.example.token.TokenType
 import java.io.Writer
 
 class FormatterContext(
@@ -50,16 +48,19 @@ class FormatterContext(
         pendingSpaces = if (n <= 0) 0 else 1
     }
 
-    fun newlineOnce() {
-        pendingNewlines += 1
-        pendingSpaces = 0
-        suppressNextSpace = false
-    }
-
     fun requestNoNextSpace() {
         suppressNextSpace = true
         pendingSpaces = 0
     }
+
+    fun setPendingNewlines(n: Int) {
+        pendingNewlines = n.coerceAtLeast(0)
+        if (pendingNewlines > 0) {
+            pendingSpaces = 0
+            suppressNextSpace = false
+        }
+    }
+
 
 
     fun flushPendingGap() {
@@ -82,6 +83,9 @@ class FormatterContext(
     // Gaps por Position (preserva intención original pero a lo sumo 1 espacio)
     fun emitOriginalSpace(prev: Token?, cur: Token) {
         if (prev == null) return
+
+        if (pendingNewlines > 0 || pendingSpaces > 0 || suppressNextSpace) return
+
         val gapLines = cur.position.line - prev.position.line
         if (gapLines > 0) {
             // preservamos los saltos de línea físicos

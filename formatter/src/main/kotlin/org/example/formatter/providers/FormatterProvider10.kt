@@ -29,13 +29,13 @@ class FormatterProvider10() : FormatterProvider {
 
         val rules = listOf(
             PreserveOriginalSpaceRule(),
-            LinesAfterPrintRule(),
+            SpaceAroundOperatorRule(),
             NoSpaceAroundEqualsRule(),
             LineAfterSemicolonRule(),
             SpaceAroundColonRule(),
             SpaceAroundEqualsRule(),
             SpaceAroundEveryTokenRule(otherRules),
-            SpaceAroundOperatorRule()
+            LinesAfterPrintRule()
         )
 
 

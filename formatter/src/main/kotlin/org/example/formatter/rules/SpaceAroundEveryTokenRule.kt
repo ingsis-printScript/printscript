@@ -24,8 +24,8 @@ class SpaceAroundEveryTokenRule(
         if (claimed) return
 
         // Reglas locales mínimas para no romper puntuación común:
-        val curIsTightPunct = (cur.value == "," || cur.value == ";" || cur.value == ")")
-        val prevIsOpenOrComma = (prev.value == "(" || prev.value == ",")
+        val curIsTightPunct = (cur.value == "," || cur.value == ";")
+        val prevIsOpenOrComma = (prev.value == ",")
         if (curIsTightPunct || prevIsOpenOrComma) return
 
         ctx.spaceOnce()

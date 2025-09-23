@@ -7,10 +7,11 @@ import org.example.token.TokenType
 
 class LineAfterSemicolonRule : Rule {
     override fun isEnabled(configuration: RulesConfiguration) =
-        configuration.getBoolean("mandatory-line-break-after-statement")
+        true
+
     override fun after(prev: Token?, cur: Token, next: Token?, ctx: FormatterContext) {
         if (isSemicolon(cur) && next != null) {
-            ctx.newlineOnce()
+            ctx.setPendingNewlines(1)
         }
     }
 

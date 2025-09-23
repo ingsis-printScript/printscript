@@ -15,10 +15,9 @@ class Formatter {
         writer: Writer
     ) {
         val lexer = LexerVersionProvider().with(version).provide(src)
-        val parser = ParserVersionProvider().with(version).provide(TokenBuffer(lexer))
         val formatter = FormatterVersionProvider()
             .with(version).provide(
-                parser,
+                lexer,
                 writer,
                 config
             )

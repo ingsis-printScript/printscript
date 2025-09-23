@@ -108,7 +108,7 @@ class FormatterTest {
 
         val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
         fmt.getNext()
-        assertEquals("let something: string = \"x\";", out.toString())
+        assertEquals("let something : string = \"x\";", out.toString())
     }
 
     @Test
@@ -126,7 +126,7 @@ class FormatterTest {
 
         val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
         fmt.getNext()
-        assertEquals("let something :string = \"x\";", out.toString())
+        assertEquals("let something : string = \"x\";", out.toString())
     }
 
     @Test

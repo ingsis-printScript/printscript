@@ -14,10 +14,10 @@ class SpaceAroundColonRule : Rule, ClaimsToken {
         val wantAfter  = ctx.configuration.getBoolean("enforce-spacing-after-colon-in-declaration")
 
         if (isColon(cur)) {
-            if (wantBefore) ctx.setPendingSpaces(1) else ctx.clearPendingSpaces()
+            if (wantBefore) ctx.setPendingSpaces(1)
         }
         if (isColon(prev)) {
-            if (wantAfter) ctx.setPendingSpaces(1) else ctx.clearPendingSpaces()
+            if (wantAfter) ctx.setPendingSpaces(1)
         }
     }
 

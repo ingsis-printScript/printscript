@@ -23,14 +23,10 @@ class LinesAfterPrintRule : Rule {
     }
 
     override fun after(prev: Token?, cur: Token, next: Token?, ctx: FormatterContext) {
-        // Solo al cerrar con ';' aplicamos los blank lines
         if (inPrintlnStmt && isSemicolon(cur)) {
-            // No agregar nada si es el último token (evitar \n final de archivo)
             if (next != null) {
                 val n = count(ctx.configuration)
-                // “Una línea más” por el salto propio del statement + (n) líneas en blanco
-                ctx.newlineOnce()     // termina la línea del println(...)
-                repeat(n) { ctx.newlineOnce() } // n líneas vacías
+                ctx.setPendingNewlines(1 + n)
             }
             inPrintlnStmt = false
         }
