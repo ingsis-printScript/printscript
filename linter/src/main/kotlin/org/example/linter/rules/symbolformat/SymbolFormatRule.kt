@@ -4,10 +4,10 @@ import org.example.ast.ASTNode
 import org.example.ast.expressions.SymbolExpression
 import org.example.common.ErrorHandler
 import org.example.common.Range
+import org.example.common.configuration.RulesConfiguration
 import org.example.common.enums.SymbolFormat
 import org.example.common.results.Result
 import org.example.common.results.Success
-import org.example.common.configuration.configurationreaders.RulesConfiguration
 import org.example.linter.rules.Rule
 import org.example.linter.rules.symbolformat.checker.SymbolFormatChecker
 import kotlin.collections.get

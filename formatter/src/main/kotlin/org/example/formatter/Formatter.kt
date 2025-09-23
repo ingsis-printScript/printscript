@@ -1,58 +1,78 @@
 package org.example.formatter
 
-import org.example.ast.ASTNode
 import org.example.common.PrintScriptIterator
-import org.example.common.results.Error
-import org.example.common.results.NoResult
-import org.example.common.results.Success
+import org.example.common.configuration.configurationreaders.ConfigurationReader
+import org.example.common.configuration.RulesConfiguration
+import org.example.formatter.rules.Rule
 import org.example.token.Token
-import org.example.formatter.formatters.ASTFormat
 import java.io.File
 import java.io.InputStream
 import java.io.Writer
 
 class Formatter(
-    private val iterator: PrintScriptIterator<Token>, //o tokenbuffer?
-    private val writer: Writer,
-    private val astFormat: ASTFormat,
-    private val configInputStream: InputStream
+    private val iterator: PrintScriptIterator<Token>,
+    private val rules: List<Rule>,
+    private val configurationReader: ConfigurationReader,
+    private val configInputStream: InputStream,
+    private val writer: Writer
 ) : PrintScriptIterator<Unit> {
 
-    private val ruler: Ruler by lazy {
-        val tempFile = createTempConfigFile(configInputStream)
-        try {
-            Ruler.fromJsonFile(tempFile.absolutePath)
-        } finally {
-            tempFile.delete()
-        }
+    private val configuration: RulesConfiguration by lazy {
+        val tmp = createTempConfigFile(configInputStream)
+        val data = configurationReader.read(tmp.absolutePath)
+        tmp.delete()
+        RulesConfiguration(data)
     }
 
-    private val rules = ruler.allRules()
-
-    fun formatNode(node: ASTNode, writer: Writer, nestingLevel: Int = 0) {
-        println("RULES ACTIVAS: " + ruler.allRules().mapValues { it.value })
-        astFormat.formatNode(node, writer, rules, nestingLevel, PrivateIterator(nodes))
+    private val activeRules: List<Rule> by lazy {
+        rules.filter { it.isEnabled(configuration) }
     }
 
-    private fun createTempConfigFile(configInputStream: InputStream): File {
-        val tempFile = File.createTempFile("formatter_rules", ".json")
-        configInputStream.use { input ->
-            tempFile.outputStream().use { out ->
-                input.copyTo(out)
-            }
-        }
-        return tempFile
-    }
-
-    override fun hasNext(): Boolean {
-        return nodes.hasNext()
-    }
+    override fun hasNext(): Boolean = iterator.hasNext()
 
     override fun getNext() {
-        when (val res = nodes.getNext()) {
-            is Success<*> -> formatNode(res.value as ASTNode, writer, 0)
-            is Error -> TODO()
-            is NoResult -> TODO()
+        formatAll()
+    }
+
+    fun formatAll() {
+        val ctx = FormatterContext(writer, configuration)
+        var lookahead: Token? = null
+
+        fun nextOrNull(): Token? {
+            if (lookahead != null) return lookahead.also { lookahead = null }
+            return if (iterator.hasNext()) iterator.getNext() else null
         }
+
+        fun peekOrNull(): Token? {
+            if (lookahead == null && iterator.hasNext()) lookahead = iterator.getNext()
+            return lookahead
+        }
+
+        var prev: Token? = null
+        var cur: Token? = nextOrNull()
+
+        while (true) {
+            val current = cur ?: break
+            val next = peekOrNull()
+
+            // sin lambdas -> sin clausuras
+            for (rule in activeRules) rule.before(prev, current, next, ctx)
+
+            ctx.flushPendingGap()
+
+            ctx.writeRaw(current.value)
+
+            for (rule in activeRules) rule.after(prev, current, next, ctx)
+
+            prev = current
+            cur = nextOrNull()
+        }
+    }
+
+
+    private fun createTempConfigFile(configInputStream: InputStream): File {
+        val tempFile = File.createTempFile("formatter_config", ".json")
+        tempFile.writeBytes(configInputStream.readBytes())
+        return tempFile
     }
 }

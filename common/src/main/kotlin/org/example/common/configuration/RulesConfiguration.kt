@@ -1,4 +1,4 @@
-package org.example.common.configuration.configurationreaders
+package org.example.common.configuration
 
 data class RulesConfiguration(private val data: Map<String, Any>) {
     fun getString(key: String): String? {

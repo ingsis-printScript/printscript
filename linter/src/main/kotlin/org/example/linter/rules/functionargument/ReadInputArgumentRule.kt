@@ -5,7 +5,7 @@ import org.example.ast.expressions.ReadInputExpression
 import org.example.common.ErrorHandler
 import org.example.common.results.Result
 import org.example.common.results.Success
-import org.example.common.configuration.configurationreaders.RulesConfiguration
+import org.example.common.configuration.RulesConfiguration
 import org.example.linter.rules.Rule
 import org.example.linter.rules.functionargument.checker.FunctionArgumentChecker
 import kotlin.reflect.KClass
