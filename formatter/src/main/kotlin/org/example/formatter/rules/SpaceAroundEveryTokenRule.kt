@@ -28,6 +28,6 @@ class SpaceAroundEveryTokenRule(
         val prevIsOpenOrComma = (prev.value == ",")
         if (curIsTightPunct || prevIsOpenOrComma) return
 
-        ctx.spaceOnce()
+        ctx.setPendingSpaces(1)
     }
 }

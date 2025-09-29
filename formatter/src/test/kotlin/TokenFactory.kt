@@ -25,14 +25,8 @@ class TokenFactory(
         return this
     }
 
-    /** Reinicia el cursor a una posición arbitraria (útil en asserts finos). */
-    fun at(line: Int, col: Int): TokenFactory {
-        this.line = line
-        this.col = col
-        return this
-    }
 
-    fun kw(value: String, sameLine: Boolean = true) = add(TokenType.SYMBOL, value, sameLine)
+    fun kw(value: String, sameLine: Boolean = true) = add(TokenType.KEYWORD, value, sameLine)
     fun sym(value: String, sameLine: Boolean = true) = add(TokenType.SYMBOL, value, sameLine)
     fun num(value: String, sameLine: Boolean = true) = add(TokenType.NUMBER, value, sameLine)
     fun str(value: String, sameLine: Boolean = true) = add(TokenType.STRING, value, sameLine)

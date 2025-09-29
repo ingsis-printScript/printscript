@@ -1,5 +1,7 @@
 package org.example.formatter.providers
 
+import IfBracePlacementRule
+import IfIndentRule
 import org.example.common.PrintScriptIterator
 import org.example.common.configuration.configurationreaders.ConfigurationReader
 import org.example.common.configuration.configurationreaders.mappers.JsonMapper
@@ -23,18 +25,21 @@ class FormatterProvider11() : FormatterProvider {
             NoSpaceAroundEqualsRule(),
             SpaceAroundColonRule(),
             SpaceAroundEqualsRule(),
-            SpaceAroundOperatorRule()
+            SpaceAroundOperatorRule(),
+            IfBracePlacementRule(),
         )
 
         val rules = listOf(
-            LineAfterSemicolonRule(),
-            LinesAfterPrintRule(),
-            NoSpaceAroundEqualsRule(),
+            IfBracePlacementRule(),
+            IfIndentRule(),
             PreserveOriginalSpaceRule(),
+            SpaceAroundOperatorRule(),
+            NoSpaceAroundEqualsRule(),
+            LineAfterSemicolonRule(),
             SpaceAroundColonRule(),
             SpaceAroundEqualsRule(),
             SpaceAroundEveryTokenRule(otherRules),
-            SpaceAroundOperatorRule()
+            LinesAfterPrintRule()
         )
 
         val configurationReader = ConfigurationReader(listOf(JsonMapper(), YamlMapper()))

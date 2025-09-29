@@ -11,7 +11,7 @@ class SpaceAroundOperatorRule : Rule, ClaimsToken {
         configuration.getBoolean("mandatory-space-surrounding-operations")
 
     override fun before(prev: Token?, cur: Token, next: Token?, ctx: FormatterContext) {
-        if (isOperator(prev) || isOperator(cur)) ctx.spaceOnce()
+        if (isOperator(prev) || isOperator(cur)) ctx.setPendingSpaces(1)
     }
 
     override fun claims(prev: Token?, cur: Token?, next: Token?, cfg: RulesConfiguration): Boolean {

@@ -1,6 +1,7 @@
 import org.example.common.PrintScriptIterator
 import org.example.formatter.Formatter
 import org.example.formatter.providers.FormatterProvider10
+import org.example.formatter.providers.FormatterVersionProvider
 import org.example.token.Token
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -55,13 +56,23 @@ class FormatterTest {
     }
 
     // ===== helper para construir el Formatter usando tu Provider 1.0 =====
-    private fun makeFormatterWithProvider(tokens: List<Token>, cfgStream: InputStream): Pair<Formatter, StringWriter> {
+    private fun makeFormatter(
+        tokens: List<Token>,
+        cfgStream: InputStream,
+        version: String
+    ): Pair<Formatter, StringWriter> {
         val it = TokenIterator(tokens)
         val out = StringWriter()
-        val provider = FormatterProvider10()
+        val provider = FormatterVersionProvider().with(version)
         val fmt = provider.provide(it, out, cfgStream)
         return fmt to out
     }
+
+    private fun makeFormatter10(tokens: List<Token>, cfg: InputStream) =
+        makeFormatter(tokens, cfg, "1.0")
+
+    private fun makeFormatter11(tokens: List<Token>, cfg: InputStream) =
+        makeFormatter(tokens, cfg, "1.1")
 
     // ===================== TESTS =====================
 
@@ -75,7 +86,7 @@ class FormatterTest {
             enforceNoSpacingAroundEquals = true
         )
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("let a=1;", out.toString())
     }
@@ -88,7 +99,7 @@ class FormatterTest {
 
         val cfg = configStream(enforceSpacingAroundEquals = true)
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("let a = 1;", out.toString())
     }
@@ -106,7 +117,7 @@ class FormatterTest {
             enforceSpacingAfterColon = true
         )
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("let something : string = \"x\";", out.toString())
     }
@@ -124,7 +135,7 @@ class FormatterTest {
             enforceSpacingAfterColon = false
         )
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("let something : string = \"x\";", out.toString())
     }
@@ -141,7 +152,7 @@ class FormatterTest {
             enforceSpacingAfterColon = true
         )
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("let x : number=1;", out.toString())
     }
@@ -156,7 +167,7 @@ class FormatterTest {
 
         val cfg = configStream(mandatoryLineBreakAfterStatement = true)
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("a=1;\nb=2;", out.toString())
     }
@@ -170,7 +181,7 @@ class FormatterTest {
 
         val cfg = configStream(lineBreaksAfterPrintln = 2)
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("println(\"x\");\n\n\nlet a=1;", out.toString())
     }
@@ -184,7 +195,7 @@ class FormatterTest {
 
         val cfg = configStream(mandatorySpaceSurroundingOperations = true)
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("1 + 2;", out.toString())
     }
@@ -200,7 +211,7 @@ class FormatterTest {
             spaceAfterColonFlag = false
         )
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("a=1;", out.toString())
     }
@@ -214,7 +225,7 @@ class FormatterTest {
 
         val cfg = configStream(lineBreaksAfterPrintln = 2)
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("println(\"x\");", out.toString())
     }
@@ -230,7 +241,7 @@ class FormatterTest {
             spaceBeforeColonFlag = true
         ) // permitir espacio antes de ':'
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("let x : number;", out.toString())
     }
@@ -246,8 +257,254 @@ class FormatterTest {
             mandatorySingleSpaceSeparation = true
         ) // activa "every" como relleno
 
-        val (fmt, out) = makeFormatterWithProvider(tokens, cfg)
+        val (fmt, out) = makeFormatter10(tokens, cfg)
         fmt.getNext()
         assertEquals("1 + 2;", out.toString())
     }
+
+    @Test
+    fun `if brace below-line mueve la llave a la linea de abajo`() {
+        val tokens = TokenFactory()
+            .kw("let").sp().sym("something").punct(":").sp().sym("boolean").sp().punct("=").sp().kw("true").punct(";")
+            .kw("if").sp().punct("(").sym("something").punct(")").sp().punct("{").nl().sp(2)
+            .printlnLiteral("\"Entered if\"")
+            .punct("}")
+            .build()
+
+        val cfg = ByteArrayInputStream(
+            """
+        {
+          "if-brace-below-line": true,
+          "indent-inside-if": 2
+        }
+        """.trimIndent().toByteArray()
+        )
+
+        val (fmt, out) = makeFormatter11(tokens, cfg) // <-- usa Provider11
+        fmt.getNext()
+
+        val expected = """
+        let something: boolean = true;
+        if (something)
+        {
+          println("Entered if");
+        }
+    """.trimIndent()
+
+        assertEquals(expected, out.toString())
+    }
+
+
+    @Test
+    fun `if same-line aplica indent=2 en linea siguiente`() {
+        val tokens = TokenFactory()
+            .kw("if").sp().punct("(").sym("cond").punct(")").sp().punct("{").nl() // salto después de "{"
+            .printlnLiteral("\"x\"")
+            .punct("}")
+            .build()
+
+        val cfg = ByteArrayInputStream(
+            """
+        {
+          "if-brace-same-line": true,
+          "if-brace-below-line": false,
+          "indent-inside-if": 2
+        }
+        """.trimIndent().toByteArray()
+        )
+
+        val (fmt, out) = makeFormatter11(tokens, cfg)
+        fmt.getNext()
+
+        val expected = """
+        if (cond) {
+          println("x");
+        }
+    """.trimIndent()
+        assertEquals(expected, out.toString())
+    }
+
+    @Test
+    fun `if below-line baja la llave y aplica indent`() {
+        val tokens = TokenFactory()
+            .kw("if").sp().punct("(").sym("something").punct(")").sp().punct("{").nl()
+            .printlnLiteral("\"Entered if\"")
+            .punct("}")
+            .build()
+
+        val cfg = ByteArrayInputStream(
+            """
+        {
+          "if-brace-same-line": false,
+          "if-brace-below-line": true,
+          "indent-inside-if": 2
+        }
+        """.trimIndent().toByteArray()
+        )
+
+        val (fmt, out) = makeFormatter11(tokens, cfg)
+        fmt.getNext()
+
+        val expected = """
+        if (something)
+        {
+          println("Entered if");
+        }
+    """.trimIndent()
+        assertEquals(expected, out.toString())
+    }
+
+    @Test
+    fun `if anidado incrementa y luego dedentea`() {
+        val tokens = TokenFactory()
+            .kw("if").sp().punct("(").sym("x").punct(")").sp().punct("{").nl()
+            .kw("if").sp().punct("(").sym("y").punct(")").sp().punct("{").nl()
+            .printlnLiteral("\"two\"")
+            .punct("}").nl()
+            .punct("}")
+            .build()
+
+        val cfg = ByteArrayInputStream(
+            """
+        {
+          "if-brace-same-line": true,
+          "if-brace-below-line": false,
+          "indent-inside-if": 2
+        }
+        """.trimIndent().toByteArray()
+        )
+
+        val (fmt, out) = makeFormatter11(tokens, cfg)
+        fmt.getNext()
+
+        val expected = """
+        if (x) {
+          if (y) {
+            println("two");
+          }
+        }
+    """.trimIndent()
+        assertEquals(expected, out.toString())
+    }
+
+    @Test
+    fun `dedent antes de cierre alinea la llave de cierre`() {
+        val tokens = TokenFactory()
+            .kw("if").sp().punct("(").sym("k").punct(")").sp().punct("{").nl()
+            .printlnLiteral("\"x\"")
+            .punct("}")
+            .build()
+
+        val cfg = ByteArrayInputStream(
+            """
+        {
+          "if-brace-same-line": true,
+          "if-brace-below-line": false,
+          "indent-inside-if": 3
+        }
+        """.trimIndent().toByteArray()
+        )
+
+        val (fmt, out) = makeFormatter11(tokens, cfg)
+        fmt.getNext()
+
+        val expected = """
+        if (k) {
+           println("x");
+        }
+    """.trimIndent()
+        assertEquals(expected, out.toString())
+    }
+
+    @Test
+    fun `if con parentesis anidados mantiene parenDepth y coloca correctamente la llave`() {
+        val tokens = TokenFactory()
+            .kw("if").sp()
+            .punct("(").punct("(").sym("a").sp().op("&").op("&").sp().punct("(").sym("b").sp().op("|").op("|").sp().sym("c").punct(")").punct(")").punct(")").sp()
+            .punct("{").nl()
+            .printlnLiteral("\"deep\"")
+            .punct("}")
+            .build()
+
+        val cfg = ByteArrayInputStream(
+            """
+        {
+          "if-brace-same-line": true,
+          "if-brace-below-line": false,
+          "indent-inside-if": 2
+        }
+        """.trimIndent().toByteArray()
+        )
+
+        val (fmt, out) = makeFormatter11(tokens, cfg)
+        fmt.getNext()
+
+        val expected = """
+        if ((a && (b || c))) {
+          println("deep");
+        }
+    """.trimIndent()
+        assertEquals(expected, out.toString())
+    }
+
+    @Test
+    fun `below-line prevalece frente a mandatory-single-space`() {
+        val tokens = TokenFactory()
+            .kw("if").sp().punct("(").sym("p").punct(")").sp().punct("{").nl()
+            .printlnLiteral("\"q\"")
+            .punct("}")
+            .build()
+
+        val cfg = ByteArrayInputStream(
+            """
+        {
+          "if-brace-below-line": true,
+          "indent-inside-if": 2,
+          "mandatory-single-space-separation": true
+        }
+        """.trimIndent().toByteArray()
+        )
+
+        val (fmt, out) = makeFormatter11(tokens, cfg)
+        fmt.getNext()
+
+        val expected = """
+        if ( p )
+        {
+          println ( "q" );
+        }
+    """.trimIndent()
+        assertEquals(expected, out.toString())
+    }
+
+    @Test
+    fun `no dispara indent si no es if KEYWORD`() {
+        val tokens = TokenFactory()
+            .sym("iff").sp().punct("(").sym("x").punct(")").sp().punct("{").nl()
+            .printlnLiteral("\"no-if\"")
+            .punct("}")
+            .build()
+
+        val cfg = ByteArrayInputStream(
+            """
+        {
+          "if-brace-same-line": true,
+          "if-brace-below-line": false,
+          "indent-inside-if": 4
+        }
+        """.trimIndent().toByteArray()
+        )
+
+        val (fmt, out) = makeFormatter11(tokens, cfg)
+        fmt.getNext()
+
+        // Como no es KEYWORD "if", la regla de indent no sube nivel; el contenido queda sin sangría
+        val expected = """
+        iff (x) {
+        println("no-if");
+        }
+    """.trimIndent()
+        assertEquals(expected, out.toString())
+    }
+
 }

@@ -11,11 +11,11 @@ class NoSpaceAroundEqualsRule : Rule, ClaimsToken {
         configuration.getBoolean("enforce-no-spacing-around-equals")
 
     override fun before(prev: Token?, cur: Token, next: Token?, ctx: FormatterContext) {
-        // Si el token actual es '=', bloqueamos espacio antes de '=' (gap previo)
+        // Si el token actual es '=', bloqueamos espacio antes
         if (isEq(cur)) {
             ctx.requestNoNextSpace()
         }
-        // Si el token anterior fue '=', bloqueamos espacio antes del token actual (o sea, después de '=')
+        // Si el token anterior fue '=', bloqueamos espacio antes del token actual (después de '=')
         if (isEq(prev)) {
             ctx.requestNoNextSpace()
         }
