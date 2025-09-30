@@ -1,4 +1,4 @@
-package org.example.common.configuration.configurationreaders.mappers
+package org.example.common.configuration.readers.mappers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 

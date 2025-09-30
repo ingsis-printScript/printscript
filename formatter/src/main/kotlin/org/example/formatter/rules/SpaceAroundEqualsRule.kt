@@ -16,12 +16,12 @@ class SpaceAroundEqualsRule : Rule, ClaimsToken {
         val wantBefore = around || ctx.configuration.getBoolean("enforce-spacing-before-equals")
         val wantAfter = around || ctx.configuration.getBoolean("enforce-spacing-after-equals")
 
-        // Lado "antes": cuando el token actual ES '='
+        // Lado antes
         if (isEqual(cur)) {
             if (wantBefore) ctx.setPendingSpaces(1) else ctx.clearPendingSpaces()
         }
 
-        // Lado "después": cuando el token anterior ES '='
+        // Lado después
         if (isEqual(prev)) {
             if (wantAfter) ctx.setPendingSpaces(1) else ctx.clearPendingSpaces()
         }

@@ -17,7 +17,7 @@ class SpaceAroundEveryTokenRule(
 
         val cfg = ctx.configuration
 
-        // Si alguna otra regla "reclama" este borde, no intervenimos.
+        // Si alguna otra regla "reclama" el token, no intervenimos.
         val claimed = otherRules.asSequence()
             .filterIsInstance<ClaimsToken>()
             .any { it.claims(prev, cur, next, cfg) }

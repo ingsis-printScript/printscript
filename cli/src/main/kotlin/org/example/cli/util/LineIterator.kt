@@ -5,7 +5,7 @@ import java.nio.file.Path
 
 class LineIterator(filePath: Path) : Iterator<String> {
     private val reader = Files.newBufferedReader(filePath)
-    private var nextLine: String? = null // necesaria pq readLine() avanza el cursor
+    private var nextLine: String? = null
     private var closed = false
 
     override fun hasNext(): Boolean {

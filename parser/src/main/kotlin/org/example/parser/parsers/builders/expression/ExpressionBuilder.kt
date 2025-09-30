@@ -3,7 +3,6 @@ package org.example.parser.parsers.builders.expression
 import org.example.ast.expressions.BinaryExpression
 import org.example.ast.expressions.Expression
 import org.example.ast.expressions.OptionalExpression
-import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Operator
 import org.example.parser.exceptions.SyntaxException
@@ -118,8 +117,8 @@ class ExpressionBuilder(
 
     private fun createRange(startToken: Token, endToken: Token): Range {
         return Range(
-            Position(startToken.position.line, startToken.position.column),
-            Position(endToken.position.line, endToken.position.column)
+            startToken.position,
+            endToken.position
         )
     }
 

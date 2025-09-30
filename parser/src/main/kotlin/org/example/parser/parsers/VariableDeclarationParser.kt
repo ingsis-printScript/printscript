@@ -4,7 +4,6 @@ import org.example.ast.ASTNode
 import org.example.ast.expressions.Expression
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.expressions.SymbolExpression
-import org.example.common.Position
 import org.example.common.Range
 import org.example.common.enums.Type
 import org.example.parser.VariableStatementFactory
@@ -63,11 +62,11 @@ class VariableDeclarationParser(
 
         val symbol = SymbolExpression(
             statements[ID_POS].value,
-            Position(statements[ID_POS].position.line, statements[ID_POS].position.column)
+            statements[ID_POS].position
         )
         val range = Range(
-            Position(statements[0].position.line, statements[0].position.column),
-            Position(statements[statements.size - 1].position.line, statements[statements.size - 1].position.column)
+            statements[0].position,
+            statements[statements.size - 1].position
         )
 
         val expressionBuilder = ExpressionBuilder(keywordMap)

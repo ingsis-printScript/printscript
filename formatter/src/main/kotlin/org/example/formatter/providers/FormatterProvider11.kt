@@ -3,9 +3,9 @@ package org.example.formatter.providers
 import IfBracePlacementRule
 import IfIndentRule
 import org.example.common.PrintScriptIterator
-import org.example.common.configuration.configurationreaders.ConfigurationReader
-import org.example.common.configuration.configurationreaders.mappers.JsonMapper
-import org.example.common.configuration.configurationreaders.mappers.YamlMapper
+import org.example.common.configuration.readers.ConfigurationReader
+import org.example.common.configuration.readers.mappers.JsonMapper
+import org.example.common.configuration.readers.mappers.YamlMapper
 import org.example.formatter.Formatter
 import org.example.formatter.rules.LineAfterSemicolonRule
 import org.example.formatter.rules.LinesAfterPrintRule

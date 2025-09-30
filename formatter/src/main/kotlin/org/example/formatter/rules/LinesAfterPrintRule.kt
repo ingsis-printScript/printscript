@@ -9,7 +9,7 @@ class LinesAfterPrintRule : Rule {
 
     private fun count(c: RulesConfiguration): Int {
         val after = c.getInt("line-breaks-after-println", 0)
-        return after.coerceIn(0, 3) // si querés permitir hasta 3
+        return after.coerceIn(0, 3)
     }
 
     private var inPrintlnStmt: Boolean = false

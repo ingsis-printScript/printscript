@@ -4,7 +4,6 @@ import org.example.ast.ASTNode
 import org.example.ast.expressions.Expression
 import org.example.ast.expressions.OptionalExpression
 import org.example.ast.statements.Condition
-import org.example.common.Position
 import org.example.common.Range
 import org.example.parser.parsers.builders.block.BlockBuilder
 import org.example.parser.parsers.builders.expression.ExpressionBuilder
@@ -54,14 +53,12 @@ class ConditionParser(
 
     override fun buildAST(statements: List<Token>): ASTNode {
         val range = Range(
-            Position(statements[0].position.line, statements[0].position.column),
-            Position(statements[statements.size - 1].position.line, statements[statements.size - 1].position.column)
+            statements[0].position,
+            statements[statements.size - 1].position
         )
 
         val expressionBuilder = ExpressionBuilder(keywordMap)
         val condition = expressionBuilder.buildExpression(statements, 2, endOfCondition(statements))
-        // endOfCondition or endOfCondition-1?... Creo que incluyo al ')'
-        // todo: OptionalExpression -> error... or leave up to interpreter?
 
         val divider = endOfBlock(statements)
         val ifBlock = blockBuilder.build(statements.subList(5, divider))

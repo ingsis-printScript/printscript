@@ -1,7 +1,7 @@
-package org.example.common.configuration.configurationreaders
+package org.example.common.configuration.readers
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.example.common.configuration.configurationreaders.mappers.MapperStrategy
+import org.example.common.configuration.readers.mappers.MapperStrategy
 import java.io.File
 
 class ConfigurationReader(private val strategies: List<MapperStrategy>) {

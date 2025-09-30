@@ -2,7 +2,7 @@ package org.example.formatter
 
 import org.example.common.PrintScriptIterator
 import org.example.common.configuration.RulesConfiguration
-import org.example.common.configuration.configurationreaders.ConfigurationReader
+import org.example.common.configuration.readers.ConfigurationReader
 import org.example.formatter.rules.Rule
 import org.example.token.Token
 import java.io.File
@@ -55,7 +55,6 @@ class Formatter(
             val current = cur ?: break
             val next = peekOrNull()
 
-            // sin lambdas -> sin clausuras
             for (rule in activeRules) rule.before(prev, current, next, ctx)
 
             ctx.flushPendingGap()
