@@ -25,7 +25,6 @@ class TokenFactory(
         return this
     }
 
-
     fun kw(value: String, sameLine: Boolean = true) = add(TokenType.KEYWORD, value, sameLine)
     fun sym(value: String, sameLine: Boolean = true) = add(TokenType.SYMBOL, value, sameLine)
     fun num(value: String, sameLine: Boolean = true) = add(TokenType.NUMBER, value, sameLine)

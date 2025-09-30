@@ -1,6 +1,5 @@
 import org.example.common.PrintScriptIterator
 import org.example.formatter.Formatter
-import org.example.formatter.providers.FormatterProvider10
 import org.example.formatter.providers.FormatterVersionProvider
 import org.example.token.Token
 import java.io.ByteArrayInputStream
@@ -277,7 +276,7 @@ class FormatterTest {
           "if-brace-below-line": true,
           "indent-inside-if": 2
         }
-        """.trimIndent().toByteArray()
+            """.trimIndent().toByteArray()
         )
 
         val (fmt, out) = makeFormatter11(tokens, cfg) // <-- usa Provider11
@@ -289,11 +288,10 @@ class FormatterTest {
         {
           println("Entered if");
         }
-    """.trimIndent()
+        """.trimIndent()
 
         assertEquals(expected, out.toString())
     }
-
 
     @Test
     fun `if same-line aplica indent=2 en linea siguiente`() {
@@ -310,7 +308,7 @@ class FormatterTest {
           "if-brace-below-line": false,
           "indent-inside-if": 2
         }
-        """.trimIndent().toByteArray()
+            """.trimIndent().toByteArray()
         )
 
         val (fmt, out) = makeFormatter11(tokens, cfg)
@@ -320,7 +318,7 @@ class FormatterTest {
         if (cond) {
           println("x");
         }
-    """.trimIndent()
+        """.trimIndent()
         assertEquals(expected, out.toString())
     }
 
@@ -339,7 +337,7 @@ class FormatterTest {
           "if-brace-below-line": true,
           "indent-inside-if": 2
         }
-        """.trimIndent().toByteArray()
+            """.trimIndent().toByteArray()
         )
 
         val (fmt, out) = makeFormatter11(tokens, cfg)
@@ -350,7 +348,7 @@ class FormatterTest {
         {
           println("Entered if");
         }
-    """.trimIndent()
+        """.trimIndent()
         assertEquals(expected, out.toString())
     }
 
@@ -371,7 +369,7 @@ class FormatterTest {
           "if-brace-below-line": false,
           "indent-inside-if": 2
         }
-        """.trimIndent().toByteArray()
+            """.trimIndent().toByteArray()
         )
 
         val (fmt, out) = makeFormatter11(tokens, cfg)
@@ -383,7 +381,7 @@ class FormatterTest {
             println("two");
           }
         }
-    """.trimIndent()
+        """.trimIndent()
         assertEquals(expected, out.toString())
     }
 
@@ -402,7 +400,7 @@ class FormatterTest {
           "if-brace-below-line": false,
           "indent-inside-if": 3
         }
-        """.trimIndent().toByteArray()
+            """.trimIndent().toByteArray()
         )
 
         val (fmt, out) = makeFormatter11(tokens, cfg)
@@ -412,7 +410,7 @@ class FormatterTest {
         if (k) {
            println("x");
         }
-    """.trimIndent()
+        """.trimIndent()
         assertEquals(expected, out.toString())
     }
 
@@ -433,7 +431,7 @@ class FormatterTest {
           "if-brace-below-line": false,
           "indent-inside-if": 2
         }
-        """.trimIndent().toByteArray()
+            """.trimIndent().toByteArray()
         )
 
         val (fmt, out) = makeFormatter11(tokens, cfg)
@@ -443,7 +441,7 @@ class FormatterTest {
         if ((a && (b || c))) {
           println("deep");
         }
-    """.trimIndent()
+        """.trimIndent()
         assertEquals(expected, out.toString())
     }
 
@@ -462,7 +460,7 @@ class FormatterTest {
           "indent-inside-if": 2,
           "mandatory-single-space-separation": true
         }
-        """.trimIndent().toByteArray()
+            """.trimIndent().toByteArray()
         )
 
         val (fmt, out) = makeFormatter11(tokens, cfg)
@@ -473,7 +471,7 @@ class FormatterTest {
         {
           println ( "q" );
         }
-    """.trimIndent()
+        """.trimIndent()
         assertEquals(expected, out.toString())
     }
 
@@ -492,7 +490,7 @@ class FormatterTest {
           "if-brace-below-line": false,
           "indent-inside-if": 4
         }
-        """.trimIndent().toByteArray()
+            """.trimIndent().toByteArray()
         )
 
         val (fmt, out) = makeFormatter11(tokens, cfg)
@@ -503,8 +501,7 @@ class FormatterTest {
         iff (x) {
         println("no-if");
         }
-    """.trimIndent()
+        """.trimIndent()
         assertEquals(expected, out.toString())
     }
-
 }

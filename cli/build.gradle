@@ -1,5 +1,6 @@
 plugins {
     id 'common-library'
+    id 'application'
 }
 
 dependencies {
@@ -12,4 +13,13 @@ dependencies {
     implementation project(':interpreter')
     implementation project(':integration')
     implementation("com.github.ajalt.clikt:clikt:5.0.1")
+}
+
+application {
+    mainClass = "org.example.cli.PrintScriptCliKt"
+}
+
+tasks.named('run', JavaExec) {
+    workingDir = rootProject.projectDir
+    standardInput = System.in
 }

@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
         args
     }
 
-    PrintScriptCli().main(testArgs)
+    PrintScriptCli().main(args)
 }
 
 class PrintScriptCli : CliktCommand(name = "printscript") {

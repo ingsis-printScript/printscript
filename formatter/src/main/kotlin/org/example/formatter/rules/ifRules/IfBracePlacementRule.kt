@@ -11,13 +11,13 @@ class IfBracePlacementRule : Rule, ClaimsToken {
     private var parenDepth = 0
 
     override fun isEnabled(configuration: RulesConfiguration): Boolean {
-        val same  = configuration.getBoolean("if-brace-same-line")
+        val same = configuration.getBoolean("if-brace-same-line")
         val below = configuration.getBoolean("if-brace-below-line")
         return same || below
     }
 
     override fun before(prev: Token?, cur: Token, next: Token?, ctx: FormatterContext) {
-        val same  = ctx.configuration.getBoolean("if-brace-same-line")
+        val same = ctx.configuration.getBoolean("if-brace-same-line")
         val below = ctx.configuration.getBoolean("if-brace-below-line")
 
         if (isIf(cur)) {
@@ -46,7 +46,7 @@ class IfBracePlacementRule : Rule, ClaimsToken {
     override fun claims(prev: Token?, cur: Token?, next: Token?, cfg: RulesConfiguration): Boolean {
         if (!isEnabled(cfg)) return false
         return awaitingIfBrace && parenDepth == 0 &&
-                ((isCloseParen(cur) && isLBrace(next)) || isLBrace(cur))
+            ((isCloseParen(cur) && isLBrace(next)) || isLBrace(cur))
     }
 
     private fun isIf(t: Token?) =

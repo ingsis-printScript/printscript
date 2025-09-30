@@ -26,7 +26,7 @@ class FormatterProvider11() : FormatterProvider {
             SpaceAroundColonRule(),
             SpaceAroundEqualsRule(),
             SpaceAroundOperatorRule(),
-            IfBracePlacementRule(),
+            IfBracePlacementRule()
         )
 
         val rules = listOf(

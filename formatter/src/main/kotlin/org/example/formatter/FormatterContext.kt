@@ -59,7 +59,7 @@ class FormatterContext(
     }
 
     fun flushPendingGap() {
-        //mete saltos de linea
+        // mete saltos de linea
         if (pendingNewlines > 0) {
             repeat(pendingNewlines) { writer.write("\n") }
             lastWasNewline = true
@@ -71,7 +71,7 @@ class FormatterContext(
             lastWasSpace = pendingIndentSpaces > 0
             lastWasNewline = false
         }
-        //si no hay newLines, mete espacios
+        // si no hay newLines, mete espacios
         if (pendingSpaces > 0 && !lastWasSpace && !lastWasNewline) {
             writer.write(" ")
             lastWasSpace = true
@@ -96,7 +96,7 @@ class FormatterContext(
             // si el token actual no empieza en la misma columna que el anterior, dejamos el espacio (si habia)
             val gapSpaces = (cur.position.column - 1).coerceAtLeast(0)
             if (gapSpaces > 0) pendingSpaces = maxOf(pendingSpaces, 1)
-        } else { //gapLines == 0
+        } else { // gapLines == 0
             val gapSpaces = (cur.position.column - (prev.position.column + prev.value.length)).coerceAtLeast(0)
             if (gapSpaces > 0) pendingSpaces = maxOf(pendingSpaces, 1)
         }
