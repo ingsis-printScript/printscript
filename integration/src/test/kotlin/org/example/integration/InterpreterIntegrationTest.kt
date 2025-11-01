@@ -92,7 +92,7 @@ class InterpreterIntegrationTest {
             """
         let x = 1;
         x = 2;
-        """.trimIndent()
+            """.trimIndent()
         )
 
         assertEquals(emptyList<String>(), printer.outputs)
@@ -101,60 +101,67 @@ class InterpreterIntegrationTest {
 
     @Test
     fun `operaciones aritmeticas con decimales`() {
-        run("""
+        run(
+            """
         let pi: number = 3.14;
         println(pi / 2);
-    """.trimIndent())
+            """.trimIndent()
+        )
 
         assertEquals(listOf("1.57"), printer.outputs) // depende de cómo tu intérprete redondee
     }
 
     @Test
     fun `concatenacion de multiples strings`() {
-        run("""
+        run(
+            """
         let hello: string = "Hello";
         let world: string = "World";
         println(hello + " " + world + "!");
-    """.trimIndent())
+            """.trimIndent()
+        )
 
         assertEquals(listOf("Hello World!"), printer.outputs)
     }
 
-
     @Test
     fun `operaciones de asignacion compuesta`() {
-        run("""
+        run(
+            """
         let a: number = 5;
         a = a + 10;
         println(a);
-    """.trimIndent())
+            """.trimIndent()
+        )
 
         assertEquals(listOf("15"), printer.outputs)
     }
 
     @Test
     fun `string vacio y concatenacion`() {
-        run("""
+        run(
+            """
         let prefix: string = "";
         println(prefix + "hello");
-    """.trimIndent())
+            """.trimIndent()
+        )
 
         assertEquals(listOf("hello"), printer.outputs)
     }
 
     @Test
     fun `error de tipo al sumar string y number sin concatenacion`() {
-        run("""
+        run(
+            """
         let a: number = 5;
         let b: string = "test";
         let c: number = a + b;
-    """.trimIndent())
+            """.trimIndent()
+        )
 
         assertEquals(emptyList<String>(), printer.outputs)
         assert(handler.errors.isNotEmpty())
     }
-
-
 }
 
 /**
