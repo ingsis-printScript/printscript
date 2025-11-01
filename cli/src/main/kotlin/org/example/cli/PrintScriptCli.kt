@@ -10,17 +10,6 @@ import com.github.ajalt.clikt.parameters.types.file
 import org.example.cli.operations.OperationDispatch
 
 fun main(args: Array<String>) {
-    val testArgs = if (args.isEmpty()) {
-        arrayOf(
-            "execution",
-            "test.ps",
-            "--version",
-            "1.1"
-        )
-    } else {
-        args
-    }
-
     PrintScriptCli().main(args)
 }
 

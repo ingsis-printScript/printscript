@@ -1,0 +1,20 @@
+pluginManagement {
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version '1.9.24'
+    }
+}
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+rootProject.name = 'printscript'
+
+include 'common'
+include 'token'
+include 'ast'
+include 'lexer'
+include 'parser'
+include 'interpreter'
+include 'cli'
+include 'formatter'
+include 'linter'
+include 'integration'
