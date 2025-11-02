@@ -71,6 +71,7 @@ class LinterProvider11 : LinterProvider {
             PrintFunction::class,
             VariableAssigner::class,
             VariableDeclarator::class,
+            VariableImmutableDeclarator::class,
             Condition::class
         )
         return supported
@@ -88,8 +89,7 @@ class LinterProvider11 : LinterProvider {
                 is ReadInputExpression -> checkOptionalExpression(node.value, symbolChecker)
                 is ReadEnvExpression -> checkOptionalExpression(node.value, symbolChecker)
                 is Condition -> handleCondition(node, symbolChecker)
-                is BooleanExpression, is NumberExpression, is StringExpression -> { /* No action needed */
-                }
+                is BooleanExpression, is NumberExpression, is StringExpression -> { /* No action needed */ }
 
                 else -> throw IllegalArgumentException("Unsupported node type: $node")
             }
