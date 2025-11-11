@@ -252,7 +252,7 @@ class LinterTest {
 
         val r1 = linter.getNext()
         val r2 = linter.getNext()
-        assertTrue(r1 is Success<*>)
+        assertTrue(r1 is Error)
         assertTrue(r2 is Success<*>)
         assertTrue(fakeErrorHandler.errors.isEmpty())
     }
